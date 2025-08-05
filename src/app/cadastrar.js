@@ -21,7 +21,7 @@ export default function Cadastrar() {
   const [confirmarSenha, setConfirmarSenha] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Sem barra no final para evitar "//" na URL
+  // SEM barra no final
   const BASE_URL = 'https://turbo-guide-v6pprpwwjpjjh6gwx-3001.app.github.dev';
 
   const handleCadastrar = async () => {
@@ -33,33 +33,51 @@ export default function Cadastrar() {
       Alert.alert('Aviso', 'As senhas não coincidem.');
       return;
     }
+const id_usuario = 1; // ou pega do contexto de autenticação
+const status_licenciamento = "pendente"; // valor padrão para novos restaurantes
 
     setLoading(true);
     try {
-      console.log('Enviando para:', `${BASE_URL}/restaurante`);
-      console.log('Payload:', { nome, email, senha });
+      const url = `${BASE_URL}/api/restaurante`;
+      console.log('Enviando para:', url);
+      console.log('Payload:', { nome, email, senha, id_usuario, status_licenciamento });
 
-      const response = await fetch(`${BASE_URL}/restaurante`, {
+      const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nome, email, senha }),
+        body: JSON.stringify({ nome, email, senha, id_usuario, status_licenciamento }),
       });
 
-      const data = await response.json();
-      console.log('Resposta:', data);
+      console.log('Status da resposta:', response.status);
 
-      if (response.ok) {
-        Alert.alert('Sucesso', data.message || 'Cadastro realizado com sucesso.');
-        setEmail('');
-        setNome('');
-        setSenha('');
-        setConfirmarSenha('');
+      // Ler o content-type antes de chamar response.json()
+      const contentType = response.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
+        const data = await response.json();
+        console.log('Resposta JSON:', data);
+
+        if (response.ok) {
+          Alert.alert('Sucesso', data.message || 'Cadastro realizado com sucesso.');
+          setEmail('');
+          setNome('');
+          setSenha('');
+          setConfirmarSenha('');
+        } else {
+          Alert.alert('Erro', data.message || 'Não foi possível realizar o cadastro.');
+        }
       } else {
-        Alert.alert('Erro', data.message || 'Não foi possível realizar o cadastro.');
+        // Resposta não-JSON (provavelmente HTML de erro). Lê o texto bruto para debugar.
+        const text = await response.text();
+        console.warn('Resposta não é JSON. Body bruto:', text);
+        Alert.alert(
+          'Erro',
+          `Resposta inesperada do servidor (não JSON). Código: ${response.status}`
+        );
       }
     } catch (error) {
       console.error('Erro ao cadastrar:', error);
-      Alert.alert('Erro', 'Falha ao conectar com o servidor.');
+      // Mostra mensagem mais útil ao usuário
+      Alert.alert('Erro', 'Falha ao conectar com o servidor. Verifique a rede e a URL.');
     } finally {
       setLoading(false);
     }

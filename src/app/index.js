@@ -71,7 +71,7 @@ export default function App() {
               <Text style={styles.link}>esqueci a senha</Text>
             </TouchableOpacity>
 
-            <Pressable style={styles.botaologin} onPress={() => console.log('Login')}>
+            <Pressable style={styles.botaologin} onPress={() => router.push('(protected)')}>
               <Text style={styles.textologin}>LOGIN</Text>
             </Pressable>
 
