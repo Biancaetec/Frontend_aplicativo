@@ -8,7 +8,8 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  Alert
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -18,8 +19,9 @@ export default function Cadastrar() {
   const [senha, setSenha] = useState('');
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [confirmarSenha, setConfirmarSenha] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  // URL do seu backend no Codespaces
+  // Sem barra no final para evitar "//" na URL
   const BASE_URL = 'https://turbo-guide-v6pprpwwjpjjh6gwx-3001.app.github.dev';
 
   const handleCadastrar = async () => {
@@ -32,7 +34,11 @@ export default function Cadastrar() {
       return;
     }
 
+    setLoading(true);
     try {
+      console.log('Enviando para:', `${BASE_URL}/restaurante`);
+      console.log('Payload:', { nome, email, senha });
+
       const response = await fetch(`${BASE_URL}/restaurante`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -40,10 +46,10 @@ export default function Cadastrar() {
       });
 
       const data = await response.json();
+      console.log('Resposta:', data);
 
       if (response.ok) {
         Alert.alert('Sucesso', data.message || 'Cadastro realizado com sucesso.');
-        // Limpar campos após sucesso
         setEmail('');
         setNome('');
         setSenha('');
@@ -54,6 +60,8 @@ export default function Cadastrar() {
     } catch (error) {
       console.error('Erro ao cadastrar:', error);
       Alert.alert('Erro', 'Falha ao conectar com o servidor.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -63,10 +71,7 @@ export default function Cadastrar() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}
     >
-      <ScrollView
-        contentContainerStyle={styles.container}
-        keyboardShouldPersistTaps="handled"
-      >
+      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
         <View style={styles.formulariocaixa}>
           <Text style={[styles.titulo, { marginTop: 20 }]}>Email</Text>
           <TextInput
@@ -76,6 +81,7 @@ export default function Cadastrar() {
             keyboardType="email-address"
             style={styles.input}
             placeholderTextColor="#888"
+            autoCapitalize="none"
           />
 
           <Text style={styles.titulo}>Nome</Text>
@@ -96,13 +102,10 @@ export default function Cadastrar() {
               secureTextEntry={!mostrarSenha}
               style={styles.caixa}
               placeholderTextColor="#888"
+              autoCapitalize="none"
             />
             <TouchableOpacity onPress={() => setMostrarSenha(!mostrarSenha)}>
-              <Ionicons
-                name={mostrarSenha ? 'eye-outline' : 'eye-off-outline'}
-                size={24}
-                color="#555"
-              />
+              <Ionicons name={mostrarSenha ? 'eye-outline' : 'eye-off-outline'} size={24} color="#555" />
             </TouchableOpacity>
           </View>
 
@@ -114,6 +117,7 @@ export default function Cadastrar() {
             secureTextEntry={!mostrarSenha}
             style={styles.input}
             placeholderTextColor="#888"
+            autoCapitalize="none"
           />
 
           <Text style={styles.aviso}>
@@ -122,8 +126,12 @@ export default function Cadastrar() {
             <Text style={{ color: '#004aad' }}>Política de Privacidade</Text>.
           </Text>
 
-          <TouchableOpacity style={styles.botao} onPress={handleCadastrar}>
-            <Text style={styles.textobotao}>Cadastre-se</Text>
+          <TouchableOpacity
+            style={[styles.botao, loading && { opacity: 0.7 }]}
+            onPress={handleCadastrar}
+            disabled={loading}
+          >
+            {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.textobotao}>Cadastre-se</Text>}
           </TouchableOpacity>
         </View>
       </ScrollView>
