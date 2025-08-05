@@ -1,5 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function Cadastrar() {
@@ -10,91 +19,94 @@ export default function Cadastrar() {
   const [confirmarSenha, setConfirmarSenha] = useState('');
 
   return (
-    <View style={styles.formulariocaixa}>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0} // ajuste se precisar
+    >
+      <ScrollView
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={styles.formulariocaixa}>
 
-      <Text style={styles.tituloemail}>Email</Text>
-      <TextInput
-        value={email}
-        onChangeText={setEmail}
-        placeholder="restoon@gmail.com"
-        keyboardType="email-address"
-        style={styles.inputEmail}
-        placeholderTextColor="#888"
-      />
-
-      <Text style={styles.titulo}>Nome</Text>
-      <TextInput
-        value={nome}
-        onChangeText={setName}
-        placeholder="Seu nome completo"
-        style={styles.input}
-        placeholderTextColor="#888"
-      />
-
-      <Text style={styles.titulo}>Senha</Text>
-      <View style={styles.senha}>
-        <TextInput
-          value={senha}
-          onChangeText={setSenha}
-          placeholder="Senha"
-          secureTextEntry={!mostrarSenha}
-          style={styles.caixa}
-          placeholderTextColor="#888"
-        />
-        <TouchableOpacity onPress={() => setMostrarSenha(!mostrarSenha)}>
-          <Ionicons
-            name={mostrarSenha ? 'eye-outline' : 'eye-off-outline'}
-            size={24}
-            color="#555"
+          <Text style={[styles.titulo, { marginTop: 20 }]}>Email</Text>
+          <TextInput
+            value={email}
+            onChangeText={setEmail}
+            placeholder="restoon@gmail.com"
+            keyboardType="email-address"
+            style={styles.input}
+            placeholderTextColor="#888"
           />
-        </TouchableOpacity>
-      </View>
 
-      <Text style={styles.titulo}>Confirme sua senha</Text>
-      <TextInput
-        value={confirmarSenha}
-        onChangeText={setConfirmarSenha}
-        placeholder="Confirme sua senha"
-        secureTextEntry={!mostrarSenha}
-        style={styles.input}
-        placeholderTextColor="#888"
-      />
-      <Text style={styles.aviso}>
-        Ao se cadastrar, você concorda com nossos <Text style={{ color: '#004aad' }}>Termos de Uso</Text> e <Text style={{ color: '#004aad' }}>Política de Privacidade</Text>.
-      </Text>
+          <Text style={styles.titulo}>Nome</Text>
+          <TextInput
+            value={nome}
+            onChangeText={setName}
+            placeholder="Seu nome completo"
+            style={styles.input}
+            placeholderTextColor="#888"
+          />
 
-      <TouchableOpacity style={styles.botao}>
-        <Text style={styles.textobotao}>Cadastre-se</Text>
-      </TouchableOpacity>
-    </View>
+          <Text style={styles.titulo}>Senha</Text>
+          <View style={styles.senha}>
+            <TextInput
+              value={senha}
+              onChangeText={setSenha}
+              placeholder="Senha"
+              secureTextEntry={!mostrarSenha}
+              style={styles.caixa}
+              placeholderTextColor="#888"
+            />
+            <TouchableOpacity onPress={() => setMostrarSenha(!mostrarSenha)}>
+              <Ionicons
+                name={mostrarSenha ? 'eye-outline' : 'eye-off-outline'}
+                size={24}
+                color="#555"
+              />
+            </TouchableOpacity>
+          </View>
+
+          <Text style={styles.titulo}>Confirme sua senha</Text>
+          <TextInput
+            value={confirmarSenha}
+            onChangeText={setConfirmarSenha}
+            placeholder="Confirme sua senha"
+            secureTextEntry={!mostrarSenha}
+            style={styles.input}
+            placeholderTextColor="#888"
+          />
+
+          <Text style={styles.aviso}>
+            Ao se cadastrar, você concorda com nossos{' '}
+            <Text style={{ color: '#004aad' }}>Termos de Uso</Text> e{' '}
+            <Text style={{ color: '#004aad' }}>Política de Privacidade</Text>.
+          </Text>
+
+          <TouchableOpacity style={styles.botao}>
+            <Text style={styles.textobotao}>Cadastre-se</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-    formulariocaixa: {
+  container: {
+    flexGrow: 1,
+  },
+  formulariocaixa: {
     backgroundColor: '#fff',
     borderRadius: 16,
     width: '88%',
-    height: '80%',
-    alignSelf: 'center',
-    marginTop: 70,
     padding: 12,
     elevation: 20,
+    alignSelf: 'center',
+    marginTop: 70,
+    marginBottom: 30,
   },
-  tituloemail: {
-    fontSize: 14,
-    marginTop: 28,
-    color: '#000',
-  },
-  inputEmail: {
-  backgroundColor: '#f2f2f2',
-  borderRadius: 8,
-  padding: 16,
-  marginBottom: 25,
-  marginTop: 10,  
-  fontSize: 14,
-  color: '#000',
-},
   titulo: {
     fontSize: 14,
     marginBottom: 8,
@@ -122,7 +134,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#000',
   },
-    aviso: {
+  aviso: {
     fontSize: 15,
     color: '#555',
     marginTop: 18,
@@ -133,7 +145,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingVertical: 12,
     alignItems: 'center',
-    marginTop: '6%',
+    marginTop: 20,
   },
   textobotao: {
     color: '#fff',
