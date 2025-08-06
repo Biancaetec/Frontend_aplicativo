@@ -4,7 +4,7 @@ import { View, Text, StyleSheet } from "react-native";
 export default function Administração() {
   return (
     <View style={styles.container}>
-      <Text style={styles.titulo}>pedidos fechados</Text>
+      <Text style={styles.titulo}>Cadastros</Text>
      
     </View>
   );

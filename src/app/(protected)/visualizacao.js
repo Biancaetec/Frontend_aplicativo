@@ -1,10 +1,11 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
-export default function Vizualização() {
+export default function Visualização() {
   return (
     <View style={styles.container}>
-      <Text style={styles.titulo}>Vizualização</Text>
+      <Text style={styles.titulo}>Visualização</Text>
+
     </View>
   );
 }

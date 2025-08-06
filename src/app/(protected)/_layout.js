@@ -31,9 +31,17 @@ function CustomDrawerContent(props) {
 const DrawerLayout = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <Drawer drawerContent={(props) => <CustomDrawerContent {...props} />}>
+      <Drawer drawerContent={(props) => <CustomDrawerContent {...props} />}> 
+      // removi o index do Drawer para evitar conflito com o arquivo index.js
+      <Drawer.Screen
+      name="index"
+      options={{
+        drawerLabel: () => null,
+        drawerItemStyle: { height: 0 },
+      }}
+    />
         <Drawer.Screen
-          name="admin"
+          name="administração"
           options={{
             drawerLabel: "Administrador",
             headerTitle: "Administrador",
@@ -41,11 +49,19 @@ const DrawerLayout = () => {
           }}
         />
         <Drawer.Screen
-          name="pedidosFechados"
+          name="pedidosfechados"
           options={{
             drawerLabel: "Pedidos Fechados",
             headerTitle: "Pedidos Fechados",
             drawerIcon: () => <FontAwesome5 name="box" size={20} color="#545454" />
+          }}
+        />
+        <Drawer.Screen
+          name="visualizacao"
+          options={{
+            drawerLabel: "Visualização",
+            headerTitle: "Visualização",
+            drawerIcon: () => <FontAwesome5 name="eye" size={20} color="#545454" />
           }}
         />
       </Drawer>
