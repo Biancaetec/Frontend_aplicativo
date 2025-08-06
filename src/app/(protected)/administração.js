@@ -1,11 +1,61 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { useRouter } from "expo-router";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 export default function Administração() {
+  const router = useRouter();
+
   return (
     <View style={styles.container}>
-      <Text style={styles.titulo}>Cadastros</Text>
-     
+      <TouchableOpacity onPress={() => router.push('/(protected)/nomedoscadastros')} style={styles.botoes}>
+        <View style={styles.linha}>
+          <MaterialIcons name="category" size={24} color="#fff" style={styles.icone} />
+          <Text style={styles.titulo}>Categoria</Text>
+        </View>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={() => router.push('/(protected)/nomedoscadastros')} style={styles.botoes}>
+        <View style={styles.linha}>
+          <MaterialIcons name="shopping-bag" size={24} color="#fff" style={styles.icone} />
+          <Text style={styles.titulo}>Produto</Text>
+        </View>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={() => router.push('/(protected)/nomedoscadastros')} style={styles.botoes}>
+        <View style={styles.linha}>
+          <MaterialIcons name="table-bar" size={24} color="#fff" style={styles.icone} />
+          <Text style={styles.titulo}>Mesa</Text>
+        </View>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={() => router.push('/(protected)/nomedoscadastros')} style={styles.botoes}>
+        <View style={styles.linha}>
+          <MaterialIcons name="add-circle-outline" size={24} color="#fff" style={styles.icone} />
+          <Text style={styles.titulo}>Adicional</Text>
+        </View>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={() => router.push('/(protected)/nomedoscadastros')} style={styles.botoes}>
+        <View style={styles.linha}>
+          <MaterialIcons name="people" size={24} color="#fff" style={styles.icone} />
+          <Text style={styles.titulo}>Funcionários</Text>
+        </View>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={() => router.push('/(protected)/nomedoscadastros')} style={styles.botoes}>
+        <View style={styles.linha}>
+          <MaterialIcons name="payments" size={24} color="#fff" style={styles.icone} />
+          <Text style={styles.titulo}>Forma de pagamento</Text>
+        </View>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={() => router.push('/(protected)/nomedoscadastros')} style={styles.botoes}>
+        <View style={styles.linha}>
+          <MaterialIcons name="schedule" size={24} color="#fff" style={styles.icone} />
+          <Text style={styles.titulo}>Filas de preparo</Text>
+        </View>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -18,14 +68,25 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 20,
   },
-  titulo: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 10,
-    color: "#333",
+  botoes: {
+    backgroundColor: "#999",
+    borderRadius: 16,
+    height: 55,
+    justifyContent: "center",
+    alignItems: "flex-start",
+    width: "100%",
+    paddingHorizontal: 20,
+    marginBottom: 40, 
   },
-  subtitulo: {
-    fontSize: 16,
-    color: "#555",
+  linha: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  icone: {
+    marginRight: 16,
+  },
+  titulo: {
+    fontSize: 20,
+    color: "#fff",
   },
 });
