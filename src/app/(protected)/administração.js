@@ -8,7 +8,7 @@ export default function Administração() {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => router.push('/(protected)/nomedoscadastros')} style={styles.botoes}>
+      <TouchableOpacity onPress={() => router.push('/(protected)/categoria')} style={styles.botoes}>
         <View style={styles.linha}>
           <MaterialIcons name="category" size={24} color="#fff" style={styles.icone} />
           <Text style={styles.titulo}>Categoria</Text>

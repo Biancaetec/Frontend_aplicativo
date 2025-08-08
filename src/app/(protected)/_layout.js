@@ -4,25 +4,31 @@ import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawe
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { Stack } from 'expo-router';
 
+// Componente personalizado do menu lateral (drawer)
 function CustomDrawerContent(props) {
   return (
     <View style={{ flex: 1 }}>
+
       <View style={styles.areaperfil}>
         <Image
-          //source={require('../../../src/assets/images/usuario.png')} // adicione sua imagem aqui
+          // Adicione sua imagem local se quiser
+          // source={require('../../../src/assets/images/usuario.png')}
           style={styles.imagemperfil}
         />
         <Text style={styles.nomeusuario}>Nome do Usuário</Text>
       </View>
+
       <DrawerContentScrollView {...props}>
         <DrawerItemList {...props} />
       </DrawerContentScrollView>
+
       <TouchableOpacity
         style={styles.button}
         onPress={() => {
           console.log('Sair clicado');
-          // aqui você pode adicionar lógica de logout, ex: limpar token e redirecionar
+          // Aqui você pode colocar lógica de logout, como limpar token e redirecionar
         }}
       >
         <Text style={{ color: 'white', fontSize: 15 }}>Sair</Text>
@@ -31,6 +37,7 @@ function CustomDrawerContent(props) {
   );
 }
 
+// Layout com menu lateral
 const DrawerLayout = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -67,15 +74,45 @@ const DrawerLayout = () => {
             drawerIcon: () => <FontAwesome5 name="eye" size={20} color="#545454" />,
           }}
         />
+
+              <Drawer.Screen
+          name="categoria"
+          options={{
+            drawerLabel: 'categoria',
+            headerTitle: 'categoria',
+            drawerItemStyle: { display: 'none' },
+          }}
+        />
+
+        <Drawer.Screen
+          name="novacategoria"
+          options={{
+            drawerLabel: 'novacategoria',
+            headerTitle: 'novacategoria',
+            drawerItemStyle: { display: 'none' },
+          }}
+        />
+
+         
+        <Drawer.Screen
+          name="(protected)"
+          options={{
+            drawerLabel: 'Protegido',
+            drawerItemStyle: { display: 'none' }, // Oculta o item de menu "Protegido"
+          }}
+        />
+        
       </Drawer>
     </GestureHandlerRootView>
   );
 };
 
+// Exportação principal
 export default function Layout() {
   return <DrawerLayout />;
 }
 
+// Estilos
 const styles = StyleSheet.create({
   areaperfil: {
     marginTop: 0,
