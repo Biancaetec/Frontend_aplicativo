@@ -11,16 +11,33 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
 import logo from '../assets/imagens/logorestoon.png';
 import { Ionicons } from "@expo/vector-icons";
 import { router } from 'expo-router';
-
+import { useAuth } from '../hooks/Auth/useAuth';
 
 export default function App() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const { signIn } = useAuth();
+
+  const handleLogin = async () => {
+    setLoading(true);
+    try {
+      await signIn({ email, password: senha });
+      router.replace('/home'); // redireciona para home após login
+    } catch (error) {
+      Alert.alert('Erro', error.message || 'Falha ao fazer login');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <KeyboardAvoidingView
@@ -46,6 +63,7 @@ export default function App() {
               keyboardType="email-address"
               style={styles.input}
               placeholderTextColor="#888"
+              autoCapitalize="none"
             />
 
             <Text style={styles.titulo}>Senha</Text>
@@ -59,11 +77,11 @@ export default function App() {
                 placeholderTextColor="#888"
               />
               <TouchableOpacity onPress={() => setMostrarSenha(!mostrarSenha)}>
-                 <Ionicons
-                   name={mostrarSenha ? "eye-outline" : "eye-off-outline"}
-                    size={24}
-                    color="#555"
-                 />
+                <Ionicons
+                  name={mostrarSenha ? "eye-outline" : "eye-off-outline"}
+                  size={24}
+                  color="#555"
+                />
               </TouchableOpacity>
             </View>
 
@@ -71,8 +89,16 @@ export default function App() {
               <Text style={styles.link}>esqueci a senha</Text>
             </TouchableOpacity>
 
-            <Pressable style={styles.botaologin} onPress={() => router.push('(protected)')}>
-              <Text style={styles.textologin}>LOGIN</Text>
+            <Pressable
+              style={[styles.botaologin, loading && { opacity: 0.7 }]}
+              onPress={handleLogin}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.textologin}>LOGIN</Text>
+              )}
             </Pressable>
 
             <View style={styles.rodape}>
@@ -137,11 +163,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     fontSize: 14,
     color: '#000',
-  },
-  mostrarsenha: {
-    fontSize: 18,
-    paddingHorizontal: 8,
-    color: '#555',
   },
   esquecisenha: {
     alignSelf: 'flex-end',

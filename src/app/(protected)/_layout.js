@@ -1,23 +1,27 @@
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Drawer } from 'expo-router/drawer';
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { Stack } from 'expo-router';
+import { Image, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { router } from 'expo-router';
 
-// Componente personalizado do menu lateral (drawer)
+// Importa o hook de autenticação que você criou
+import { useAuth } from '../../hooks/Auth/useAuth';
+
 function CustomDrawerContent(props) {
+  const { signOut, user } = useAuth();
+
   return (
     <View style={{ flex: 1 }}>
-
       <View style={styles.areaperfil}>
         <Image
-          // Adicione sua imagem local se quiser
           // source={require('../../../src/assets/images/usuario.png')}
           style={styles.imagemperfil}
         />
-        <Text style={styles.nomeusuario}>Nome do Usuário</Text>
+        <Text style={styles.nomeusuario}>
+        {user?.restaurante?.nome || "Nome do Usuário"}
+        </Text>
       </View>
 
       <DrawerContentScrollView {...props}>
@@ -27,8 +31,8 @@ function CustomDrawerContent(props) {
       <TouchableOpacity
         style={styles.button}
         onPress={() => {
-          console.log('Sair clicado');
-          // Aqui você pode colocar lógica de logout, como limpar token e redirecionar
+          signOut();
+          router.replace('/'); // redireciona para a página pública após logout
         }}
       >
         <Text style={{ color: 'white', fontSize: 15 }}>Sair</Text>
@@ -37,25 +41,45 @@ function CustomDrawerContent(props) {
   );
 }
 
-// Layout com menu lateral
-const DrawerLayout = () => {
+export default function Layout() {
+  const { user } = useAuth();
+
+  // Se usuário não autenticado, redireciona para login e não mostra o Drawer
+  if (!user?.authenticated) {
+    router.replace('/'); // ajusta para sua rota de login
+    return null; // não renderiza nada enquanto redireciona
+  }
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <Drawer drawerContent={(props) => <CustomDrawerContent {...props} />}>
+      <Drawer
+        screenOptions={{
+          headerTitle: '', // remove o "(Protected)" do header
+          drawerActiveTintColor: '#004aad',
+          drawerInactiveTintColor: '#555',
+          drawerLabelStyle: { fontSize: 16 },
+          drawerStyle: { backgroundColor: '#fff' },
+        }}
+        drawerContent={(props) => <CustomDrawerContent {...props} />}
+      >
         <Drawer.Screen
-          name="index"
+          name="home"
           options={{
             drawerLabel: 'Início',
             headerTitle: 'Início',
-            drawerIcon: () => <MaterialIcons name="home" size={28} color="#3e3e3e" />,
+            drawerIcon: ({ color, size }) => (
+              <FontAwesome5 name="home" size={size} color={color} />
+            ),
           }}
         />
         <Drawer.Screen
-          name="administração"
+          name="administracao"
           options={{
             drawerLabel: 'Administração',
             headerTitle: 'Administração',
-            drawerIcon: () => <MaterialIcons name="admin-panel-settings" size={24} color="#3e3e3e" />,
+            drawerIcon: ({ color, size }) => (
+              <MaterialIcons name="admin-panel-settings" size={size} color={color} />
+            ),
           }}
         />
         <Drawer.Screen
@@ -74,8 +98,7 @@ const DrawerLayout = () => {
             drawerIcon: () => <FontAwesome5 name="eye" size={20} color="#545454" />,
           }}
         />
-
-              <Drawer.Screen
+        <Drawer.Screen
           name="categoria"
           options={{
             drawerLabel: 'categoria',
@@ -83,7 +106,6 @@ const DrawerLayout = () => {
             drawerItemStyle: { display: 'none' },
           }}
         />
-
         <Drawer.Screen
           name="novacategoria"
           options={{
@@ -92,34 +114,18 @@ const DrawerLayout = () => {
             drawerItemStyle: { display: 'none' },
           }}
         />
-
-         
-        <Drawer.Screen
-          name="(protected)"
-          options={{
-            drawerLabel: 'Protegido',
-            drawerItemStyle: { display: 'none' }, // Oculta o item de menu "Protegido"
-          }}
-        />
-        
       </Drawer>
     </GestureHandlerRootView>
   );
-};
-
-// Exportação principal
-export default function Layout() {
-  return <DrawerLayout />;
 }
 
-// Estilos
 const styles = StyleSheet.create({
   areaperfil: {
     marginTop: 0,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#004aad',
-    paddingVertical: 40,
+    paddingVertical: 90,
     paddingBottom: 20,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
@@ -146,5 +152,22 @@ const styles = StyleSheet.create({
     width: 200,
     marginBottom: 20,
     marginLeft: 35,
+  },
+  drawerHeader: {
+    height: 140,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 20,
+    backgroundColor: '#f8f8f8',
+  },
+  logo: {
+    width: 80,
+    height: 80,
+    resizeMode: 'contain',
+    marginBottom: 10,
+  },
+  drawerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
