@@ -1,38 +1,104 @@
+import React from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Drawer } from 'expo-router/drawer';
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
-import { Image, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { Image, StyleSheet, Text, View, TouchableOpacity, StatusBar, Platform } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { router } from 'expo-router';
-
-// Importa o hook de autenticação que você criou
 import { useAuth } from '../../hooks/Auth/useAuth';
+import { useNavigation } from '@react-navigation/native';
 
+// ================= HEADER CUSTOMIZADO =================
+function CustomHeader() {
+  const navigation = useNavigation();
+
+  return (
+    <View style={headerStyles.headerWrapper}>
+      <View style={headerStyles.headerContainer}>
+        {/* Botão de Menu + Texto */}
+        <TouchableOpacity
+          style={headerStyles.leftContainer}
+          onPress={() => navigation.toggleDrawer()}
+        >
+          <FontAwesome5 name="bars" size={18} color="#fff" />
+          <Text style={headerStyles.headerTitle}>Filtrar</Text>
+        </TouchableOpacity>
+
+        {/* Ícones da direita */}
+        <View style={headerStyles.rightIcons}>
+          <TouchableOpacity style={headerStyles.iconButton}>
+            <FontAwesome5 name="clock" size={18} color="#fff" />
+          </TouchableOpacity>
+          <TouchableOpacity style={headerStyles.iconButton}>
+            <FontAwesome5 name="pen" size={18} color="#fff" />
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  );
+}
+
+const headerStyles = StyleSheet.create({
+  headerWrapper: {
+    backgroundColor: '#fff',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight + 10 : 40,
+    paddingBottom: 5,
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#004aad',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 25,
+    marginHorizontal: 10,
+  },
+  leftContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerTitle: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '500',
+    marginLeft: 8,
+  },
+  rightIcons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  iconButton: {
+    marginLeft: 12,
+  },
+});
+
+// ================= DRAWER CUSTOMIZADO =================
 function CustomDrawerContent(props) {
   const { signOut, user } = useAuth();
 
   return (
     <View style={{ flex: 1 }}>
+      {/* Perfil no topo */}
       <View style={styles.areaperfil}>
-        <Image
-          // source={require('../../../src/assets/images/usuario.png')}
-          style={styles.imagemperfil}
-        />
+        <Image style={styles.imagemperfil} />
         <Text style={styles.nomeusuario}>
-        {user?.restaurante?.nome || "Nome do Usuário"}
+          {user?.restaurante?.nome || 'Nome do Usuário'}
         </Text>
       </View>
 
+      {/* Lista de Itens */}
       <DrawerContentScrollView {...props}>
         <DrawerItemList {...props} />
       </DrawerContentScrollView>
 
+      {/* Botão Sair */}
       <TouchableOpacity
         style={styles.button}
         onPress={() => {
           signOut();
-          router.replace('/'); // redireciona para a página pública após logout
+          router.replace('/');
         }}
       >
         <Text style={{ color: 'white', fontSize: 15 }}>Sair</Text>
@@ -41,20 +107,19 @@ function CustomDrawerContent(props) {
   );
 }
 
+// ================= LAYOUT PRINCIPAL =================
 export default function Layout() {
   const { user } = useAuth();
 
-  // Se usuário não autenticado, redireciona para login e não mostra o Drawer
   if (!user?.authenticated) {
-    router.replace('/'); // ajusta para sua rota de login
-    return null; // não renderiza nada enquanto redireciona
+    router.replace('/');
+    return null;
   }
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Drawer
         screenOptions={{
-          headerTitle: '', // remove o "(Protected)" do header
           drawerActiveTintColor: '#004aad',
           drawerInactiveTintColor: '#555',
           drawerLabelStyle: { fontSize: 16 },
@@ -66,7 +131,7 @@ export default function Layout() {
           name="home"
           options={{
             drawerLabel: 'Início',
-            headerTitle: 'Início',
+            header: () => <CustomHeader />, // header só na página Início
             drawerIcon: ({ color, size }) => (
               <FontAwesome5 name="home" size={size} color={color} />
             ),
@@ -76,7 +141,6 @@ export default function Layout() {
           name="administracao"
           options={{
             drawerLabel: 'Administração',
-            headerTitle: 'Administração',
             drawerIcon: ({ color, size }) => (
               <MaterialIcons name="admin-panel-settings" size={size} color={color} />
             ),
@@ -86,23 +150,24 @@ export default function Layout() {
           name="pedidosfechados"
           options={{
             drawerLabel: 'Pedidos Fechados',
-            headerTitle: 'Pedidos Fechados',
-            drawerIcon: () => <FontAwesome5 name="box" size={20} color="#545454" />,
+            drawerIcon: () => (
+              <FontAwesome5 name="box" size={20} color="#545454" />
+            ),
           }}
         />
         <Drawer.Screen
           name="visualizacao"
           options={{
             drawerLabel: 'Visualização',
-            headerTitle: 'Visualização',
-            drawerIcon: () => <FontAwesome5 name="eye" size={20} color="#545454" />,
+            drawerIcon: () => (
+              <FontAwesome5 name="eye" size={20} color="#545454" />
+            ),
           }}
         />
         <Drawer.Screen
           name="categoria"
           options={{
             drawerLabel: 'categoria',
-            headerTitle: 'categoria',
             drawerItemStyle: { display: 'none' },
           }}
         />
@@ -110,7 +175,6 @@ export default function Layout() {
           name="novacategoria"
           options={{
             drawerLabel: 'novacategoria',
-            headerTitle: 'novacategoria',
             drawerItemStyle: { display: 'none' },
           }}
         />
@@ -119,6 +183,7 @@ export default function Layout() {
   );
 }
 
+// ================= ESTILOS DO DRAWER =================
 const styles = StyleSheet.create({
   areaperfil: {
     marginTop: 0,
@@ -152,22 +217,5 @@ const styles = StyleSheet.create({
     width: 200,
     marginBottom: 20,
     marginLeft: 35,
-  },
-  drawerHeader: {
-    height: 140,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 20,
-    backgroundColor: '#f8f8f8',
-  },
-  logo: {
-    width: 80,
-    height: 80,
-    resizeMode: 'contain',
-    marginBottom: 10,
-  },
-  drawerTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
   },
 });
