@@ -178,6 +178,21 @@ export default function Layout() {
             drawerItemStyle: { display: 'none' },
           }}
         />
+         {/* adicional */}
+    <Drawer.Screen
+      name="adicional"
+      options={{
+        drawerLabel: 'adicional',
+        drawerItemStyle: { display: 'none' },
+      }}
+    />
+    <Drawer.Screen
+      name="novoadicional"
+      options={{
+        drawerLabel: 'novoadicional',
+        drawerItemStyle: { display: 'none' },
+      }}
+    />
       </Drawer>
     </GestureHandlerRootView>
   );

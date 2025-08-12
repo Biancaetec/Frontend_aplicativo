@@ -22,7 +22,7 @@ export default function Administração() {
         </View>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => router.push('/(protected)/nomedoscadastros')} style={styles.botoes}>
+      <TouchableOpacity onPress={() => router.push('/(protected)/adicional')} style={styles.botoes}>
         <View style={styles.linha}>
           <MaterialIcons name="add-circle-outline" size={24} color="#fff" style={styles.icone} />
           <Text style={styles.titulo}>Adicionais</Text>
@@ -33,21 +33,6 @@ export default function Administração() {
         <View style={styles.linha}>
           <MaterialIcons name="table-bar" size={24} color="#fff" style={styles.icone} />
           <Text style={styles.titulo}>Mesa</Text>
-        </View>
-      </TouchableOpacity>
-
-    
-      <TouchableOpacity onPress={() => router.push('/(protected)/nomedoscadastros')} style={styles.botoes}>
-        <View style={styles.linha}>
-          <MaterialIcons name="people" size={24} color="#fff" style={styles.icone} />
-          <Text style={styles.titulo}>Funcionários</Text>
-        </View>
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={() => router.push('/(protected)/nomedoscadastros')} style={styles.botoes}>
-        <View style={styles.linha}>
-          <MaterialIcons name="payments" size={24} color="#fff" style={styles.icone} />
-          <Text style={styles.titulo}>Forma de pagamento</Text>
         </View>
       </TouchableOpacity>
 
