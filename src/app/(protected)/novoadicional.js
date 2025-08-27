@@ -4,7 +4,7 @@ import { Picker } from '@react-native-picker/picker';
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
-export default function NovoAdicional({ route }) {
+export default function NovoAdicional() {
   const navigation = useNavigation();
   const [quantidade, setQuantidade] = useState('0');
   const [adicionais, setAdicionais] = useState([]);
@@ -43,75 +43,141 @@ export default function NovoAdicional({ route }) {
     setAdicionais((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // Salvar adicionais e voltar para Adicional.js
+  // Salvar adicionais e voltar
   const salvarAdicionais = () => {
     navigation.navigate('adicional', { listaAdicionais: adicionais });
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.titulo}>Cadastro de Adicionais</Text>
 
       <View style={styles.pickerWrapper}>
-        <Text style={styles.label}>Adicionar quantos?</Text>
+        <Text style={styles.labelPergunta}>Adicionar quantos?</Text>
         <View style={styles.pickerContainer}>
           <Picker
             selectedValue={quantidade}
             onValueChange={adicionarCampos}
             style={styles.picker}
-            dropdownIconColor="#fff"
+            dropdownIconColor="#0D3A87"
           >
-            <Picker.Item label="Selecione" value="0" color="#004aad" />
+            <Picker.Item label="Selecione" value="0" />
             {[1, 2, 3, 4, 5].map((num) => (
-              <Picker.Item key={num} label={`${num}`} value={`${num}`} color="#004aad" />
+              <Picker.Item key={num} label={`${num}`} value={`${num}`} />
             ))}
           </Picker>
         </View>
       </View>
 
-      <ScrollView style={styles.scroll}>
-        {adicionais.map((item, index) => (
-          <View key={index} style={styles.campoContainer}>
-            <TextInput
-              placeholder="Nome do adicional"
-              style={styles.input}
-              value={item.nome}
-              onChangeText={(valor) => atualizarCampo(index, 'nome', valor)}
-              placeholderTextColor="#666"
-            />
-            <TextInput
-              placeholder="Preço"
-              style={styles.input}
-              keyboardType="numeric"
-              value={item.preco}
-              onChangeText={(valor) => atualizarCampo(index, 'preco', valor)}
-              placeholderTextColor="#666"
-            />
-            <TouchableOpacity onPress={() => removerCampo(index)} style={styles.botaoExcluir}>
-              <FontAwesome name="trash" size={22} color="#fff" />
+      {adicionais.map((item, index) => (
+        <View key={index} style={styles.categoriaContainer}>
+          <View style={styles.row}>
+            <Text style={styles.label}>Nome do adicional</Text>
+            <TouchableOpacity onPress={() => removerCampo(index)}>
+              <FontAwesome name="trash" size={24} color="#FF3B30" />
             </TouchableOpacity>
           </View>
-        ))}
-      </ScrollView>
+          <TextInput
+            placeholder="Ex: Extra queijo"
+            style={styles.input}
+            value={item.nome}
+            onChangeText={(text) => atualizarCampo(index, 'nome', text)}
+            placeholderTextColor="#A9A9A9"
+          />
+          <TextInput
+            placeholder="Preço"
+            style={styles.input}
+            keyboardType="numeric"
+            value={item.preco}
+            onChangeText={(text) => atualizarCampo(index, 'preco', text)}
+            placeholderTextColor="#A9A9A9"
+          />
+        </View>
+      ))}
 
       <TouchableOpacity style={styles.botaoSalvar} onPress={salvarAdicionais}>
-        <Text style={styles.textoBotao}>Salvar</Text>
+        <Text style={styles.textoBotao}>Salvar Adicionais</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: '#fff' },
-  titulo: { fontSize: 22, fontWeight: 'bold', color: '#004aad', textAlign: 'center', marginBottom: 16 },
-  pickerWrapper: { marginBottom: 16 },
-  label: { fontSize: 16, fontWeight: '600', color: '#004aad', marginBottom: 4 },
-  pickerContainer: { backgroundColor: '#a9c2e2ff', borderRadius: 10 },
-  picker: { color: '#fff' },
-  scroll: { flex: 1, marginVertical: 8 },
-  campoContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#ddd', padding: 8, borderRadius: 8, marginBottom: 8 },
-  input: { flex: 1, height: 40, borderColor: '#004aad', borderWidth: 1, borderRadius: 6, paddingHorizontal: 8, marginRight: 6, color: '#004aad' },
-  botaoExcluir: { backgroundColor: '#ff1c1c', padding: 8, borderRadius: 6 },
-  botaoSalvar: { backgroundColor: '#004aad', padding: 14, borderRadius: 8, alignItems: 'center', marginTop: 12 },
-  textoBotao: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+  container: {
+    padding: 20,
+    backgroundColor: '#F5F6FA',
+    flexGrow: 1,
+    paddingBottom: 40,
+  },
+  titulo: {
+    fontSize: 22,
+    color: '#0D3A87',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 30,
+  },
+  pickerWrapper: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  labelPergunta: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#0D3A87',
+    marginBottom: 8,
+  },
+  pickerContainer: {
+    borderWidth: 1.5,
+    borderColor: '#0D3A87',
+    borderRadius: 12,
+    overflow: 'hidden',
+    backgroundColor: '#FFF',
+    width: 160,
+  },
+  picker: { height: 50, color: '#0D3A87' },
+  categoriaContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 20,
+    marginVertical: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  label: {
+    fontWeight: '600',
+    color: '#0D3A87',
+    fontSize: 15,
+  },
+  input: {
+    height: 45,
+    borderWidth: 1.5,
+    borderColor: '#0D3A87',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    backgroundColor: '#F9F9F9',
+    color: '#333',
+    fontSize: 15,
+    marginBottom: 10,
+  },
+  botaoSalvar: {
+    backgroundColor: '#0D3A87',
+    paddingVertical: 15,
+    borderRadius: 15,
+    marginTop: 30,
+    alignItems: 'center',
+  },
+  textoBotao: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 });

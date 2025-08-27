@@ -38,8 +38,8 @@ export default function NovaCategoria() {
       Alert.alert('Erro', 'Preencha todos os nomes das categorias antes de salvar.');
       return;
     }
-    adicionarCategorias(categoriasTemp);
-    Alert.alert('Sucesso', 'Categorias salvas com sucesso!');
+adicionarCategorias(categoriasTemp);    
+Alert.alert('Sucesso', 'Categorias salvas com sucesso!');
     navigation.goBack(); // volta para a tela Categoria
   };
 
@@ -75,7 +75,7 @@ export default function NovaCategoria() {
             </TouchableOpacity>
           </View>
           <TextInput
-            placeholder="Ex: Bebidas"
+            placeholder="Ex: Barman"
             style={styles.input}
             value={item.nome}
             onChangeText={(text) => onNomeChange(text, index)}

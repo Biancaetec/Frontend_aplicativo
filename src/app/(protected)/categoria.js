@@ -10,10 +10,10 @@ export default function Categoria() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <Ionicons name="arrow-back" size={24} color="#fff" />
         <Text style={styles.headerText}>Categorias</Text>
-      </View>
+      </View> */}
 
       <FlatList
         data={categorias}
@@ -42,8 +42,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff'
   }
   ,
-  header: { backgroundColor: '#004aad', height: 60, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 15 },
-  headerText: { color: '#fff', fontSize: 18, marginLeft: 10 },
+  // header: { backgroundColor: '#004aad', height: 60, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 15 },
+  // headerText: { color: '#fff', fontSize: 18, marginLeft: 10 },
   botao: { position: 'absolute', bottom: 30, right: 20, backgroundColor: '#004aad', paddingVertical: 12, paddingHorizontal: 20, borderRadius: 20 },
   botaoTexto: { color: '#fff', fontWeight: 'bold' },
   categoriaItem: { padding: 15, backgroundColor: '#E3F2FD', borderRadius: 12, marginBottom: 10 },

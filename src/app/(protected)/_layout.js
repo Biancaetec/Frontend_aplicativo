@@ -9,6 +9,7 @@ import { router } from 'expo-router';
 import { useAuth } from '../../hooks/Auth/useAuth';
 import { useNavigation } from '@react-navigation/native';
 import { Slot } from 'expo-router';
+import { MesaProvider } from '../../MesaContext';
 import { CategoriaProvider } from '../../CategoriaContext';
 
 // ================= HEADER CUSTOMIZADO =================
@@ -120,7 +121,9 @@ export default function Layout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      
       <CategoriaProvider>
+        <MesaProvider>
       <Drawer
         screenOptions={{
           drawerActiveTintColor: '#004aad',
@@ -181,6 +184,20 @@ export default function Layout() {
             drawerItemStyle: { display: 'none' },
           }}
         />
+         <Drawer.Screen
+          name="mesa"
+          options={{
+            drawerLabel: 'Mesa',
+            drawerItemStyle: { display: 'none' },
+          }}
+        />
+        <Drawer.Screen
+          name="novamesa"
+          options={{
+            drawerLabel: 'novamesa',
+            drawerItemStyle: { display: 'none' },
+          }}
+        />
          {/* adicional */}
     <Drawer.Screen
       name="adicional"
@@ -197,7 +214,9 @@ export default function Layout() {
       }}
     />
       </Drawer>
-      </CategoriaProvider>
+       </MesaProvider>
+       </CategoriaProvider>
+     
     </GestureHandlerRootView>
   );
 }

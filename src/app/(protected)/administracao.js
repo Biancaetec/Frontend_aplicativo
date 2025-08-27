@@ -34,7 +34,7 @@ export default function Administração() {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => router.push('/(protected)/nomedoscadastros')} style={styles.botoes}>
+        <TouchableOpacity onPress={() => router.push('/(protected)/mesa')} style={styles.botoes}>
           <View style={styles.linha}>
             <MaterialIcons name="table-bar" size={24} color="#000" style={styles.icone} />
             <Text style={styles.titulo}>Mesa</Text>

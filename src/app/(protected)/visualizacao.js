@@ -1,31 +1,49 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import React, { useContext } from "react";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { MesaContext } from "../../MesaContext"; // ajuste o caminho se necessário
 
-export default function Visualização() {
+export default function Visualizacao() {
+  const { mesas } = useContext(MesaContext);
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.titulo}>Visualização</Text>
+    <ScrollView contentContainerStyle={styles.container}>
 
-    </View>
+      <View style={styles.mesasContainer}>
+        {mesas.map((mesa, index) => (
+          <View key={index} style={styles.mesaBox}>
+            <Text style={styles.mesaTexto}>{mesa.numero}</Text>
+          </View>
+        ))}
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: "center",  
-    alignItems: "center",      
-    backgroundColor: "#fff",
+    flexGrow: 1,
     padding: 20,
+    backgroundColor: "#fff",
   },
-  titulo: {
-    fontSize: 24,
+  
+  mesasContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+  },
+  mesaBox: {
+    width: "28%",
+    aspectRatio: 1,
+    marginBottom: 16,
+    borderWidth: 2,
+    borderColor: "green",
+    borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  mesaTexto: {
+    fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 10,
-    color: "#333",
-  },
-  subtitulo: {
-    fontSize: 16,
-    color: "#555",
+    color: "#0D3A87",
   },
 });
