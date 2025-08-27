@@ -8,6 +8,8 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { router } from 'expo-router';
 import { useAuth } from '../../hooks/Auth/useAuth';
 import { useNavigation } from '@react-navigation/native';
+import { Slot } from 'expo-router';
+import { CategoriaProvider } from '../../CategoriaContext';
 
 // ================= HEADER CUSTOMIZADO =================
 function CustomHeader() {
@@ -118,6 +120,7 @@ export default function Layout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      <CategoriaProvider>
       <Drawer
         screenOptions={{
           drawerActiveTintColor: '#004aad',
@@ -194,6 +197,7 @@ export default function Layout() {
       }}
     />
       </Drawer>
+      </CategoriaProvider>
     </GestureHandlerRootView>
   );
 }
