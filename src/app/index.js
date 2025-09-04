@@ -13,6 +13,7 @@ import {
   Platform,
   Alert,
   ActivityIndicator,
+  Button,
 } from 'react-native';
 import logo from '../assets/imagens/logorestoon.png';
 import { Ionicons } from "@expo/vector-icons";
@@ -105,6 +106,7 @@ export default function App() {
               <Text style={styles.textorodape}>É novo por aqui?</Text>
               <TouchableOpacity onPress={() => router.push('/cadastrar')}>
                 <Text style={styles.link}> se cadastre já</Text>
+                <TouchableOpacity onPress={() => router.push('src/App.js')}><Text>etet</Text></TouchableOpacity>
               </TouchableOpacity>
             </View>
           </View>
