@@ -5,23 +5,27 @@ export const CategoriaContext = createContext();
 export const CategoriaProvider = ({ children }) => {
   const [categorias, setCategorias] = useState([]);
 
-  // Função para adicionar várias categorias de uma vez
-  const adicionarCategorias = (novasCategorias) => {
-    // Garante que cada categoria tenha um id único
-    const categoriasComId = novasCategorias.map((cat, index) => ({
-      id: Date.now() + index,
-      nome: cat.nome,
-    }));
-    setCategorias((prev) => [...prev, ...categoriasComId]);
+  // Adicionar categoria
+  const adicionarCategoria = (novaCategoria) => {
+    setCategorias((prevCategorias) => [...prevCategorias, novaCategoria]);
   };
 
-  const removerCategoria = (id) => {
-    setCategorias((prev) => prev.filter((cat) => cat.id !== id));
+  // Editar categoria
+  const editarCategoria = (index, categoriaAtualizada) => {
+    const novasCategorias = [...categorias];
+    novasCategorias[index] = categoriaAtualizada;
+    setCategorias(novasCategorias);
+  };
+
+  // Remover categoria
+  const removerCategoria = (index) => {
+    const novasCategorias = categorias.filter((_, i) => i !== index);
+    setCategorias(novasCategorias);
   };
 
   return (
     <CategoriaContext.Provider
-      value={{ categorias, adicionarCategorias, removerCategoria }}
+      value={{ categorias, adicionarCategoria, editarCategoria, removerCategoria }}
     >
       {children}
     </CategoriaContext.Provider>

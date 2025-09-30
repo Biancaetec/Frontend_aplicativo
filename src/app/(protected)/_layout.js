@@ -11,6 +11,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Slot } from 'expo-router';
 import { MesaProvider } from '../../MesaContext';
 import { CategoriaProvider } from '../../CategoriaContext';
+import { AdicionalProvider } from '../../AdicionalContext';
 
 // ================= HEADER CUSTOMIZADO =================
 function CustomHeader() {
@@ -121,9 +122,10 @@ export default function Layout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      
-      <CategoriaProvider>
         <MesaProvider>
+      <CategoriaProvider>
+     <AdicionalProvider> 
+
       <Drawer
         screenOptions={{
           drawerActiveTintColor: '#004aad',
@@ -214,9 +216,9 @@ export default function Layout() {
       }}
     />
       </Drawer>
-       </MesaProvider>
+     </AdicionalProvider>
        </CategoriaProvider>
-     
+       </MesaProvider>
     </GestureHandlerRootView>
   );
 }
