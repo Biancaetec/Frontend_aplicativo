@@ -4,12 +4,13 @@ import {
   ActivityIndicator,
   Alert,
   Button,
+  Image,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from "react-native";
-
+import imgExcluir from "../assets/lixeira.png";
 export default function App() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -81,7 +82,12 @@ export default function App() {
         <Text>Dados do Banco</Text>
         {data &&
           data.map((item) => {
-            return <Text>{item.username}</Text>;
+            return (
+              <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}} >
+              <Text key={item.id}>{item.username}</Text>
+              <Image source={imgExcluir} alt="excluir" style={{width:32, height:32}}/>
+              </View>
+            );
           })}
 
         {loading ? (
@@ -94,6 +100,7 @@ export default function App() {
         )}
       </View>
       <StatusBar style="auto" />
+
     </View>
   );
 }
