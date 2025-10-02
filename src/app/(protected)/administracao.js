@@ -17,7 +17,7 @@ export default function Administração() {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => router.push('/(protected)/nomedoscadastros')} style={styles.botoes}>
+        <TouchableOpacity onPress={() => router.push('/(protected)/produto')} style={styles.botoes}>
           <View style={styles.linha}>
             <MaterialIcons name="shopping-bag" size={24} color="#000" style={styles.icone} />
             <Text style={styles.titulo}>Produto</Text>

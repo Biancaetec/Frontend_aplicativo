@@ -12,6 +12,7 @@ import { Slot } from 'expo-router';
 import { MesaProvider } from '../../MesaContext';
 import { CategoriaProvider } from '../../CategoriaContext';
 import { AdicionalProvider } from '../../AdicionalContext';
+import { ProdutoProvider } from '../../ProdutoContext';
 
 // ================= HEADER CUSTOMIZADO =================
 function CustomHeader() {
@@ -122,10 +123,10 @@ export default function Layout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-        <MesaProvider>
-      <CategoriaProvider>
-     <AdicionalProvider> 
-
+      <MesaProvider>
+        <CategoriaProvider>
+          <AdicionalProvider> 
+             <ProdutoProvider>
       <Drawer
         screenOptions={{
           drawerActiveTintColor: '#004aad',
@@ -215,9 +216,25 @@ export default function Layout() {
         drawerItemStyle: { display: 'none' },
       }}
     />
+      {/* produto */}
+    <Drawer.Screen
+      name="produto"
+      options={{
+        drawerLabel: 'produto',
+        drawerItemStyle: { display: 'none' },
+      }}
+    />
+    <Drawer.Screen
+      name="novoproduto"
+      options={{
+        drawerLabel: 'novoproduto',
+        drawerItemStyle: { display: 'none' },
+      }}
+    />
       </Drawer>
-     </AdicionalProvider>
-       </CategoriaProvider>
+           </ProdutoProvider>
+         </AdicionalProvider>
+        </CategoriaProvider>
        </MesaProvider>
     </GestureHandlerRootView>
   );
