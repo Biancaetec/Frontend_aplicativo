@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, StatusBar, FlatList } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, StatusBar, FlatList } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { MesaContext } from '../../MesaContext'; // ajuste o caminho se necessário
 
 export default function TelaPedidos() {

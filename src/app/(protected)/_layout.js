@@ -11,9 +11,9 @@ import { useNavigation } from '@react-navigation/native';
 import { Slot } from 'expo-router';
 import { MesaProvider } from '../../MesaContext';
 import { CategoriaProvider } from '../../CategoriaContext';
-import { AdicionalProvider } from '../../AdicionalContext';
 import { ProdutoProvider } from '../../ProdutoContext';
-
+import NovoProduto from './novoproduto';
+import Produtos from './produto';
 // ================= HEADER CUSTOMIZADO =================
 function CustomHeader() {
   const navigation = useNavigation();
@@ -125,7 +125,6 @@ export default function Layout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <MesaProvider>
         <CategoriaProvider>
-          <AdicionalProvider> 
              <ProdutoProvider>
       <Drawer
         screenOptions={{
@@ -201,39 +200,24 @@ export default function Layout() {
             drawerItemStyle: { display: 'none' },
           }}
         />
-         {/* adicional */}
-    <Drawer.Screen
-      name="adicional"
-      options={{
-        drawerLabel: 'adicional',
-        drawerItemStyle: { display: 'none' },
-      }}
-    />
-    <Drawer.Screen
-      name="novoadicional"
-      options={{
-        drawerLabel: 'novoadicional',
-        drawerItemStyle: { display: 'none' },
-      }}
-    />
+   
       {/* produto */}
-    <Drawer.Screen
-      name="produto"
-      options={{
-        drawerLabel: 'produto',
-        drawerItemStyle: { display: 'none' },
-      }}
-    />
-    <Drawer.Screen
-      name="novoproduto"
-      options={{
-        drawerLabel: 'novoproduto',
-        drawerItemStyle: { display: 'none' },
-      }}
-    />
+   <Drawer.Screen
+  name="produto"
+  options={{
+    drawerLabel: 'produto',
+    drawerItemStyle: { display: 'none' },
+  }}
+/>
+<Drawer.Screen
+  name="novoproduto"
+  options={{
+    drawerLabel: 'novoproduto',
+    drawerItemStyle: { display: 'none' },
+  }}
+/>
       </Drawer>
            </ProdutoProvider>
-         </AdicionalProvider>
         </CategoriaProvider>
        </MesaProvider>
     </GestureHandlerRootView>

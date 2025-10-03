@@ -27,12 +27,7 @@ export default function Administração() {
 
       {/* Linha 2 */}
       <View style={styles.linhaBotoes}>
-        <TouchableOpacity onPress={() => router.push('/(protected)/adicional')} style={styles.botoes}>
-          <View style={styles.linha}>
-            <MaterialIcons name="add-circle-outline" size={24} color="#000000ff" style={styles.icone} />
-            <Text style={styles.titulo}>Adicionais</Text>
-          </View>
-        </TouchableOpacity>
+       
 
         <TouchableOpacity onPress={() => router.push('/(protected)/mesa')} style={styles.botoes}>
           <View style={styles.linha}>

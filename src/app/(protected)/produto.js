@@ -1,113 +1,98 @@
-import React, { useContext, useState } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
+import React, { useContext } from 'react';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { CategoriaContext } from '../../CategoriaContext';
 import { ProdutoContext } from '../../ProdutoContext';
 
 export default function Produtos() {
-  const { categorias } = useContext(CategoriaContext);
   const { produtos } = useContext(ProdutoContext);
   const navigation = useNavigation();
 
-  const [categoriaAberta, setCategoriaAberta] = useState(null);
-
-  const toggleCategoria = (id) => {
-    setCategoriaAberta(categoriaAberta === id ? null : id);
-  };
-
-  if (categorias.length === 0) {
-    return (
-      <View style={styles.semCategoriasContainer}>
-        <Text style={styles.aviso}>
-          As categorias cadastradas aparecerão aqui.
-        </Text>
-
-        <TouchableOpacity
-          style={styles.botaoNovaCategoria}
-          onPress={() => navigation.navigate('novacategoria')}
-        >
-          <Text style={styles.botaoTexto}>+ Criar nova categoria</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
   return (
     <View style={styles.container}>
-      <FlatList
-        data={categorias}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item: categoria }) => {
-          const produtosDaCategoria = produtos.filter(p => p.categoriaId === categoria.id);
-          const aberta = categoriaAberta === categoria.id;
-
-          return (
-            <View style={styles.categoriaContainer}>
-
-              {/* Botão expandir/collapse */}
-              <TouchableOpacity
-                style={styles.categoriaBotao}
-                onPress={() => toggleCategoria(categoria.id)}
-              >
-                <Text style={styles.categoriaTexto}>{categoria.nome}</Text>
-                <Text style={styles.toggle}>{aberta ? '-' : '+'}</Text>
-              </TouchableOpacity>
-
-              {/* Lista de produtos e botão cadastrar */}
-              {aberta && (
-                <View style={styles.produtosContainer}>
-                  {produtosDaCategoria.length === 0 ? (
-                    <Text style={styles.semProduto}>Nenhum produto nesta categoria</Text>
-                  ) : (
-                    produtosDaCategoria.map(prod => (
-                      <Text key={prod.id} style={styles.produtoTexto}>- {prod.nome}</Text>
-                    ))
-                  )}
-
-                  {/* Botão Cadastrar */}
-                  <View style={styles.botaoCadastrarContainer}>
-                    <TouchableOpacity
-                      style={styles.botaoCadastrar}
-                      onPress={() => navigation.navigate('novoproduto', { categoriaId: categoria.id })}
-                    >
-                      <Text style={styles.textoCadastrar}>Cadastrar</Text>
-                    </TouchableOpacity>
-                  </View>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        {produtos.length === 0 ? (
+          <Text style={styles.semProdutos}>Nenhum produto cadastrado.</Text>
+        ) : (
+          produtos.map((produto, index) => (
+            <View key={index} style={styles.produtoBox}>
+              {produto.imagem ? (
+                <Image source={{ uri: produto.imagem }} style={styles.imagem} />
+              ) : (
+                <View style={styles.imagemVazia}>
+                  <Text style={styles.imagemVaziaTexto}>Sem imagem</Text>
                 </View>
               )}
+              <View style={styles.info}>
+                <Text style={styles.nome}>{produto.nome}</Text>
+                <Text style={styles.descricao}>{produto.descricao}</Text>
+                <Text style={styles.tipo}>Tipo: {produto.tipo}</Text>
+                <Text style={styles.valor}>Valor: R$ {produto.valor}</Text>
+                {produto.adicionais && produto.adicionais.length > 0 && (
+                  <View style={styles.adicionaisContainer}>
+                    <Text style={styles.adicionaisTitulo}>Adicionais:</Text>
+                    {produto.adicionais.map((adicional, i) => (
+                      <Text key={i} style={styles.adicionalItem}>
+                        {adicional.nome} - R$ {adicional.custo}
+                      </Text>
+                    ))}
+                  </View>
+                )}
+              </View>
             </View>
-          );
-        }}
-        contentContainerStyle={{ padding: 20, paddingBottom: 120 }}
-      />
+          ))
+        )}
+      </ScrollView>
 
-      {/* Botão criar nova categoria */}
+      {/* Botão flutuante para adicionar novo produto */}
       <TouchableOpacity
-        style={styles.botaoNovaCategoria}
-        onPress={() => navigation.navigate('novacategoria')}
+        style={styles.botaoNovoProduto}
+        onPress={() => navigation.navigate('novoproduto')}
       >
-        <Text style={styles.botaoTexto}>+ Criar nova categoria</Text>
+        <Text style={styles.textoBotao}>+ Novo Produto</Text>
       </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
-  semCategoriasContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  aviso: { fontSize: 16, color: '#666', fontStyle: 'italic', textAlign: 'center', paddingHorizontal: 20, marginBottom: 20 },
-  categoriaContainer: { marginBottom: 12, borderRadius: 12, borderWidth: 1, borderColor: '#E3F2FD' },
-  categoriaBotao: { flexDirection: 'row', justifyContent: 'space-between', padding: 15, backgroundColor: '#E3F2FD', borderRadius: 12 },
-  categoriaTexto: { fontSize: 16, color: '#0D3A87', fontWeight: '500' },
-  toggle: { fontSize: 18, color: '#0D3A87', fontWeight: 'bold' },
-  produtosContainer: { padding: 12, backgroundColor: '#F5F6FA', borderBottomLeftRadius: 12, borderBottomRightRadius: 12 },
-  produtoTexto: { fontSize: 15, color: '#0D3A87', marginVertical: 2 },
-  semProduto: { fontSize: 14, color: '#666', fontStyle: 'italic' },
-
-  botaoCadastrarContainer: { alignItems: 'flex-end', marginTop: 10 },
-  botaoCadastrar: { backgroundColor: '#28a745', paddingVertical: 8, paddingHorizontal: 15, borderRadius: 20 },
-  textoCadastrar: { color: '#fff', fontWeight: 'bold' },
-
-  botaoNovaCategoria: { position: 'absolute', bottom: 30, right: 20, backgroundColor: '#004aad', paddingVertical: 12, paddingHorizontal: 20, borderRadius: 20 },
-  botaoTexto: { color: '#fff', fontWeight: 'bold' },
+  container: { flex: 1, backgroundColor: '#fff', padding: 16 },
+  scrollContainer: { paddingBottom: 100 },
+  semProdutos: { textAlign: 'center', marginTop: 50, fontSize: 16, color: '#555' },
+  produtoBox: {
+    flexDirection: 'row',
+    backgroundColor: '#f5f5f5',
+    borderRadius: 12,
+    marginBottom: 16,
+    padding: 10,
+    alignItems: 'center',
+  },
+  imagem: { width: 80, height: 80, borderRadius: 8, marginRight: 10 },
+  imagemVazia: {
+    width: 80,
+    height: 80,
+    borderRadius: 8,
+    backgroundColor: '#ddd',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  imagemVaziaTexto: { fontSize: 10, color: '#888' },
+  info: { flex: 1 },
+  nome: { fontWeight: 'bold', fontSize: 16, marginBottom: 2 },
+  descricao: { color: '#555', fontSize: 14, marginBottom: 2 },
+  tipo: { fontSize: 14, marginBottom: 2 },
+  valor: { fontWeight: 'bold', fontSize: 14 },
+  adicionaisContainer: { marginTop: 4 },
+  adicionaisTitulo: { fontWeight: '600', fontSize: 13 },
+  adicionalItem: { fontSize: 12, color: '#555' },
+  botaoNovoProduto: {
+    position: 'absolute',
+    bottom: 30,
+    right: 20,
+    backgroundColor: '#004aad',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+  },
+  textoBotao: { color: '#fff', fontWeight: 'bold' },
 });

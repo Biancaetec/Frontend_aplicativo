@@ -1,20 +1,15 @@
 import React, { createContext, useState } from 'react';
 
+// Cria o contexto de produtos
 export const ProdutoContext = createContext();
 
+// Provider para envolver a aplicação e fornecer dados de produtos
 export const ProdutoProvider = ({ children }) => {
-  const [produtos, setProdutos] = useState([]);
+  const [produtos, setProdutos] = useState([]); // Armazena todos os produtos
 
-  const adicionarProduto = ({ nome, categoriaId }) => {
-    if (!nome || !categoriaId) return;
-
-    const novoProduto = {
-      id: Date.now().toString(),
-      nome,
-      categoriaId,
-    };
-
-    setProdutos([...produtos, novoProduto]);
+  // Função para adicionar um novo produto
+  const adicionarProduto = (produto) => {
+    setProdutos(prev => [...prev, produto]); // Adiciona sem duplicar categorias
   };
 
   return (
