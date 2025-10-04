@@ -1,47 +1,53 @@
 import React, { useContext } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 import { MesaContext } from '../../MesaContext';
 
 export default function Mesa() {
   const { mesas } = useContext(MesaContext);
   const navigation = useNavigation();
 
-  // Ordena as mesas pelo número antes de renderizar
+  // Ordena as mesas pelo número
   const mesasOrdenadas = [...mesas].sort((a, b) => a.numero - b.numero);
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.mesasContainer}>
-        {mesasOrdenadas.map((mesa, index) => (
-          <View key={index} style={styles.mesaBox}>
-            <Text style={styles.mesaTexto}>{mesa.numero}</Text>
+    <SafeAreaView style={styles.container}>
+      <FlatList
+        data={mesasOrdenadas}
+        keyExtractor={(_, index) => index.toString()}
+        numColumns={3}
+        columnWrapperStyle={{ justifyContent: 'space-around', marginBottom: 16 }}
+        renderItem={({ item }) => (
+          <View style={styles.mesaBox}>
+            <Text style={styles.mesaTexto}>{item.numero}</Text>
           </View>
-        ))}
-      </View>
+        )}
+        ListEmptyComponent={
+          <View style={styles.semMesasContainer}>
+            <Ionicons name="restaurant-outline" size={48} color="#555" />
+            <Text style={styles.semMesasTexto}>Nenhuma mesa cadastrada.</Text>
+          </View>
+        }
+        contentContainerStyle={{ padding: 20, flexGrow: 1 }}
+      />
 
       <TouchableOpacity
         style={styles.botao}
         onPress={() => navigation.navigate('novamesa')}
       >
-        <Text style={styles.textoBotao}>+ Adicionar Mesa</Text>
+        <Text style={styles.botaoTexto}>+ Adicionar Mesa</Text>
       </TouchableOpacity>
-    </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 16, backgroundColor: '#fff', flexGrow: 1 },
-  mesasContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
+  container: { flex: 1, backgroundColor: '#fff' },
   mesaBox: {
-    width: '28%', // 4 mesas por linha
-    height: '28%', // Mantém a proporção quadrada
+    width: '28%',
     aspectRatio: 1,
-    marginBottom: 16,
     borderWidth: 2,
     borderColor: 'green',
     borderRadius: 12,
@@ -49,6 +55,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   mesaTexto: { fontSize: 18, fontWeight: 'bold', color: '#0D3A87' },
-  botao: { position: 'absolute', bottom: 30, right: 20, backgroundColor: '#004aad', paddingVertical: 12, paddingHorizontal: 20, borderRadius: 20 },
-  textoBotao: { color: '#fff', fontWeight: 'bold' },
+  botao: {
+    position: 'absolute',
+    bottom: 30,
+    right: 20,
+    backgroundColor: '#004aad',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+  },
+  botaoTexto: { color: '#fff', fontWeight: 'bold' },
+  semMesasContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 50,
+  },
+  semMesasTexto: { fontSize: 16, color: '#555', marginTop: 10 },
 });

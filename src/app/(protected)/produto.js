@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 import { ProdutoContext } from '../../ProdutoContext';
 
 export default function Produtos() {
@@ -9,9 +10,12 @@ export default function Produtos() {
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <ScrollView contentContainerStyle={{flexGrow:1}}>
         {produtos.length === 0 ? (
-          <Text style={styles.semProdutos}>Nenhum produto cadastrado.</Text>
+          <View style={styles.semProdutosContainer}>
+            <Ionicons name="cube-outline" size={50} color="#555" />
+            <Text style={styles.semProdutos}>Nenhum produto cadastrado.</Text>
+          </View>
         ) : (
           produtos.map((produto, index) => (
             <View key={index} style={styles.produtoBox}>
@@ -57,7 +61,12 @@ export default function Produtos() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff', padding: 16 },
   scrollContainer: { paddingBottom: 100 },
-  semProdutos: { textAlign: 'center', marginTop: 50, fontSize: 16, color: '#555' },
+  semProdutosContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  semProdutos: { textAlign: 'center', marginTop: 10, fontSize: 16, color: '#555' },
   produtoBox: {
     flexDirection: 'row',
     backgroundColor: '#f5f5f5',

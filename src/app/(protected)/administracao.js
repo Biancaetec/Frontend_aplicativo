@@ -8,44 +8,41 @@ export default function Administração() {
 
   return (
     <View style={styles.container}>
+
       {/* Linha 1 */}
       <View style={styles.linhaBotoes}>
-        <TouchableOpacity onPress={() => router.push('/(protected)/categoria')} style={styles.botoes}>
-          <View style={styles.linha}>
-            <MaterialIcons name="category" size={24} color="#000" style={styles.icone} />
-            <Text style={styles.titulo}>Categoria</Text>
+        <TouchableOpacity onPress={() => router.push("/(protected)/mesa")} style={styles.botoes}>
+          <View style={styles.coluna}>
+            <MaterialIcons name="table-bar" size={28} color="#000" style={styles.iconeCima} />
+            <Text style={styles.titulo}>Mesa</Text>
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => router.push('/(protected)/produto')} style={styles.botoes}>
-          <View style={styles.linha}>
-            <MaterialIcons name="shopping-bag" size={24} color="#000" style={styles.icone} />
-            <Text style={styles.titulo}>Produto</Text>
+        <TouchableOpacity onPress={() => router.push("/(protected)/categoria")} style={styles.botoes}>
+          <View style={styles.coluna}>
+            <MaterialIcons name="category" size={28} color="#000" style={styles.iconeCima} />
+            <Text style={styles.titulo}>Categoria</Text>
           </View>
         </TouchableOpacity>
       </View>
 
       {/* Linha 2 */}
       <View style={styles.linhaBotoes}>
-       
-
-        <TouchableOpacity onPress={() => router.push('/(protected)/mesa')} style={styles.botoes}>
-          <View style={styles.linha}>
-            <MaterialIcons name="table-bar" size={24} color="#000" style={styles.icone} />
-            <Text style={styles.titulo}>Mesa</Text>
+        <TouchableOpacity onPress={() => router.push("/(protected)/produto")} style={styles.botoes}>
+          <View style={styles.coluna}>
+            <MaterialIcons name="shopping-bag" size={28} color="#000" style={styles.iconeCima} />
+            <Text style={styles.titulo}>Produto</Text>
           </View>
         </TouchableOpacity>
-      </View>
 
-      {/* Linha 3 - botão solitário */}
-      <View style={styles.linhaBotoes}>
-        <TouchableOpacity onPress={() => router.push('/(protected)/nomedoscadastros')} style={[styles.botoes, { width: "100%" }]}>
-          <View style={styles.linha}>
-            <MaterialIcons name="schedule" size={24} color="#000" style={styles.icone} />
+        <TouchableOpacity onPress={() => router.push("/(protected)/FilaDePreparo")} style={styles.botoes}>
+          <View style={styles.coluna}>
+            <MaterialIcons name="schedule" size={28} color="#000" style={styles.iconeCima} />
             <Text style={styles.titulo}>Filas de preparo</Text>
           </View>
         </TouchableOpacity>
       </View>
+
     </View>
   );
 }
@@ -53,10 +50,10 @@ export default function Administração() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",  
-    alignItems: "center",      
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: "#fff",
-    padding: 20,
+    padding: 28,
   },
   linhaBotoes: {
     flexDirection: "row",
@@ -65,22 +62,24 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   botoes: {
-     backgroundColor: "#eee",
+    backgroundColor: "#eee",
     width: "48%", // dois botões por linha
-    height: 100,
+    height: 150,
     borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",
   },
-  linha: {
-    flexDirection: "row",
+  coluna: {
+    flexDirection: "column",
     alignItems: "center",
+    justifyContent: "center",
   },
-  icone: {
-    marginRight: 16,
+  iconeCima: {
+    marginBottom: 8,
   },
   titulo: {
     fontSize: 20,
     color: "#000",
+    textAlign: "center",
   },
 });

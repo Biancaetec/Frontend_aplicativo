@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, StatusBar, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MesaContext } from '../../MesaContext'; // ajuste o caminho se necessário
+import { FilaContext } from '../../FilaContext';
 
 export default function TelaPedidos() {
   const [abaAtiva, setAbaAtiva] = useState('Pedidos');
@@ -55,8 +56,8 @@ export default function TelaPedidos() {
       </View>
 
       {/* Botão Novo Pedido */}
-      <TouchableOpacity style={styles.newOrderButton}>
-        <Text style={styles.newOrderText}>+ Novo pedido</Text>
+      <TouchableOpacity style={styles.botaopedido}>
+        <Text style={styles.textobotao}>+ Novo pedido</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
@@ -85,7 +86,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
   },
-  newOrderButton: {
+  botaopedido: {
     position: 'absolute',
     bottom: 20,
     right: 20,
@@ -95,7 +96,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     alignItems: 'center',
   },
-  newOrderText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  textobotao: { color: '#fff', fontSize: 16, fontWeight: '600' },
   mesaBox: {
     width: '28%',
     aspectRatio: 1,

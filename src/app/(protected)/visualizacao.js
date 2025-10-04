@@ -1,18 +1,30 @@
 import React, { useContext } from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
-import { MesaContext } from "../../MesaContext"; // ajuste o caminho se necessário
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { MesaContext } from "../../MesaContext";
+import { CategoriaContext } from "../../CategoriaContext";
+import { useRouter } from "expo-router";
 
 export default function Visualizacao() {
   const { mesas } = useContext(MesaContext);
+  const { categorias } = useContext(CategoriaContext);
+  const router = useRouter();
+
+  const abrirCategorias = () => {
+    // Navega para a tela de visualização das categorias
+    router.push("/(protected)/categorias");
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-
       <View style={styles.mesasContainer}>
         {mesas.map((mesa, index) => (
-          <View key={index} style={styles.mesaBox}>
+          <TouchableOpacity
+            key={index}
+            style={styles.mesaBox}
+            onPress={abrirCategorias}
+          >
             <Text style={styles.mesaTexto}>{mesa.numero}</Text>
-          </View>
+          </TouchableOpacity>
         ))}
       </View>
     </ScrollView>
@@ -25,7 +37,6 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "#fff",
   },
-  
   mesasContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -33,7 +44,7 @@ const styles = StyleSheet.create({
   },
   mesaBox: {
     width: "28%",
-    aspectRatio: 1,
+    height: 90,
     marginBottom: 16,
     borderWidth: 2,
     borderColor: "green",
