@@ -1,79 +1,81 @@
 import React, { useContext, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { MesaContext } from '../../MesaContext';
-import { useRouter } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 export default function Mesa() {
-  const { mesas, buscarMesas, loading } = useContext(MesaContext);
-  const router = useRouter();
+  const { mesas, carregarMesas, excluirMesa } = useContext(MesaContext);
+  const navigation = useNavigation();
 
-  // Carrega as mesas ao entrar na tela
   useEffect(() => {
-    buscarMesas();
+    carregarMesas();
   }, []);
 
-  // Renderização de cada item
+  const handleEditar = (mesa) => {
+    navigation.navigate('novamesa', { mesaEditando: JSON.stringify(mesa) });
+  };
+
+  const handleExcluir = (id_mesa) => {
+    Alert.alert(
+      'Confirmação',
+      'Deseja realmente excluir esta mesa?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Excluir', style: 'destructive', onPress: () => excluirMesa(id_mesa) }
+      ]
+    );
+  };
+
   const renderMesa = ({ item }) => (
-    <View
-      style={[
-        styles.card,
-        { borderColor: item.ocupada ? '#ff4d4d' : '#00cc66' },
-      ]}
-    >
-      <Text style={styles.numero}>Mesa {item.numero}</Text>
-      <Text style={styles.descricao}>{item.descricao || 'Sem descrição'}</Text>
-      <Text style={styles.status}>
-        Status: {item.ocupada ? 'Ocupada' : 'Livre'}
-      </Text>
+    <View style={[styles.mesaContainer, { borderColor: item.ocupada ? 'red' : 'green' }]}>
+      <Text style={styles.mesaNumero}>Mesa {item.numero}</Text>
+      <Text style={styles.mesaDescricao}>{item.descricao}</Text>
+
+      <View style={styles.botoesContainer}>
+        <TouchableOpacity style={styles.botaoEditar} onPress={() => handleEditar(item)}>
+          <Text style={styles.botaoTexto}>Editar</Text>
+        </TouchableOpacity>
+
+        {/* Ícone de lixeira */}
+        <TouchableOpacity onPress={() => handleExcluir(item.id_mesa)}>
+          <MaterialIcons name="delete" size={28} color="#d11a2a" style={{ marginLeft: 30 }} />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titulo}>Mesas Cadastradas</Text>
-
-      {loading ? (
-        <ActivityIndicator size="large" color="#004aad" />
-      ) : mesas.length === 0 ? (
-        <Text style={styles.mensagem}>Nenhuma mesa cadastrada.</Text>
+      {mesas.length === 0 ? (
+        <Text style={styles.semMesas}>Nenhuma mesa cadastrada.</Text>
       ) : (
         <FlatList
           data={mesas}
           keyExtractor={(item) => item.id_mesa.toString()}
           renderItem={renderMesa}
+          contentContainerStyle={{ paddingBottom: 20 }}
         />
       )}
-
-      <TouchableOpacity
-        style={styles.botao}
-        onPress={() => router.push('/novamesa')}
-      >
-        <Text style={styles.botaoTexto}>+ Adicionar Mesa</Text>
-      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: '#fff' },
-  titulo: { fontSize: 22, fontWeight: 'bold', color: '#004aad', marginBottom: 20, textAlign: 'center' },
-  card: {
-    backgroundColor: '#f9f9f9',
+  semMesas: { fontSize: 16, color: '#555', textAlign: 'center', marginTop: 50 },
+  mesaContainer: {
     borderWidth: 2,
     borderRadius: 12,
     padding: 15,
-    marginBottom: 12,
+    marginBottom: 15,
+    backgroundColor: '#f9f9f9',
+    width: '35%',
+    height: '29%',
   },
-  numero: { fontSize: 18, fontWeight: 'bold', color: '#333' },
-  descricao: { fontSize: 14, color: '#666', marginTop: 5 },
-  status: { fontSize: 14, marginTop: 8, color: '#004aad' },
-  mensagem: { textAlign: 'center', color: '#555', fontSize: 16, marginTop: 30 },
-  botao: {
-    backgroundColor: '#004aad',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  botaoTexto: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
+  mesaNumero: { fontSize: 18, fontWeight: 'bold', marginBottom: 5 },
+  mesaDescricao: { fontSize: 14, color: '#555', marginBottom: 10},
+  botoesContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '60%',  },
+  botaoEditar: { backgroundColor: '#004aad', padding: 6, borderRadius: 8, flex: 1, marginRight: 10, alignItems: 'center', width: '50%' },
+  botaoTexto: { color: '#fff', fontWeight: 'bold' },
 });

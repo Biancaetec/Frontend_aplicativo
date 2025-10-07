@@ -6,13 +6,19 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 export default function NovaMesa() {
   const { adicionarMesa, editarMesa, loading } = useContext(MesaContext);
   const navigation = useNavigation();
-  const route = useRoute(); // pega os params da rota
+  const route = useRoute();
 
-  const mesaEditando = route.params?.mesaEditando || null; // aqui você pega os params passados
+  // Converte de volta para objeto se houver edição
+  const mesaEditando = route.params?.mesaEditando
+    ? JSON.parse(route.params.mesaEditando)
+    : null;
+
   const [numero, setNumero] = useState('');
 
   useEffect(() => {
-    if (mesaEditando) setNumero(mesaEditando.numero.toString());
+    if (mesaEditando) {
+      setNumero(mesaEditando.numero.toString());
+    }
   }, [mesaEditando]);
 
   const handleSalvar = async () => {

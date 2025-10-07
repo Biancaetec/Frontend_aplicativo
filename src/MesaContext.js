@@ -1,29 +1,29 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 
 export const MesaContext = createContext();
 
-export const MesaProvider = ({ children }) => {
+export function MesaProvider({ children }) {
   const [mesas, setMesas] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const baseUrl = 'https://turbo-guide-v6pprpwwjpjjh6gwx-3001.app.github.dev/api/mesa';
+  const API_URL = 'https://turbo-guide-v6pprpwwjpjjh6gwx-3001.app.github.dev/api/mesa';
 
-  // ================= BUSCAR MESAS =================
-  const buscarMesas = async () => {
+  // Listar mesas
+  const carregarMesas = async () => {
     try {
-      const response = await fetch(baseUrl);
-      const data = await response.json();
+      const res = await fetch(API_URL);
+      const data = await res.json();
       setMesas(data);
     } catch (error) {
-      console.error('Erro ao buscar mesas:', error);
+      console.error('Erro ao carregar mesas:', error);
     }
   };
 
-  // ================= ADICIONAR MESA =================
+  // Adicionar mesa
   const adicionarMesa = async (numero) => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const response = await fetch(baseUrl, {
+      const res = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -33,8 +33,8 @@ export const MesaProvider = ({ children }) => {
           ocupada: false,
         }),
       });
-      if (!response.ok) throw new Error('Erro ao adicionar mesa');
-      await buscarMesas(); // Atualiza a lista
+      if (!res.ok) throw new Error('Erro ao criar mesa');
+      await carregarMesas();
     } catch (error) {
       console.error(error);
     } finally {
@@ -42,17 +42,20 @@ export const MesaProvider = ({ children }) => {
     }
   };
 
-  // ================= EDITAR MESA =================
+  // Editar mesa
   const editarMesa = async (id_mesa, numero, ocupada) => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const response = await fetch(`${baseUrl}/${id_mesa}`, {
+      const res = await fetch(`${API_URL}/${id_mesa}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ numero: Number(numero), ocupada }),
+        body: JSON.stringify({
+          numero: Number(numero),
+          ocupada,
+        }),
       });
-      if (!response.ok) throw new Error('Erro ao editar mesa');
-      await buscarMesas();
+      if (!res.ok) throw new Error('Erro ao atualizar mesa');
+      await carregarMesas();
     } catch (error) {
       console.error(error);
     } finally {
@@ -60,25 +63,27 @@ export const MesaProvider = ({ children }) => {
     }
   };
 
-  // ================= EXCLUIR MESA =================
+  // Excluir mesa
   const excluirMesa = async (id_mesa) => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const response = await fetch(`${baseUrl}/${id_mesa}`, { method: 'DELETE' });
-      if (!response.ok) throw new Error('Erro ao excluir mesa');
-      await buscarMesas();
+      const res = await fetch(`${API_URL}/${id_mesa}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Erro ao deletar mesa');
+      await carregarMesas();
     } catch (error) {
       console.error(error);
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    carregarMesas();
+  }, []);
 
   return (
-    <MesaContext.Provider
-      value={{ mesas, adicionarMesa, editarMesa, excluirMesa, buscarMesas, loading }}
-    >
+    <MesaContext.Provider value={{ mesas, carregarMesas, adicionarMesa, editarMesa, excluirMesa, loading }}>
       {children}
     </MesaContext.Provider>
   );
-};
+}
