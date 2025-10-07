@@ -13,6 +13,7 @@ export const MesaProvider = ({ children }) => {
     setMesas(prev => prev.filter(m => m.numero !== numero));
   };
 
+
   return (
     <MesaContext.Provider value={{ mesas, adicionarMesa, removerMesa }}>
       {children}
