@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,33 +9,43 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { MesaContext } from '../../MesaContext';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
-export default function NovaMesa() {
-  const { adicionarMesa, loading } = useContext(MesaContext);
+export default function EditarMesa() {
+  const { editarMesa, loading } = useContext(MesaContext);
   const navigation = useNavigation();
+  const route = useRoute();
+
+  const mesaEditando = route.params?.mesaEditando
+    ? JSON.parse(route.params.mesaEditando)
+    : null;
 
   const [numero, setNumero] = useState('');
-  const [mensagemVisivel, setMensagemVisivel] = useState(false);
+
+  useEffect(() => {
+    if (mesaEditando) {
+      setNumero(mesaEditando.numero.toString());
+    }
+  }, [mesaEditando]);
 
   const handleSalvar = async () => {
-    if (!numero.trim() || isNaN(Number(numero))) {
-      Alert.alert('Erro', 'Informe um número válido para a mesa.');
+    if (!numero.trim()) {
+      Alert.alert('Erro', 'Informe o número da mesa.');
       return;
     }
 
     try {
-      await adicionarMesa(Number(numero));
-      setMensagemVisivel(true);
-      setNumero('');
+      await editarMesa(mesaEditando.id_mesa, numero);
+      Alert.alert('Sucesso', 'Mesa atualizada com sucesso!');
+      navigation.goBack();
     } catch (error) {
-      Alert.alert('Erro', 'Ocorreu um erro ao salvar a mesa.');
+      Alert.alert('Erro', 'Ocorreu um erro ao atualizar a mesa.');
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titulo}>Cadastro de Mesa</Text>
+      <Text style={styles.titulo}>Editar Mesa</Text>
 
       <TextInput
         placeholder="Número da mesa"
@@ -54,20 +64,9 @@ export default function NovaMesa() {
         {loading ? (
           <ActivityIndicator color="#fff" />
         ) : (
-          <Text style={styles.textoBotao}>Salvar Mesa</Text>
+          <Text style={styles.textoBotao}>Salvar Alterações</Text>
         )}
       </TouchableOpacity>
-
-      {mensagemVisivel && (
-        <TouchableOpacity
-          style={styles.mensagemContainer}
-          onPress={() => navigation.navigate('mesa')}
-        >
-          <Text style={styles.mensagemTexto}>
-            Visualizar informação cadastrada
-          </Text>
-        </TouchableOpacity>
-      )}
     </View>
   );
 }
@@ -106,17 +105,5 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 16,
-  },
-  mensagemContainer: {
-    marginTop: 20,
-    padding: 12,
-    borderRadius: 10,
-    alignItems: 'center',
-    backgroundColor: '#E8F0FF',
-  },
-  mensagemTexto: {
-    color: '#0D3A87',
-    fontWeight: 'bold',
-    fontSize: 15,
   },
 });
