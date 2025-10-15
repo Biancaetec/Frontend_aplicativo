@@ -69,7 +69,11 @@ export function AuthProvider({ children }) {
       restaurante: null,
     });
   };
-
+const login = async (email, senha) => {
+  const response = await api.post('/login', { email, senha });
+  console.log('🔹 resposta do login:', response.data);
+  setUser(response.data);
+}
   // Aqui, authenticated pode ser true ou false. 
   // Caso precise de um estado "carregando", ajuste se desejar.
 

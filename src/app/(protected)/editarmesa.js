@@ -12,13 +12,12 @@ import { MesaContext } from '../../MesaContext';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 export default function EditarMesa() {
-  const { editarMesa, loading } = useContext(MesaContext);
+  const { editarMesa, loading, id_restaurante } = useContext(MesaContext);
   const navigation = useNavigation();
   const route = useRoute();
 
-  const mesaEditando = route.params?.mesaEditando
-    ? JSON.parse(route.params.mesaEditando)
-    : null;
+  // Recebe a mesa que será editada
+  const mesaEditando = route.params?.mesaEditando || null;
 
   const [numero, setNumero] = useState('');
 
@@ -29,16 +28,33 @@ export default function EditarMesa() {
   }, [mesaEditando]);
 
   const handleSalvar = async () => {
-    if (!numero.trim()) {
-      Alert.alert('Erro', 'Informe o número da mesa.');
+    if (!mesaEditando) {
+      Alert.alert('Erro', 'Nenhuma mesa selecionada para edição.');
+      return;
+    }
+
+    if (!numero.trim() || isNaN(Number(numero))) {
+      Alert.alert('Erro', 'Informe um número válido para a mesa.');
+      return;
+    }
+
+    if (!id_restaurante) {
+      Alert.alert('Erro', 'Usuário não autenticado. Aguarde carregar a sessão.');
       return;
     }
 
     try {
-      await editarMesa(mesaEditando.id_mesa, numero);
+      console.log('🔹 Tentando editar mesa:', {
+        id_mesa: mesaEditando.id_mesa,
+        numero,
+        id_restaurante,
+      });
+
+      await editarMesa(mesaEditando.id_mesa, Number(numero));
       Alert.alert('Sucesso', 'Mesa atualizada com sucesso!');
       navigation.goBack();
     } catch (error) {
+      console.error('Erro ao atualizar mesa:', error);
       Alert.alert('Erro', 'Ocorreu um erro ao atualizar a mesa.');
     }
   };

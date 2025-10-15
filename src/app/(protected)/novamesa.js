@@ -12,23 +12,30 @@ import { MesaContext } from '../../MesaContext';
 import { useNavigation } from '@react-navigation/native';
 
 export default function NovaMesa() {
-  const { adicionarMesa, loading } = useContext(MesaContext);
+  const { adicionarMesa, loading, id_restaurante } = useContext(MesaContext);
   const navigation = useNavigation();
 
   const [numero, setNumero] = useState('');
   const [mensagemVisivel, setMensagemVisivel] = useState(false);
 
   const handleSalvar = async () => {
+    if (!id_restaurante) {
+      Alert.alert('Erro', 'Usuário não autenticado. Aguarde carregar a sessão.');
+      return;
+    }
+
     if (!numero.trim() || isNaN(Number(numero))) {
       Alert.alert('Erro', 'Informe um número válido para a mesa.');
       return;
     }
 
     try {
+      console.log('🔹 Tentando adicionar mesa:', { numero, id_restaurante });
       await adicionarMesa(Number(numero));
       setMensagemVisivel(true);
       setNumero('');
     } catch (error) {
+      console.error('Erro ao salvar mesa:', error);
       Alert.alert('Erro', 'Ocorreu um erro ao salvar a mesa.');
     }
   };
@@ -47,9 +54,9 @@ export default function NovaMesa() {
       />
 
       <TouchableOpacity
-        style={[styles.botaoSalvar, loading && { opacity: 0.7 }]}
+        style={[styles.botaoSalvar, (loading || !id_restaurante) && { opacity: 0.7 }]}
         onPress={handleSalvar}
-        disabled={loading}
+        disabled={loading || !id_restaurante}
       >
         {loading ? (
           <ActivityIndicator color="#fff" />
@@ -73,19 +80,8 @@ export default function NovaMesa() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#F5F6FA',
-    justifyContent: 'flex-start',
-  },
-  titulo: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#0D3A87',
-    marginBottom: 25,
-    textAlign: 'center',
-  },
+  container: { flex: 1, padding: 20, backgroundColor: '#F5F6FA', justifyContent: 'flex-start' },
+  titulo: { fontSize: 22, fontWeight: 'bold', color: '#0D3A87', marginBottom: 25, textAlign: 'center' },
   input: {
     height: 50,
     borderWidth: 1.5,
@@ -96,27 +92,8 @@ const styles = StyleSheet.create({
     color: '#333',
     fontSize: 16,
   },
-  botaoSalvar: {
-    backgroundColor: '#0D3A87',
-    paddingVertical: 15,
-    borderRadius: 15,
-    alignItems: 'center',
-  },
-  textoBotao: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  mensagemContainer: {
-    marginTop: 20,
-    padding: 12,
-    borderRadius: 10,
-    alignItems: 'center',
-    backgroundColor: '#E8F0FF',
-  },
-  mensagemTexto: {
-    color: '#0D3A87',
-    fontWeight: 'bold',
-    fontSize: 15,
-  },
+  botaoSalvar: { backgroundColor: '#0D3A87', paddingVertical: 15, borderRadius: 15, alignItems: 'center' },
+  textoBotao: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+  mensagemContainer: { marginTop: 20, padding: 12, borderRadius: 10, alignItems: 'center', backgroundColor: '#E8F0FF' },
+  mensagemTexto: { color: '#0D3A87', fontWeight: 'bold', fontSize: 15 },
 });

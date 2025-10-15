@@ -1,80 +1,108 @@
-import React, { useContext } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useContext, useEffect } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { CategoriaContext } from '../../CategoriaContext';
+import { useNavigation } from '@react-navigation/native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 export default function Categoria() {
+  const { categorias, carregarCategorias, excluirCategoria } = useContext(CategoriaContext);
   const navigation = useNavigation();
-  const { categorias } = useContext(CategoriaContext);
+
+  useEffect(() => {
+    carregarCategorias();
+  }, []);
+
+  const handleExcluir = (id_categoria) => {
+    Alert.alert(
+      'Confirmação',
+      'Deseja realmente excluir esta categoria?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Excluir', style: 'destructive', onPress: () => excluirCategoria(id_categoria) }
+      ]
+    );
+  };
+
+  const renderCategoria = ({ item }) => (
+    <View style={styles.categoriaContainer}>
+      <Text style={styles.categoriaNome}>{item.nome}</Text>
+
+      <View style={styles.botoesContainer}>
+        <TouchableOpacity
+          style={styles.botaoEditar}
+          onPress={() => navigation.navigate('editarcategoria', { categoriaEditando: item })}
+        >
+          <Text style={styles.textoBotao}>Editar</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => handleExcluir(item.id_categoria)}>
+          <MaterialIcons name="delete" size={26} color="#d11a2a" />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={categorias}
-        keyExtractor={(_, index) => index.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.categoriaItem}>
-            <Text style={styles.categoriaTexto}>{item.nome}</Text>
-          </View>
-        )}
-        ListEmptyComponent={
-          <View style={styles.semCategoriasContainer}>
-            <Ionicons name="folder-open-outline" size={48} color="#555" />
-            <Text style={styles.semCategoriasTexto}>Nenhuma categoria cadastrada.</Text>
-          </View>
-        }
-        contentContainerStyle={{ padding: 20, flexGrow: 1 }}
-      />
+      {categorias.length === 0 ? (
+        <Text style={styles.semCategorias}>Nenhuma categoria cadastrada.</Text>
+      ) : (
+        <FlatList
+          data={categorias}
+          keyExtractor={(item) => item.id_categoria.toString()}
+          renderItem={renderCategoria}
+          contentContainerStyle={{ paddingBottom: 100, paddingTop: 10 }}
+        />
+      )}
 
       <TouchableOpacity
-        style={styles.botao}
+        style={styles.botaoFlutuante}
         onPress={() => navigation.navigate('novacategoria')}
       >
-        <Text style={styles.botaoTexto}>+ Criar nova categoria</Text>
+        <Text style={styles.textoBotaoFlutuante}>+ Criar nova categoria</Text>
       </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  botao: {
-    position: 'absolute',
-    bottom: 30,
-    right: 20,
-    backgroundColor: '#004aad',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-  },
-  botaoTexto: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  categoriaItem: {
-    padding: 15,
-    backgroundColor: '#E3F2FD',
+  container: { flex: 1, padding: 15, backgroundColor: '#fff' },
+  semCategorias: { fontSize: 16, color: '#555', textAlign: 'center', marginTop: 50 },
+  categoriaContainer: {
+    borderWidth: 2,
     borderRadius: 12,
+    backgroundColor: '#E3F2FD',
+    marginBottom: 12,
+    padding: 15,
+  },
+  categoriaNome: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#0D3A87',
     marginBottom: 10,
   },
-  categoriaTexto: {
-    fontSize: 16,
-    color: '#0D3A87',
-    fontWeight: '500',
-  },
-  semCategoriasContainer: {
-    flex: 1,
+  botoesContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
     alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 50,
   },
-  semCategoriasTexto: {
-    fontSize: 16,
-    color: '#555',
-    marginTop: 10,
+  botaoEditar: {
+    backgroundColor: '#004aad',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+    marginRight: 10,
   },
+  textoBotao: { color: '#fff', fontWeight: 'bold' },
+  botaoFlutuante: {
+    position: 'absolute',
+    bottom: 25,
+    right: 20,
+    backgroundColor: '#004aad',
+    paddingVertical: 14,
+    paddingHorizontal: 22,
+    borderRadius: 25,
+    elevation: 5,
+  },
+  textoBotaoFlutuante: { color: '#fff', fontWeight: 'bold', fontSize: 15 },
 });
