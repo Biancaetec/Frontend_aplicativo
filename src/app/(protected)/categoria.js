@@ -71,14 +71,15 @@ const styles = StyleSheet.create({
   categoriaContainer: {
     borderWidth: 2,
     borderRadius: 12,
-    backgroundColor: '#E3F2FD',
+    backgroundColor: '#fff',
     marginBottom: 12,
     padding: 15,
+    borderColor: '#0d4086ff',
   },
   categoriaNome: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#0D3A87',
+    color: '#000000ff',
     marginBottom: 10,
   },
   botoesContainer: {

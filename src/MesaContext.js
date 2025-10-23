@@ -9,8 +9,6 @@ export function MesaProvider({ children }) {
 
   const { user, loading: authLoading } = useAuth();
 
-  // 🔹 Debug: veja o que está chegando no user
-  console.log('🔹 user do useAuth:', user);
 
   // 🔹 ID do restaurante
   const id_restaurante = useMemo(() => user?.restaurante?.id_restaurante, [user]);

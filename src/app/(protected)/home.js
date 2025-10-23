@@ -18,26 +18,26 @@ export default function TelaPedidos() {
       {/* Menu de Abas */}
       <View style={styles.headerRow}>
         <TouchableOpacity
-          style={[styles.tab, abaAtiva === 'Pedidos' && styles.tabAtiva]}
+          style={[styles.linha, abaAtiva === 'Pedidos' && styles.linhaAtiva]}
           onPress={() => setAbaAtiva('Pedidos')}
         >
-          <Text style={[styles.headerText, abaAtiva === 'Pedidos' && styles.textAtivo]}>
+          <Text style={[styles.texto, abaAtiva === 'Pedidos' && styles.textoAtivo]}>
             Pedidos
           </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.tab, abaAtiva === 'Mesa' && styles.tabAtiva]}
+          style={[styles.linha, abaAtiva === 'Mesa' && styles.linhaAtiva]}
           onPress={() => setAbaAtiva('Mesa')}
         >
-          <Text style={[styles.headerText, abaAtiva === 'Mesa' && styles.textAtivo]}>
+          <Text style={[styles.texto, abaAtiva === 'Mesa' && styles.textoAtivo]}>
             Mesa
           </Text>
         </TouchableOpacity>
       </View>
 
       {/* Área de conteúdo */}
-      <View style={styles.listArea}>
+      <View style={styles.dentroLinhaAtiva}>
         {abaAtiva === 'Pedidos' ? (
           <Text>📋 Lista de pedidos aqui...</Text>
         ) : (
@@ -47,7 +47,7 @@ export default function TelaPedidos() {
             numColumns={3} // 3 mesas por linha, ajuste como quiser
             columnWrapperStyle={{ justifyContent: 'space-around', marginBottom: 16 }}
             renderItem={({ item }) => (
-              <View style={styles.mesaBox}>
+              <View style={styles.mesaquadradinho}>
                 <Text style={styles.mesaTexto}>{item.numero}</Text>
               </View>
             )}
@@ -71,18 +71,18 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
   },
-  tab: {
+  linha: {
     paddingVertical: 10,
     flex: 1,
     alignItems: 'center',
   },
-  tabAtiva: {
+  linhaAtiva: {
     borderBottomWidth: 2,
     borderBottomColor: '#1E56A0',
   },
-  headerText: { fontWeight: 'bold', fontSize: 16, color: '#333' },
-  textAtivo: { color: '#1E56A0' },
-  listArea: {
+  texto: { fontWeight: 'bold', fontSize: 16, color: '#333' },
+  textoAtivo: { color: '#1E56A0' },
+  dentroLinhaAtiva: {
     flex: 1,
     padding: 16,
   },
@@ -97,14 +97,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   textobotao: { color: '#fff', fontSize: 16, fontWeight: '600' },
-  mesaBox: {
+  mesaquadradinho: {
     width: '28%',
     aspectRatio: 1,
     borderWidth: 2,
-    borderColor: 'green',
+    borderColor: "#00ad00ff",
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  mesaTexto: { fontSize: 18, fontWeight: 'bold', color: '#0D3A87' },
+  mesaTexto: { fontSize: 18, fontWeight: 'bold', color: '#000000ff' },
 });

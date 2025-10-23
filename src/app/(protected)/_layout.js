@@ -180,6 +180,7 @@ export default function Layout() {
                 {/* Telas ocultas */}
                 <Drawer.Screen name="categoria" options={{ drawerItemStyle: { display: 'none' } }} />
                 <Drawer.Screen name="novacategoria" options={{ drawerItemStyle: { display: 'none' } }} />
+                <Drawer.Screen name="visualizarcategorias" options={{ drawerItemStyle: { display: 'none' } }} />
                 <Drawer.Screen name="editarcategoria" options={{ drawerItemStyle: { display: 'none' } }} />
                 <Drawer.Screen name="mesa" options={{ drawerItemStyle: { display: 'none' } }} />
                 <Drawer.Screen name="novamesa" options={{ drawerItemStyle: { display: 'none' } }} />

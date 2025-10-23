@@ -1,17 +1,18 @@
 import React, { useContext } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { MesaContext } from "../../MesaContext";
-import { CategoriaContext } from "../../CategoriaContext";
 import { useRouter } from "expo-router";
 
 export default function Visualizacao() {
   const { mesas } = useContext(MesaContext);
-  const { categorias } = useContext(CategoriaContext);
   const router = useRouter();
 
-  const abrirCategorias = () => {
-    // Navega para a tela de visualização das categorias
-    router.push("/(protected)/categorias");
+  const abrirCategorias = (mesaSelecionada) => {
+    // Navega para a tela de categorias, enviando o número da mesa
+    router.push({
+      pathname: "/(protected)/visualizarcategorias",
+      params: { numeroMesa: mesaSelecionada.numero },
+    });
   };
 
   return (
@@ -21,9 +22,9 @@ export default function Visualizacao() {
           <TouchableOpacity
             key={index}
             style={styles.mesaBox}
-            onPress={abrirCategorias}
+            onPress={() => abrirCategorias(mesa)}
           >
-            <Text style={styles.mesaTexto}>{mesa.numero}</Text>
+            <Text style={styles.mesaTexto}>Mesa {mesa.numero}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -47,7 +48,7 @@ const styles = StyleSheet.create({
     height: 90,
     marginBottom: 16,
     borderWidth: 2,
-    borderColor: "green",
+    borderColor: "#00ad00ff",
     borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
@@ -55,6 +56,6 @@ const styles = StyleSheet.create({
   mesaTexto: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#0D3A87",
+    color: "#000000ff",
   },
 });
