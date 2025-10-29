@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "frontend_aplicativo",
-    "slug": "frontend_aplicativo",
+    "name": "Frontend_aplicativo",
+    "slug": "Frontend_aplicativo",
     "scheme": "your-app-scheme",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -24,7 +24,8 @@
       "edgeToEdgeEnabled": true
     },
     "web": {
-      "favicon": "./src/assets/favicon.png"
+      "favicon": "./src/assets/favicon.png",
+      "output": "server"
     },
     "plugins": [
       "expo-router"
