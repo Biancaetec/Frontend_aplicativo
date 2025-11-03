@@ -1,8 +1,9 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { ProdutoContext } from '../../ProdutoContext';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 export default function Produtos() {
   const { produtos } = useContext(ProdutoContext);
@@ -10,7 +11,7 @@ export default function Produtos() {
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={{flexGrow:1}}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         {produtos.length === 0 ? (
           <View style={styles.semProdutosContainer}>
             <Ionicons name="cube-outline" size={50} color="#555" />
@@ -27,6 +28,7 @@ export default function Produtos() {
                 </View>
               )}
               <View style={styles.info}>
+
                 <Text style={styles.nome}>{produto.nome}</Text>
                 <Text style={styles.descricao}>{produto.descricao}</Text>
                 <Text style={styles.tipo}>Tipo: {produto.tipo}</Text>
@@ -41,7 +43,18 @@ export default function Produtos() {
                     ))}
                   </View>
                 )}
-              </View>
+
+                <View style={styles.botoesContainer}>
+                  <TouchableOpacity
+                    style={styles.botaoEditar}
+                    onPress={() => navigation.navigate('editarproduto', { produtoEditando: item })}
+                  >
+                    <Text style={styles.textoBotao}>Editar</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity onPress={() => handleExcluir(item.id_produto)}>
+                    <MaterialIcons name="delete" size={26} color="#d11a2a" />
+                  </TouchableOpacity></View></View>
             </View>
           ))
         )}
@@ -103,5 +116,29 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 20,
   },
+  botoesContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  botaoEditar: {
+    backgroundColor: '#004aad',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+    marginRight: 10,
+  },
   textoBotao: { color: '#fff', fontWeight: 'bold' },
+  botaoFlutuante: {
+    position: 'absolute',
+    bottom: 25,
+    right: 20,
+    backgroundColor: '#004aad',
+    paddingVertical: 14,
+    paddingHorizontal: 22,
+    borderRadius: 25,
+    elevation: 5,
+  },
+  textoBotaoFlutuante: { color: '#fff', fontWeight: 'bold', fontSize: 15 },
 });
+
