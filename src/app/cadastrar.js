@@ -12,6 +12,7 @@ export default function Cadastrar() {
 
   // SEM barra no final
   const BASE_URL = 'https://turbo-guide-v6pprpwwjpjjh6gwx-3001.app.github.dev';
+  // const BASE_URL = 'https://turbo-guide-v6pprpwwjpjjh6gwx-3001.app.github.dev';
 
   const handleCadastrar = async () => {
     if (!email.trim() || !nome.trim() || !senha.trim() || !confirmarSenha.trim()) {
