@@ -1,97 +1,112 @@
 import React, { useContext, useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, Image } from 'react-native';
 import { ProdutoContext } from '../../ProdutoContext';
+import { useNavigation } from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { router } from 'expo-router';
 
 export default function Produtos() {
-  const { produtos } = useContext(ProdutoContext);
+  const { produtos, carregarProdutos, excluirProduto } = useContext(ProdutoContext);
   const navigation = useNavigation();
+
+  // Carrega os produtos ao abrir a tela
+  useEffect(() => {
+    carregarProdutos();
+  }, []);
+
+  // Confirmação antes de excluir
+  const handleExcluir = (id_produto) => {
+    Alert.alert(
+      'Confirmação',
+      'Deseja realmente excluir este produto?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Excluir', style: 'destructive', onPress: () => excluirProduto(id_produto) }
+      ]
+    );
+  };
+
+  // Renderiza cada item da FlatList
+  const renderProduto = ({ item }) => (
+    <View style={styles.produtoContainer}>
+      <View style={styles.produtoInfo}>
+        {item.imagem ? (
+          <Image source={{ uri: item.imagem }} style={styles.imagem} />
+        ) : (
+          <View style={styles.imagemVazia}>
+            <Text style={styles.imagemVaziaTexto}>Sem imagem</Text>
+          </View>
+        )}
+
+        <View style={{ flex: 1 }}>
+          <Text style={styles.produtoNome}>{item.nome}</Text>
+          {item.descricao ? <Text style={styles.produtoDescricao}>{item.descricao}</Text> : null}
+          {item.id_categoria ? (
+            <Text style={styles.produtoCategoria}>Categoria ID: {item.id_categoria}</Text>
+          ) : null}
+          {item.preco && <Text style={styles.produtoPreco}>R$ {item.preco}</Text>}
+        </View>
+      </View>
+
+      <View style={styles.botoesContainer}>
+        <TouchableOpacity
+          style={styles.botaoEditar}
+          onPress={() =>
+            router.push({
+              pathname: '/(protected)/editarproduto',
+              params: { produtoEditando: JSON.stringify(item) }, // ⚠️ precisa serializar objetos
+            })
+          }>
+          <Text style={styles.textoBotao}>Editar</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => handleExcluir(item.id_produto)}>
+          <MaterialIcons name="delete" size={26} color="#d11a2a" />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        {produtos.length === 0 ? (
-          <View style={styles.semProdutosContainer}>
-            <Ionicons name="cube-outline" size={50} color="#555" />
-            <Text style={styles.semProdutos}>Nenhum produto cadastrado.</Text>
-          </View>
-        ) : (
-          produtos.map((produto, index) => (
-            <View key={index} style={styles.produtoBox}>
-              {produto.imagem ? (
-                <Image source={{ uri: produto.imagem }} style={styles.imagem} />
-              ) : (
-                <View style={styles.imagemVazia}>
-                  <Text style={styles.imagemVaziaTexto}>Sem imagem</Text>
-                </View>
-              )}
-              <View style={styles.info}>
+      {produtos.length === 0 ? (
+        <Text style={styles.semProdutos}>Nenhum produto cadastrado.</Text>
+      ) : (
+        <FlatList
+          data={produtos}
+          keyExtractor={(item) => item.id_produto.toString()}
+          renderItem={renderProduto}
+          contentContainerStyle={{ paddingBottom: 100, paddingTop: 10 }}
+        />
+      )}
 
-                <Text style={styles.nome}>{produto.nome}</Text>
-                <Text style={styles.descricao}>{produto.descricao}</Text>
-                <Text style={styles.tipo}>Tipo: {produto.tipo}</Text>
-                <Text style={styles.valor}>Valor: R$ {produto.valor}</Text>
-                {produto.adicionais && produto.adicionais.length > 0 && (
-                  <View style={styles.adicionaisContainer}>
-                    <Text style={styles.adicionaisTitulo}>Adicionais:</Text>
-                    {produto.adicionais.map((adicional, i) => (
-                      <Text key={i} style={styles.adicionalItem}>
-                        {adicional.nome} - R$ {adicional.custo}
-                      </Text>
-                    ))}
-                  </View>
-                )}
-
-                <View style={styles.botoesContainer}>
-                  <TouchableOpacity
-                    style={styles.botaoEditar}
-                    onPress={() => navigation.navigate('editarproduto', { produtoEditando: item })}
-                  >
-                    <Text style={styles.textoBotao}>Editar</Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity onPress={() => handleExcluir(item.id_produto)}>
-                    <MaterialIcons name="delete" size={26} color="#d11a2a" />
-                  </TouchableOpacity></View></View>
-            </View>
-          ))
-        )}
-      </ScrollView>
-
-      {/* Botão flutuante para adicionar novo produto */}
+      {/* Botão flutuante */}
       <TouchableOpacity
-        style={styles.botaoNovoProduto}
+        style={styles.botaoFlutuante}
         onPress={() => navigation.navigate('novoproduto')}
       >
-        <Text style={styles.textoBotao}>+ Novo Produto</Text>
+        <Text style={styles.textoBotaoFlutuante}>+ Criar novo produto</Text>
       </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff', padding: 16 },
-  scrollContainer: { paddingBottom: 100 },
-  semProdutosContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  semProdutos: { textAlign: 'center', marginTop: 10, fontSize: 16, color: '#555' },
-  produtoBox: {
-    flexDirection: 'row',
-    backgroundColor: '#f5f5f5',
+  container: { flex: 1, padding: 15, backgroundColor: '#fff' },
+  semProdutos: { fontSize: 16, color: '#555', textAlign: 'center', marginTop: 50 },
+  produtoContainer: {
+    borderWidth: 2,
     borderRadius: 12,
-    marginBottom: 16,
-    padding: 10,
-    alignItems: 'center',
+    backgroundColor: '#fff',
+    marginBottom: 12,
+    padding: 15,
+    borderColor: '#0d4086ff',
   },
-  imagem: { width: 80, height: 80, borderRadius: 8, marginRight: 10 },
+  produtoInfo: { flexDirection: 'row', alignItems: 'center' },
+  imagem: { width: 70, height: 70, borderRadius: 8, marginRight: 10, backgroundColor: '#eee' },
   imagemVazia: {
-    width: 80,
-    height: 80,
+    width: 70,
+    height: 70,
     borderRadius: 8,
     backgroundColor: '#ddd',
     justifyContent: 'center',
@@ -99,27 +114,15 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   imagemVaziaTexto: { fontSize: 10, color: '#888' },
-  info: { flex: 1 },
-  nome: { fontWeight: 'bold', fontSize: 16, marginBottom: 2 },
-  descricao: { color: '#555', fontSize: 14, marginBottom: 2 },
-  tipo: { fontSize: 14, marginBottom: 2 },
-  valor: { fontWeight: 'bold', fontSize: 14 },
-  adicionaisContainer: { marginTop: 4 },
-  adicionaisTitulo: { fontWeight: '600', fontSize: 13 },
-  adicionalItem: { fontSize: 12, color: '#555' },
-  botaoNovoProduto: {
-    position: 'absolute',
-    bottom: 30,
-    right: 20,
-    backgroundColor: '#004aad',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-  },
+  produtoNome: { fontSize: 16, fontWeight: 'bold', color: '#000', marginBottom: 3 },
+  produtoDescricao: { fontSize: 13, color: '#555', marginBottom: 3 },
+  produtoCategoria: { fontSize: 12, color: '#777', marginBottom: 3 },
+  produtoPreco: { fontSize: 14, fontWeight: '600', color: '#0d4086ff' },
   botoesContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
+    marginTop: 10,
   },
   botaoEditar: {
     backgroundColor: '#004aad',
@@ -141,4 +144,3 @@ const styles = StyleSheet.create({
   },
   textoBotaoFlutuante: { color: '#fff', fontWeight: 'bold', fontSize: 15 },
 });
-

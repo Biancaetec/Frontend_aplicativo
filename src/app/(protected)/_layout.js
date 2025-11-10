@@ -187,6 +187,7 @@ export default function Layout() {
                 <Drawer.Screen name="editarmesa" options={{ drawerItemStyle: { display: 'none' } }} />  
                 <Drawer.Screen name="produto" options={{ drawerItemStyle: { display: 'none' } }} />
                 <Drawer.Screen name="novoproduto" options={{ drawerItemStyle: { display: 'none' } }} />
+                <Drawer.Screen name="editarproduto" options={{ drawerItemStyle: { display: 'none' } }} />
                 <Drawer.Screen name="FilaDePreparo" options={{ drawerItemStyle: { display: 'none' } }} />
                 <Drawer.Screen name="novafila" options={{ drawerItemStyle: { display: 'none' } }} />
                 <Drawer.Screen name="pedidosdafila" options={{ drawerItemStyle: { display: 'none' } }} />

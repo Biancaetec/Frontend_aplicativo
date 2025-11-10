@@ -1,20 +1,121 @@
-import React, { createContext, useState } from 'react';
+import { createContext, useState, useEffect, useMemo } from 'react';
+import { useAuth } from './hooks/Auth/useAuth.js';
 
-// Cria o contexto de produtos
 export const ProdutoContext = createContext();
 
-// Provider para envolver a aplicação e fornecer dados de produtos
-export const ProdutoProvider = ({ children }) => {
-  const [produtos, setProdutos] = useState([]); // Armazena todos os produtos
+export function ProdutoProvider({ children }) {
+  const [produtos, setProdutos] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  // Função para adicionar um novo produto
-  const adicionarProduto = (produto) => {
-    setProdutos(prev => [...prev, produto]); // Adiciona sem duplicar categorias
+  const { user, loading: authLoading } = useAuth();
+
+  // ID do restaurante
+  const id_restaurante = useMemo(() => user?.restaurante?.id_restaurante, [user]);
+
+  const API_URL = 'https://turbo-guide-v6pprpwwjpjjh6gwx-3001.app.github.dev/api/produto';
+
+  // Carregar produtos
+  const carregarProdutos = async () => {
+    if (authLoading || !id_restaurante) return;
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_URL}?id_restaurante=${id_restaurante}`);
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      setProdutos(data);
+    } catch (error) {
+      console.error('[ProdutoContext] carregarProdutos:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
+  // Adicionar produto
+  const adicionarProduto = async ({ nome, preco, id_categoria, descricao, imagem, id_restaurante }) => {
+    if (!id_restaurante) throw new Error('Usuário não autenticado');
+    setLoading(true);
+    try {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nome,
+          preco,
+          id_categoria,
+          descricao,
+          imagem,
+          id_restaurante,
+        }),
+      });
+      //if (!res.ok) throw new Error(await res.text());
+      if (!res.ok) throw new Error(await res.text());
+      await carregarProdutos();
+    } catch (error) {
+      console.error('[ProdutoContext] adicionarProduto:', error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Editar produto
+  const editarProduto = async (id_produto, nome) => {
+    if (!id_restaurante) throw new Error('Usuário não autenticado');
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_URL}/${id_produto}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome, id_restaurante }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      await carregarProdutos();
+    } catch (error) {
+      console.error('[ProdutoContext] editarProduto:', error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Excluir produto
+  const excluirProduto = async (id_produto) => {
+    if (!id_restaurante) return;
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_URL}/${id_produto}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error(await res.text());
+      await carregarProdutos();
+    } catch (error) {
+      console.error('[ProdutoContext] excluirProduto:', error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Atualiza produtos quando o usuário é carregado
+  useEffect(() => {
+    if (!authLoading && id_restaurante) {
+      carregarProdutos();
+    }
+  }, [authLoading, id_restaurante]);
+
+  if (authLoading) return null;
+
   return (
-    <ProdutoContext.Provider value={{ produtos, adicionarProduto }}>
+    <ProdutoContext.Provider
+      value={{
+        produtos,
+        carregarProdutos,
+        adicionarProduto,
+        editarProduto,
+        excluirProduto,
+        loading,
+        id_restaurante,
+      }}
+    >
       {children}
     </ProdutoContext.Provider>
   );
-};
+}
