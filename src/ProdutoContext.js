@@ -12,6 +12,8 @@ export function ProdutoProvider({ children }) {
   // ID do restaurante
   const id_restaurante = useMemo(() => user?.restaurante?.id_restaurante, [user]);
 
+  // console.log("Hook restaurante: ", id_restaurante);
+
   const API_URL = 'https://turbo-guide-v6pprpwwjpjjh6gwx-3001.app.github.dev/api/produto';
 
   // Carregar produtos
@@ -31,8 +33,12 @@ export function ProdutoProvider({ children }) {
   };
 
   // Adicionar produto
-  const adicionarProduto = async ({ nome, preco, id_categoria, descricao, imagem, id_restaurante }) => {
+  // const adicionarProduto = async ({ nome, preco, id_categoria, descricao, imagem, id_restaurante }) => {
+  const adicionarProduto = async ({ nome, preco, categoria, descricao, imagem, tipo_preparo, id_categoria, ativo }) => {
+    
+    // console.log("🔹 Adicionando produto para restaurante ID:", id_restaurante);
     if (!id_restaurante) throw new Error('Usuário não autenticado');
+    console.log("🔹 Dados do novo produto Context:", { nome, preco, categoria, descricao, imagem, id_restaurante, id_categoria });
     setLoading(true);
     try {
       const res = await fetch(API_URL, {
@@ -41,10 +47,13 @@ export function ProdutoProvider({ children }) {
         body: JSON.stringify({
           nome,
           preco,
-          id_categoria,
+          categoria,
           descricao,
           imagem,
           id_restaurante,
+          tipo_preparo,
+          id_categoria,
+          ativo
         }),
       });
       //if (!res.ok) throw new Error(await res.text());
@@ -68,10 +77,12 @@ export function ProdutoProvider({ children }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nome, id_restaurante }),
       });
+
+      // console.log("🔹 Editando produto Context ID:", JSON.stringify({ nome, id_restaurante }));
       if (!res.ok) throw new Error(await res.text());
       await carregarProdutos();
     } catch (error) {
-      console.error('[ProdutoContext] editarProduto:', error);
+      console.error('[ProdutoContext] editarProduto:', error.message);
       throw error;
     } finally {
       setLoading(false);

@@ -23,6 +23,8 @@ export function CategoriaProvider({ children }) {
       if (!res.ok) throw new Error(await res.text());
       const data = await res.json();
       setCategorias(data);
+
+      // console.log("🔹 Categorias carregadas:", data);
     } catch (error) {
       console.error('[CategoriaContext] carregarCategorias:', error);
     } finally {

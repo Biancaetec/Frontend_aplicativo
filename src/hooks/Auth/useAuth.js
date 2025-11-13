@@ -10,6 +10,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState({
     authenticated: false,
     restaurante: null,
+    id_restaurante: null,
   });
 
   const { authUser } = useUsersDatabase();
@@ -23,11 +24,13 @@ export function AuthProvider({ children }) {
           setUser({
             authenticated: true,
             restaurante: JSON.parse(storagedUser),
+            id_restaurante: JSON.parse(storagedUser).id_restaurante,
           });
         } else {
           setUser({
             authenticated: false,
             restaurante: null,
+            id_restaurante: null,
           });
         }
       } catch (error) {
@@ -35,6 +38,7 @@ export function AuthProvider({ children }) {
         setUser({
           authenticated: false,
           restaurante: null,
+          id_restaurante: null,
         });
       }
     }
@@ -43,12 +47,14 @@ export function AuthProvider({ children }) {
   }, []);
 
   const signIn = async ({ email, password }) => {
+
     const response = await authUser({ email, password });
 
     if (!response) {
       setUser({
         authenticated: false,
         restaurante: null,
+        id_restaurante: null,
       });
       throw new Error("Usuário ou senha inválidos.");
     }
@@ -56,9 +62,12 @@ export function AuthProvider({ children }) {
     // Salva no AsyncStorage para persistir o login
     await AsyncStorage.setItem("@restoon:user", JSON.stringify(response));
 
+    console.log("🔹 Dados do usuário autenticado:", response);
+
     setUser({
       authenticated: true,
       restaurante: response,
+      id_restaurante: response.id_restaurante,
     });
   };
 
@@ -67,6 +76,8 @@ export function AuthProvider({ children }) {
     setUser({
       authenticated: false,
       restaurante: null,
+      id_restaurante: null,
+
     });
   };
 const login = async (email, senha) => {

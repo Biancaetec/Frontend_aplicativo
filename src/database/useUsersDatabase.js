@@ -20,6 +20,8 @@ export function useUsersDatabase() {
 
       const data = await response.json();
 
+      console.log("🔹 Dados recebidos do servidor:", data);
+
       // Remove a senha antes de retornar
       const { senha, ...userData } = data;
 

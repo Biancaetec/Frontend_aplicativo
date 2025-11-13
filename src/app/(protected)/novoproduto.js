@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, Image, Alert } from 'react-native';
 import { ProdutoContext } from '../../ProdutoContext'; // Contexto dos produtos
 import { CategoriaContext } from '../../CategoriaContext'; // Contexto das categorias
@@ -10,6 +10,8 @@ export default function NovoProduto() {
   // Contextos
   const { adicionarProduto } = useContext(ProdutoContext);
   const { categorias } = useContext(CategoriaContext);
+
+  // console.log("🔹 Categorias disponíveis:", categorias);
 
   // Estados dos campos do produto
   const [imagem, setImagem] = useState(null); // URL da imagem selecionada
@@ -53,8 +55,11 @@ export default function NovoProduto() {
     setAdicionalCusto(''); // Limpa campo
   };
 
+
+  // useEffect(()=>console.log(categoriaSelecionada),[categoriaSelecionada])
+
   // Salvar produto
-  const salvarProduto = () => {
+  const salvarProduto = async () => {
     if (!nome || !valor) { // Validação obrigatória
       Alert.alert('Erro', 'Informe nome e valor do produto.');
       return;
@@ -68,14 +73,18 @@ export default function NovoProduto() {
       imagem, 
       nome, 
       descricao, 
-      tipo, 
-      valor, 
+      tipo_preparo: categoriaSelecionada, 
+      preco: parseFloat(valor, 10), 
       custo, 
       adicionais, 
-      categoria: categoriaSelecionada 
+      categoria: categoriaSelecionada,
+      ativo: 1,
+      id_categoria: categorias.find(cat => cat.nome === categoriaSelecionada)?.id_categoria || null
     };
 
-    adicionarProduto(produto); // Adiciona no contexto
+    console.log("🔹 Dados do produto a salvar:", produto);
+
+    await adicionarProduto(produto); // Adiciona no contexto
     Alert.alert('Sucesso', 'Produto cadastrado!', [
       { text: 'OK', onPress: () => router.push('/produto') }, // Volta para a página anterior
     ]);

@@ -21,8 +21,8 @@ import { router } from 'expo-router';
 import { useAuth } from '../hooks/Auth/useAuth';
 
 export default function App() {
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
+  const [email, setEmail] = useState('restoon@gmail.com');
+  const [senha, setSenha] = useState('1234');
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [loading, setLoading] = useState(false);
 

@@ -18,7 +18,7 @@ import { router } from 'expo-router';
 import { useAuth } from '../../hooks/Auth/useAuth';
 import { useNavigation } from '@react-navigation/native';
 import { MesaProvider } from '../../MesaContext';
-import { CategoriaProvider } from '../../CategoriaContext';
+import { CategoriaContext, CategoriaProvider } from '../../CategoriaContext';
 import { ProdutoProvider } from '../../ProdutoContext';
 import { FilaProvider, FilaContext } from '../../FilaContext';
 
@@ -27,6 +27,8 @@ function CustomHeader() {
   const navigation = useNavigation();
   const { filas } = useContext(FilaContext); // pega as filas do contexto
   const [mostrarFilas, setMostrarFilas] = useState(false); // controla dropdown
+  const { categorias } = useContext(CategoriaContext);
+  const [categoriaSelecionada, setCategoriaSelecionada] = useState('');
 
   // Alterna exibição da lista suspensa de filas
   const handleFilaPress = () => setMostrarFilas(prev => !prev);
@@ -63,22 +65,30 @@ const selecionarFila = (fila) => {
       {mostrarFilas && (
         <View style={headerStyles.filasDropdown}>
           <Text style={headerStyles.filasTitulo}>Fila de preparo</Text>
-          {filas.length === 0 ? (
-            <Text style={headerStyles.semFilasTexto}>Cadastre a fila de preparo</Text>
-          ) : (
-            <FlatList
-              data={filas}
-              keyExtractor={(_, index) => index.toString()}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={headerStyles.filaItem}
-                  onPress={() => selecionarFila(item)}
-                >
-                  <Text style={headerStyles.filaTexto}>{item.nome}</Text>
-                </TouchableOpacity>
-              )}
-            />
-          )}
+          {/*aqui deve estar as categorias*/}
+          {categorias && categorias.length > 0 ? (
+                  <View>
+                    {categorias.map((cat, i) => (
+                      <TouchableOpacity
+                        key={i}
+                        onPress={() => setCategoriaSelecionada(cat.nome)} // Seleciona categoria
+                      >
+                        <Text onPress={() => router.push('/categoria')} >{cat.nome}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                ) : (
+                  // Caso não haja categoria cadastrada
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 10 }}>
+                    <Text>Nenhuma categoria cadastrada</Text>
+                    <TouchableOpacity
+                      style={{ marginLeft: 10, backgroundColor: '#004aad', padding: 5, borderRadius: 5 }}
+                      onPress={() => router.push('/categoria')} // Vai para cadastro
+                    >
+                      <Text style={{ color: '#fff' }}>Cadastrar</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
         </View>
       )}
     </View>
