@@ -190,6 +190,7 @@ export default function Layout() {
                   <Drawer.Screen name="novafila" options={{ drawerItemStyle: { display: 'none' } }} />
                   <Drawer.Screen name="pedidosdafila" options={{ drawerItemStyle: { display: 'none' } }} />
                   <Drawer.Screen name="revisarpedido" options={{ drawerItemStyle: { display: 'none' } }} />
+                  <Drawer.Screen name="visualizarmesa" options={{ drawerItemStyle: { display: 'none' } }} />
                 </Drawer>
               </FilaProvider>
             </PedidoProvider>

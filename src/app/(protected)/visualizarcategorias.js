@@ -7,13 +7,15 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { CategoriaContext } from "../../CategoriaContext";
 import { ProdutoContext } from "../../ProdutoContext";
 import { PedidoContext } from "../../PedidoContext";
+import { MesaContext } from "../../MesaContext";
 
 export default function VisualizarCategorias() {
-  const { numeroMesa } = useLocalSearchParams();
+  const router = useRouter();
+  const { mesaSelecionada } = useContext(MesaContext);
   const { categorias, carregarCategorias, loading: loadingCategorias } =
     useContext(CategoriaContext);
   const { produtos, carregarProdutos, carregarProdutosPorCategoria, loading } =
@@ -57,11 +59,7 @@ export default function VisualizarCategorias() {
     if (selecionados.length === 0) return alert("Selecione ao menos um produto!");
 
     selecionados.forEach((produto) => {
-      adicionarProduto({
-        mesa: numeroMesa,
-        produto: produto,
-        quantidade: quantidades[produto.id_produto],
-      });
+      adicionarProduto(produto, quantidades[produto.id_produto]);
     });
 
     salvarCategoria(categoriaSelecionada.id_categoria);
@@ -81,8 +79,9 @@ export default function VisualizarCategorias() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titulo}>Mesa {numeroMesa}</Text>
+      <Text style={styles.titulo}>Mesa {mesaSelecionada?.numero}</Text>
 
+      {/* Lista de categorias */}
       {categorias.length === 0 ? (
         <Text style={styles.semCategorias}>Nenhuma categoria cadastrada.</Text>
       ) : (
@@ -97,7 +96,7 @@ export default function VisualizarCategorias() {
               style={[
                 styles.categoriaBotao,
                 categoriaSelecionada?.id_categoria === item.id_categoria &&
-                  styles.categoriaSelecionada,
+                styles.categoriaSelecionada,
               ]}
               onPress={() =>
                 setCategoriaSelecionada(
@@ -111,7 +110,7 @@ export default function VisualizarCategorias() {
                 style={[
                   styles.categoriaTexto,
                   categoriaSelecionada?.id_categoria === item.id_categoria &&
-                    styles.categoriaTextoSelecionado,
+                  styles.categoriaTextoSelecionado,
                 ]}
               >
                 {item.nome}
@@ -121,6 +120,7 @@ export default function VisualizarCategorias() {
         />
       )}
 
+      {/* Produtos da categoria */}
       {categoriaSelecionada && (
         <View style={styles.produtosContainer}>
           <Text style={styles.subtitulo}>
@@ -176,6 +176,14 @@ export default function VisualizarCategorias() {
           </TouchableOpacity>
         </View>
       )}
+
+      {/* Botão fixo de revisar pedido */}
+      <TouchableOpacity
+        style={styles.botaoRevisar}
+        onPress={() => router.push("/revisarpedido")}
+      >
+        <Text style={styles.textoBotaoRevisar}>Revisar Pedido</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -183,66 +191,82 @@ export default function VisualizarCategorias() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    padding: 20,
+    backgroundColor: "#fafafa",
+    padding: 16,
   },
   titulo: {
     fontSize: 22,
     fontWeight: "bold",
-    color: "#000",
+    color: "#004aad",
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: 16,
   },
   categoriasContainer: {
-    paddingBottom: 10,
+    flexGrow: 0,
+    marginBottom: 12,
+    paddingHorizontal: 4,
+    height: 45,
   },
   categoriaBotao: {
-    backgroundColor: "#0d4086ff",
-    borderRadius: 20,
-    paddingVertical: 10,
-    paddingHorizontal: 15,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#e6e6e6",
+    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
     marginRight: 10,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
   },
   categoriaSelecionada: {
-    backgroundColor: "#092b59ff",
+    backgroundColor: "#004aad",
   },
   categoriaTexto: {
-    color: "#fff",
-    fontSize: 16,
+    color: "#004aad",
     fontWeight: "600",
+    fontSize: 15,
   },
   categoriaTextoSelecionado: {
-    color: "#ffffff",
-    fontWeight: "bold",
+    color: "#fff",
   },
   produtosContainer: {
-    marginTop: 20,
+    flex: 1,
+    marginTop: 10,
+    marginBottom: 70,
+
   },
   subtitulo: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#0d4086ff",
+    color: "#004aad",
     marginBottom: 10,
+    textAlign: "center",
   },
   produtoBox: {
-    backgroundColor: "#eaf0ff",
-    borderRadius: 10,
-    padding: 15,
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: "#c7d8ff",
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: "#dce3f0",
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 2,
   },
   produtoNome: {
     fontSize: 16,
-    fontWeight: "600",
-    color: "#000",
+    fontWeight: "500",
+    color: "#333",
   },
   produtoPreco: {
     fontSize: 14,
-    color: "#444",
+    color: "#666",
     marginTop: 4,
   },
   controles: {
@@ -250,7 +274,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   botaoQtd: {
-    backgroundColor: "#0d4086ff",
+    backgroundColor: "#004aad",
     borderRadius: 10,
     paddingHorizontal: 10,
     paddingVertical: 4,
@@ -268,15 +292,34 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   botaoSalvar: {
-    marginTop: 15,
-    backgroundColor: "#0d4086ff",
+    backgroundColor: "#009688",
     borderRadius: 10,
-    paddingVertical: 12,
+    paddingVertical: 14,
     alignItems: "center",
+    marginTop: 10,
   },
   textoBotaoSalvar: {
     color: "#fff",
     fontSize: 16,
+    fontWeight: "bold",
+  },
+  botaoRevisar: {
+    position: "absolute",
+    bottom: 25,
+    left: 20,
+    right: 20,
+    backgroundColor: "#004aad",
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: "center",
+    elevation: 6,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+  },
+  textoBotaoRevisar: {
+    color: "#fff",
+    fontSize: 17,
     fontWeight: "600",
   },
   semCategorias: {
@@ -299,6 +342,6 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 10,
     fontSize: 16,
-    color: "#1f63bdff",
+    color: "#004aad",
   },
 });

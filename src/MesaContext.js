@@ -5,18 +5,18 @@ export const MesaContext = createContext();
 
 export function MesaProvider({ children }) {
   const [mesas, setMesas] = useState([]);
+  const [mesaSelecionada, setMesaSelecionada] = useState(null); // ✅ Nova: mesa atual
   const [loading, setLoading] = useState(false);
 
   const { user, loading: authLoading } = useAuth();
 
-
-  // 🔹 ID do restaurante
+  // 🔹 ID do restaurante do usuário logado
   const id_restaurante = useMemo(() => user?.restaurante?.id_restaurante, [user]);
   console.log('🔹 id_restaurante:', id_restaurante);
 
   const API_URL = 'https://turbo-guide-v6pprpwwjpjjh6gwx-3001.app.github.dev/api/mesa';
 
-  // 🔹 Carregar mesas
+  // 🔹 Carregar mesas do restaurante
   const carregarMesas = async () => {
     if (authLoading) return;
     if (!id_restaurante) {
@@ -72,38 +72,7 @@ export function MesaProvider({ children }) {
     }
   };
 
-  // // 🔹 Editar mesa
-  // const editarMesa = async (id_mesa, numero) => {
-  //   if (!id_restaurante) {
-  //     console.error('[MesaContext] Não é possível editar mesa. Usuário não autenticado.');
-  //     throw new Error('Usuário não autenticado');
-  //   }
-  //   if (!id_mesa) {
-  //     console.error('[MesaContext] Nenhuma mesa selecionada para edição.');
-  //     throw new Error('Nenhuma mesa selecionada');
-  //   }
-
-  //   setLoading(true);
-  //   try {
-  //     const res = await fetch(`${API_URL}/${id_mesa}`, {
-  //       method: 'PATCH',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify({ numero: Number(numero), descricao: `Mesa ${numero}` }),
-  //     });
-  //     if (!res.ok) {
-  //       const msg = await res.text();
-  //       throw new Error(`Erro ao editar mesa: ${msg}`);
-  //     }
-  //     await carregarMesas();
-  //   } catch (error) {
-  //     console.error('[MesaContext] editarMesa:', error);
-  //     throw error;
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-   // 🔹 Editar mesa
+  // 🔹 Editar mesa
   const editarMesa = async (id_mesa, numero) => {
     if (!id_restaurante) {
       console.error('[MesaContext] Não é possível editar mesa. Usuário não autenticado.');
@@ -119,9 +88,9 @@ export function MesaProvider({ children }) {
       const res = await fetch(`${API_URL}/${id_mesa}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          numero: Number(numero), 
-          descricao: `Mesa ${numero}` 
+        body: JSON.stringify({
+          numero: Number(numero),
+          descricao: `Mesa ${numero}`,
         }),
       });
       const data = await res.json();
@@ -156,6 +125,18 @@ export function MesaProvider({ children }) {
     }
   };
 
+  // 🔹 Selecionar mesa atual (para pedidos)
+  const selecionarMesa = (mesa) => {
+    console.log('[MesaContext] Mesa selecionada:', mesa);
+    setMesaSelecionada(mesa);
+  };
+
+  // 🔹 Limpar mesa selecionada (ex: após fechar pedido)
+  const limparMesa = () => {
+    console.log('[MesaContext] Mesa limpa');
+    setMesaSelecionada(null);
+  };
+
   // 🔹 Atualiza mesas quando usuário é carregado
   useEffect(() => {
     if (!authLoading && id_restaurante) {
@@ -169,6 +150,9 @@ export function MesaProvider({ children }) {
     <MesaContext.Provider
       value={{
         mesas,
+        mesaSelecionada,
+        selecionarMesa,
+        limparMesa,
         carregarMesas,
         adicionarMesa,
         editarMesa,

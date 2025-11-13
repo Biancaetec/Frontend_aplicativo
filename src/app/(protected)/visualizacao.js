@@ -4,15 +4,13 @@ import { MesaContext } from "../../MesaContext";
 import { useRouter } from "expo-router";
 
 export default function Visualizacao() {
-  const { mesas } = useContext(MesaContext);
+  const { mesas, selecionarMesa } = useContext(MesaContext);
   const router = useRouter();
 
   const abrirCategorias = (mesaSelecionada) => {
-    router.push({
-      pathname: "/(protected)/visualizarcategorias",
-      params: { numeroMesa: mesaSelecionada.numero },
-    });
-  };
+  selecionarMesa(mesaSelecionada); // salva no contexto
+  router.push("/(protected)/visualizarcategorias");
+};
 
   return (
     <ScrollView contentContainerStyle={styles.container}>

@@ -1,16 +1,19 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, StatusBar, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MesaContext } from '../../MesaContext'; // ajuste o caminho se necessário
-import { FilaContext } from '../../FilaContext';
+import { MesaContext } from '../../MesaContext';
 import { router } from 'expo-router';
 
 export default function TelaPedidos() {
   const [abaAtiva, setAbaAtiva] = useState('Pedidos');
-  const { mesas } = useContext(MesaContext); // pega mesas do contexto
+  const { mesas, selecionarMesa } = useContext(MesaContext); // adiciona selecionarMesa do contexto
 
-  // Ordena mesas pelo número
   const mesasOrdenadas = [...mesas].sort((a, b) => a.numero - b.numero);
+
+  function handleSelecionarMesa(mesa) {
+    selecionarMesa(mesa); // salva no contexto
+    router.push('/visualizarmesa'); // navega pra tela
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -44,21 +47,27 @@ export default function TelaPedidos() {
         ) : (
           <FlatList
             data={mesasOrdenadas}
-            keyExtractor={(_, index) => index.toString()}
-            numColumns={3} // 3 mesas por linha, ajuste como quiser
+            keyExtractor={(item) => item.id_mesa.toString()}
+            numColumns={3}
             columnWrapperStyle={{ justifyContent: 'space-around', marginBottom: 16 }}
             renderItem={({ item }) => (
-              <View style={styles.mesaquadradinho}>
+              <TouchableOpacity
+                style={styles.mesaquadradinho}
+                onPress={() => handleSelecionarMesa(item)}
+              >
                 <Text style={styles.mesaTexto}>{item.numero}</Text>
-              </View>
+              </TouchableOpacity>
             )}
           />
         )}
       </View>
 
       {/* Botão Novo Pedido */}
-      <TouchableOpacity onPress={() => router.push('/visualizacao')} style={styles.botaopedido}>
-        <Text style={styles.textobotao} >+ Novo pedido</Text>
+      <TouchableOpacity
+        onPress={() => router.push('/visualizacao')}
+        style={styles.botaopedido}
+      >
+        <Text style={styles.textobotao}>+ Novo pedido *testeee pra commitar pode apagar*</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
@@ -83,10 +92,7 @@ const styles = StyleSheet.create({
   },
   texto: { fontWeight: 'bold', fontSize: 16, color: '#333' },
   textoAtivo: { color: '#1E56A0' },
-  dentroLinhaAtiva: {
-    flex: 1,
-    padding: 16,
-  },
+  dentroLinhaAtiva: { flex: 1, padding: 16 },
   botaopedido: {
     position: 'absolute',
     bottom: 20,
@@ -102,7 +108,7 @@ const styles = StyleSheet.create({
     width: '28%',
     aspectRatio: 1,
     borderWidth: 2,
-    borderColor: "#00ad00ff",
+    borderColor: '#00ad00ff',
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
