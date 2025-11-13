@@ -105,6 +105,14 @@ export function ProdutoProvider({ children }) {
     }
   };
 
+    // Filtrar produtos por categoria (sem refazer requisição)
+  const carregarProdutosPorCategoria = (id_categoria) => {
+    if (!produtos || produtos.length === 0) return [];
+    return produtos.filter(
+      (p) => p.id_categoria === Number(id_categoria)
+    );
+  };
+
   // Atualiza produtos quando o usuário é carregado
   useEffect(() => {
     if (!authLoading && id_restaurante) {
@@ -114,11 +122,12 @@ export function ProdutoProvider({ children }) {
 
   if (authLoading) return null;
 
-  return (
+   return (
     <ProdutoContext.Provider
       value={{
         produtos,
         carregarProdutos,
+        carregarProdutosPorCategoria, // 🔹 adiciona aqui
         adicionarProduto,
         editarProduto,
         excluirProduto,

@@ -10,7 +10,6 @@ import {
   TouchableOpacity,
   StatusBar,
   Platform,
-  FlatList,
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -21,29 +20,26 @@ import { MesaProvider } from '../../MesaContext';
 import { CategoriaContext, CategoriaProvider } from '../../CategoriaContext';
 import { ProdutoProvider } from '../../ProdutoContext';
 import { FilaProvider, FilaContext } from '../../FilaContext';
+import { PedidoProvider } from '../../PedidoContext';
 
 // ================= HEADER CUSTOMIZADO =================
 function CustomHeader() {
   const navigation = useNavigation();
-  const { filas } = useContext(FilaContext); // pega as filas do contexto
-  const [mostrarFilas, setMostrarFilas] = useState(false); // controla dropdown
+  const { filas } = useContext(FilaContext);
+  const [mostrarFilas, setMostrarFilas] = useState(false);
   const { categorias } = useContext(CategoriaContext);
   const [categoriaSelecionada, setCategoriaSelecionada] = useState('');
 
-  // Alterna exibição da lista suspensa de filas
   const handleFilaPress = () => setMostrarFilas(prev => !prev);
 
-  // Seleciona uma fila de preparo
-const selecionarFila = (fila) => {
-  setMostrarFilas(false);
-  navigation.navigate('pedidosdafila', { filaNome: fila.nome }); // usar lowercase do arquivo
-};
+  const selecionarFila = (fila) => {
+    setMostrarFilas(false);
+    navigation.navigate('pedidosdafila', { filaNome: fila.nome });
+  };
 
   return (
     <View style={headerStyles.headerWrapper}>
-      {/* Header principal */}
       <View style={headerStyles.headerContainer}>
-        {/* Botão de menu */}
         <TouchableOpacity
           style={headerStyles.leftContainer}
           onPress={() => navigation.toggleDrawer()}
@@ -52,43 +48,38 @@ const selecionarFila = (fila) => {
           <Text style={headerStyles.headerTitle}>Filtrar</Text>
         </TouchableOpacity>
 
-        {/* Ícones da direita */}
         <View style={headerStyles.rightIcons}>
-          {/* Ícone do relógio para abrir dropdown */}
           <TouchableOpacity style={headerStyles.iconButton} onPress={handleFilaPress}>
             <FontAwesome5 name="clock" size={20} color="#fff" />
           </TouchableOpacity>
         </View>
       </View>
 
-      {/* Dropdown fluido do relógio */}
       {mostrarFilas && (
         <View style={headerStyles.filasDropdown}>
           <Text style={headerStyles.filasTitulo}>Fila de preparo</Text>
-          {/*aqui deve estar as categorias*/}
           {categorias && categorias.length > 0 ? (
-                  <View>
-                    {categorias.map((cat, i) => (
-                      <TouchableOpacity
-                        key={i}
-                        onPress={() => setCategoriaSelecionada(cat.nome)} // Seleciona categoria
-                      >
-                        <Text onPress={() => router.push('/categoria')} >{cat.nome}</Text>
-                      </TouchableOpacity>
-                    ))}
-                  </View>
-                ) : (
-                  // Caso não haja categoria cadastrada
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 10 }}>
-                    <Text>Nenhuma categoria cadastrada</Text>
-                    <TouchableOpacity
-                      style={{ marginLeft: 10, backgroundColor: '#004aad', padding: 5, borderRadius: 5 }}
-                      onPress={() => router.push('/categoria')} // Vai para cadastro
-                    >
-                      <Text style={{ color: '#fff' }}>Cadastrar</Text>
-                    </TouchableOpacity>
-                  </View>
-                )}
+            <View>
+              {categorias.map((cat, i) => (
+                <TouchableOpacity
+                  key={i}
+                  onPress={() => setCategoriaSelecionada(cat.nome)}
+                >
+                  <Text onPress={() => router.push('/categoria')}>{cat.nome}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          ) : (
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 10 }}>
+              <Text>Nenhuma categoria cadastrada</Text>
+              <TouchableOpacity
+                style={{ marginLeft: 10, backgroundColor: '#004aad', padding: 5, borderRadius: 5 }}
+                onPress={() => router.push('/categoria')}
+              >
+                <Text style={{ color: '#fff' }}>Cadastrar</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       )}
     </View>
@@ -101,7 +92,6 @@ function CustomDrawerContent(props) {
 
   return (
     <View style={{ flex: 1 }}>
-      {/* Perfil no topo do Drawer */}
       <View style={styles.areaperfil}>
         <Image style={styles.imagemperfil} />
         <Text style={styles.nomeusuario}>
@@ -109,12 +99,10 @@ function CustomDrawerContent(props) {
         </Text>
       </View>
 
-      {/* Lista de Itens do Drawer */}
       <DrawerContentScrollView {...props}>
         <DrawerItemList {...props} />
       </DrawerContentScrollView>
 
-      {/* Botão Sair */}
       <TouchableOpacity
         style={styles.button}
         onPress={() => {
@@ -132,7 +120,6 @@ function CustomDrawerContent(props) {
 export default function Layout() {
   const { user } = useAuth();
 
-  // Bloqueia acesso se não autenticado
   if (!user?.authenticated) {
     router.replace('/');
     return null;
@@ -143,66 +130,69 @@ export default function Layout() {
       <MesaProvider>
         <CategoriaProvider>
           <ProdutoProvider>
-            <FilaProvider>
-              <Drawer
-                screenOptions={{
-                  drawerActiveTintColor: '#004aad',
-                  drawerInactiveTintColor: '#555',
-                  drawerLabelStyle: { fontSize: 16 },
-                  drawerStyle: { backgroundColor: '#fff' },
-                }}
-                drawerContent={(props) => <CustomDrawerContent {...props} />}
-              >
-                {/* Tela inicial com header customizado */}
-                <Drawer.Screen
-                  name="home"
-                  options={{
-                    drawerLabel: 'Início',
-                    header: () => <CustomHeader />,
-                    drawerIcon: ({ size, color }) => (
-                      <FontAwesome5 name="home" size={size} color={color} />
-                    ),
+            <PedidoProvider>
+              <FilaProvider>
+                <Drawer
+                  screenOptions={{
+                    drawerActiveTintColor: '#004aad',
+                    drawerInactiveTintColor: '#555',
+                    drawerLabelStyle: { fontSize: 16 },
+                    drawerStyle: { backgroundColor: '#fff' },
                   }}
-                />
-                <Drawer.Screen
-                  name="administracao"
-                  options={{
-                    drawerLabel: 'Administração',
-                    drawerIcon: ({ size, color }) => (
-                      <MaterialIcons name="admin-panel-settings" size={size} color={color} />
-                    ),
-                  }}
-                />
-                <Drawer.Screen
-                  name="pedidosfechados"
-                  options={{
-                    drawerLabel: 'Pedidos Fechados',
-                    drawerIcon: () => <FontAwesome5 name="box" size={20} color="#545454" />,
-                  }}
-                />
-                <Drawer.Screen
-                  name="visualizacao"
-                  options={{
-                    drawerLabel: 'Visualização',
-                    drawerIcon: () => <FontAwesome5 name="eye" size={20} color="#545454" />,
-                  }}
-                />
-                {/* Telas ocultas */}
-                <Drawer.Screen name="categoria" options={{ drawerItemStyle: { display: 'none' } }} />
-                <Drawer.Screen name="novacategoria" options={{ drawerItemStyle: { display: 'none' } }} />
-                <Drawer.Screen name="visualizarcategorias" options={{ drawerItemStyle: { display: 'none' } }} />
-                <Drawer.Screen name="editarcategoria" options={{ drawerItemStyle: { display: 'none' } }} />
-                <Drawer.Screen name="mesa" options={{ drawerItemStyle: { display: 'none' } }} />
-                <Drawer.Screen name="novamesa" options={{ drawerItemStyle: { display: 'none' } }} />
-                <Drawer.Screen name="editarmesa" options={{ drawerItemStyle: { display: 'none' } }} />  
-                <Drawer.Screen name="produto" options={{ drawerItemStyle: { display: 'none' } }} />
-                <Drawer.Screen name="novoproduto" options={{ drawerItemStyle: { display: 'none' } }} />
-                <Drawer.Screen name="editarproduto" options={{ drawerItemStyle: { display: 'none' } }} />
-                <Drawer.Screen name="FilaDePreparo" options={{ drawerItemStyle: { display: 'none' } }} />
-                <Drawer.Screen name="novafila" options={{ drawerItemStyle: { display: 'none' } }} />
-                <Drawer.Screen name="pedidosdafila" options={{ drawerItemStyle: { display: 'none' } }} />
-              </Drawer>
-            </FilaProvider>
+                  drawerContent={(props) => <CustomDrawerContent {...props} />}
+                >
+                  <Drawer.Screen
+                    name="home"
+                    options={{
+                      drawerLabel: 'Início',
+                      header: () => <CustomHeader />,
+                      drawerIcon: ({ size, color }) => (
+                        <FontAwesome5 name="home" size={size} color={color} />
+                      ),
+                    }}
+                  />
+                  <Drawer.Screen
+                    name="administracao"
+                    options={{
+                      drawerLabel: 'Administração',
+                      drawerIcon: ({ size, color }) => (
+                        <MaterialIcons name="admin-panel-settings" size={size} color={color} />
+                      ),
+                    }}
+                  />
+                  <Drawer.Screen
+                    name="pedidosfechados"
+                    options={{
+                      drawerLabel: 'Pedidos Fechados',
+                      drawerIcon: () => <FontAwesome5 name="box" size={20} color="#545454" />,
+                    }}
+                  />
+                  <Drawer.Screen
+                    name="visualizacao"
+                    options={{
+                      drawerLabel: 'Visualização',
+                      drawerIcon: () => <FontAwesome5 name="eye" size={20} color="#545454" />,
+                    }}
+                  />
+
+                  {/* Telas ocultas */}
+                  <Drawer.Screen name="categoria" options={{ drawerItemStyle: { display: 'none' } }} />
+                  <Drawer.Screen name="novacategoria" options={{ drawerItemStyle: { display: 'none' } }} />
+                  <Drawer.Screen name="visualizarcategorias" options={{ drawerItemStyle: { display: 'none' } }} />
+                  <Drawer.Screen name="editarcategoria" options={{ drawerItemStyle: { display: 'none' } }} />
+                  <Drawer.Screen name="mesa" options={{ drawerItemStyle: { display: 'none' } }} />
+                  <Drawer.Screen name="novamesa" options={{ drawerItemStyle: { display: 'none' } }} />
+                  <Drawer.Screen name="editarmesa" options={{ drawerItemStyle: { display: 'none' } }} />
+                  <Drawer.Screen name="produto" options={{ drawerItemStyle: { display: 'none' } }} />
+                  <Drawer.Screen name="novoproduto" options={{ drawerItemStyle: { display: 'none' } }} />
+                  <Drawer.Screen name="editarproduto" options={{ drawerItemStyle: { display: 'none' } }} />
+                  <Drawer.Screen name="FilaDePreparo" options={{ drawerItemStyle: { display: 'none' } }} />
+                  <Drawer.Screen name="novafila" options={{ drawerItemStyle: { display: 'none' } }} />
+                  <Drawer.Screen name="pedidosdafila" options={{ drawerItemStyle: { display: 'none' } }} />
+                  <Drawer.Screen name="revisarpedido" options={{ drawerItemStyle: { display: 'none' } }} />
+                </Drawer>
+              </FilaProvider>
+            </PedidoProvider>
           </ProdutoProvider>
         </CategoriaProvider>
       </MesaProvider>
@@ -249,9 +239,6 @@ const headerStyles = StyleSheet.create({
     zIndex: 100,
   },
   filasTitulo: { fontSize: 16, fontWeight: 'bold', marginBottom: 6 },
-  semFilasTexto: { color: '#555', fontStyle: 'italic' },
-  filaItem: { padding: 10, backgroundColor: '#fff', borderRadius: 10, marginBottom: 6 },
-  filaTexto: { color: '#0D3A87', fontWeight: '500' },
 });
 
 const styles = StyleSheet.create({
@@ -265,7 +252,23 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
   },
-  imagemperfil: { width: 100, height: 100, borderRadius: 50, borderWidth: 2, borderColor: '#fff', marginBottom: 12 },
+  imagemperfil: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    borderWidth: 2,
+    borderColor: '#fff',
+    marginBottom: 12,
+  },
   nomeusuario: { color: '#fff', fontSize: 18, fontWeight: '600' },
-  button: { backgroundColor: '#000', padding: 10, borderRadius: 5, marginTop: 35, alignItems: 'center', width: 200, marginBottom: 20, marginLeft: 35 },
+  button: {
+    backgroundColor: '#000',
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 35,
+    alignItems: 'center',
+    width: 200,
+    marginBottom: 20,
+    marginLeft: 35,
+  },
 });

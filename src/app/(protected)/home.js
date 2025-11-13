@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, StatusBar, FlatList } from 'r
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MesaContext } from '../../MesaContext'; // ajuste o caminho se necessário
 import { FilaContext } from '../../FilaContext';
+import { router } from 'expo-router';
 
 export default function TelaPedidos() {
   const [abaAtiva, setAbaAtiva] = useState('Pedidos');
@@ -56,8 +57,8 @@ export default function TelaPedidos() {
       </View>
 
       {/* Botão Novo Pedido */}
-      <TouchableOpacity style={styles.botaopedido}>
-        <Text style={styles.textobotao}>+ Novo pedido</Text>
+      <TouchableOpacity onPress={() => router.push('/visualizacao')} style={styles.botaopedido}>
+        <Text style={styles.textobotao} >+ Novo pedido</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
