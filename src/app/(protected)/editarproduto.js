@@ -20,34 +20,37 @@ export default function EditarProduto() {
   const navigation = useNavigation();
   const route = useRoute();
 
-  // Recebe o produto (desserializa)
-  const produtoEditando = route.params?.produtoEditando
-    ? JSON.parse(route.params.produtoEditando)
-    : null;
+  const produtoEditando = route.params?.produtoEditando || null;
 
   const [nome, setNome] = useState('');
   const [descricao, setDescricao] = useState('');
   const [preco, setPreco] = useState('');
+  const [tipo_preparo, setTipo_Preparo] = useState('');
   const [id_categoria, setIdCategoria] = useState('');
   const [imagem, setImagem] = useState('');
 
-  // Preenche apenas uma vez (sem travar campos)
   useEffect(() => {
     if (produtoEditando) {
-      setNome(produtoEditando.nome || '');
-      setDescricao(produtoEditando.descricao || '');
-      setPreco(produtoEditando.preco ? produtoEditando.preco.toString() : '');
-      setIdCategoria(produtoEditando.id_categoria ? produtoEditando.id_categoria.toString() : '');
-      setImagem(produtoEditando.imagem || '');
+      setNome(produtoEditando.nome ?? '');
+      setDescricao(produtoEditando.descricao ?? '');
+      setPreco(produtoEditando.preco ? String(produtoEditando.preco) : '');
+      setTipo_Preparo(produtoEditando.tipo_preparo ?? '');
+      setIdCategoria(
+        produtoEditando.id_categoria ? String(produtoEditando.id_categoria) : ''
+      );
+      setImagem(produtoEditando.imagem ?? '');
     }
-  }, []); // ← executa apenas uma vez
+  }, [produtoEditando]);
 
-  // Escolher imagem da galeria
   const escolherImagem = async () => {
     try {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert('Permissão negada', 'Você precisa permitir o acesso à galeria.');
+        Alert.alert(
+          'Permissão negada',
+          'Você precisa permitir o acesso à galeria.'
+        );
         return;
       }
 
@@ -69,52 +72,27 @@ export default function EditarProduto() {
   };
 
   const handleSalvar = async () => {
-    if (!produtoEditando) {
-      Alert.alert('Erro', 'Nenhum produto selecionado para edição.');
-      return;
-    }
-
-    if (!nome.trim() || !preco.trim() || isNaN(Number(preco))) {
-      Alert.alert('Erro', 'Informe nome e preço válidos para o produto.');
-      return;
-    }
-
-    if (!id_restaurante) {
-      Alert.alert('Erro', 'Usuário não autenticado. Aguarde carregar a sessão.');
-      return;
-    }
-
-    try {
-      const dadosAtualizados = {
-        nome,
-        descricao,
-        preco: Number(preco),
-        id_categoria: id_categoria ? Number(id_categoria) : null,
-        imagem,
-      };
-
-      console.log('🔹 Editando produto:', {
-        id_produto: produtoEditando.id_produto,
-        ...dadosAtualizados,
-        id_restaurante,
-      });
-
-      await editarProduto(produtoEditando.id_produto, dadosAtualizados);
-
-      Alert.alert('Sucesso', 'Produto atualizado com sucesso!');
-      navigation.goBack();
-    } catch (error) {
-      console.error('Erro ao atualizar produto:', error);
-      Alert.alert('Erro', 'Ocorreu um erro ao atualizar o produto.');
-    }
-  };
+  try {
+    await editarProduto(produtoEditando.id_produto, {
+      nome,
+      descricao,
+      preco: Number(preco),
+      tipo_preparo,
+      imagem,
+      id_categoria: Number(produtoEditando.id_categoria) // Obrigatório
+    });
+    alert("Produto atualizado!");
+    router.back();
+  } catch (e) {
+    console.log("Erro ao editar:", e);
+  }
+};
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.titulo}>Editar Produto</Text>
       <BotaoVoltar destino="produto" />
 
-      {/* Imagem do produto */}
       <TouchableOpacity style={styles.imagemContainer} onPress={escolherImagem}>
         {imagem ? (
           <Image source={{ uri: imagem }} style={styles.imagem} />
@@ -123,7 +101,6 @@ export default function EditarProduto() {
         )}
       </TouchableOpacity>
 
-      {/* Nome */}
       <Text style={styles.label}>Nome do Produto</Text>
       <TextInput
         placeholder="Ex: Pizza Calabresa"
@@ -133,7 +110,6 @@ export default function EditarProduto() {
         placeholderTextColor="#A9A9A9"
       />
 
-      {/* Descrição */}
       <Text style={styles.label}>Descrição</Text>
       <TextInput
         placeholder="Ex: Massa fina, molho artesanal, borda recheada..."
@@ -144,7 +120,6 @@ export default function EditarProduto() {
         multiline
       />
 
-      {/* Preço */}
       <Text style={styles.label}>Preço</Text>
       <TextInput
         placeholder="Ex: 25.90"
@@ -155,14 +130,22 @@ export default function EditarProduto() {
         placeholderTextColor="#A9A9A9"
       />
 
-      {/* Categoria */}
-      <Text style={styles.label}>ID da Categoria (opcional)</Text>
+      <Text style={styles.label}>Categoria (id)</Text>
       <TextInput
         placeholder="Ex: 2"
         style={styles.input}
         value={id_categoria}
         onChangeText={setIdCategoria}
         keyboardType="numeric"
+        placeholderTextColor="#A9A9A9"
+      />
+
+      <Text style={styles.label}>Tipo de Preparo</Text>
+      <TextInput
+        placeholder="Ex: Cozinha"
+        style={styles.input}
+        value={tipo_preparo}
+        onChangeText={setTipo_Preparo}
         placeholderTextColor="#A9A9A9"
       />
 

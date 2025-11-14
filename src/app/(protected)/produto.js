@@ -42,7 +42,7 @@ export default function Produtos() {
           <Text style={styles.produtoNome}>{item.nome}</Text>
           {item.descricao ? <Text style={styles.produtoDescricao}>{item.descricao}</Text> : null}
           {item.id_categoria ? (
-            <Text style={styles.produtoCategoria}>Categoria ID: {item.id_categoria}</Text>
+            <Text style={styles.produtoCategoria}>Categoria: {item.tipo_preparo}</Text>
           ) : null}
           {item.preco && <Text style={styles.produtoPreco}>R$ {item.preco}</Text>}
         </View>

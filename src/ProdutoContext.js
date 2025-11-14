@@ -68,26 +68,26 @@ export function ProdutoProvider({ children }) {
   };
 
   // Editar produto
-  const editarProduto = async (id_produto, nome) => {
-    if (!id_restaurante) throw new Error('Usuário não autenticado');
-    setLoading(true);
-    try {
-      const res = await fetch(`${API_URL}/${id_produto}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nome, id_restaurante }),
-      });
+  const editarProduto = async (id_produto, dadosAtualizados) => {
+  if (!id_restaurante) throw new Error('Usuário não autenticado');
+  setLoading(true);
+  try {
+    const res = await fetch(`${API_URL}/${id_produto}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...dadosAtualizados, id_restaurante }),
+    });
 
-      // console.log("🔹 Editando produto Context ID:", JSON.stringify({ nome, id_restaurante }));
-      if (!res.ok) throw new Error(await res.text());
-      await carregarProdutos();
-    } catch (error) {
-      console.error('[ProdutoContext] editarProduto:', error.message);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
+    if (!res.ok) throw new Error(await res.text());
+    await carregarProdutos();
+  } catch (error) {
+    console.error('[ProdutoContext] editarProduto:', error.message);
+    throw error;
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   // Excluir produto
   const excluirProduto = async (id_produto) => {
