@@ -62,8 +62,8 @@ export default function EditarMesa() {
 
   return (
     <View style={styles.container}>
-      <BotaoVoltar destino="mesa" />
       <Text style={styles.titulo}>Editar Mesa</Text>
+      <BotaoVoltar destino="mesa" />
 
       <TextInput
         placeholder="Número da mesa"
@@ -102,6 +102,7 @@ const styles = StyleSheet.create({
     color: '#0D3A87',
     marginBottom: 25,
     textAlign: 'center',
+    marginTop: 10,
   },
   input: {
     height: 50,
@@ -112,6 +113,7 @@ const styles = StyleSheet.create({
     marginBottom: 25,
     color: '#333',
     fontSize: 16,
+    marginTop: 30,
   },
   botaoSalvar: {
     backgroundColor: '#0D3A87',

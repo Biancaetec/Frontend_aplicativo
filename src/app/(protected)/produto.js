@@ -69,6 +69,7 @@ export default function Produtos() {
 
   return (
     <View style={styles.container}>
+    <Text style={styles.titulo}>Gestão de Produtos</Text>
       {produtos.length === 0 ? (
         <Text style={styles.semProdutos}>Nenhum produto cadastrado.</Text>
       ) : (
@@ -102,6 +103,16 @@ const styles = StyleSheet.create({
     padding: 15,
     borderColor: '#0d4086ff',
   },
+
+  titulo: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: "#1E56A0",
+    marginBottom: 20,
+    textAlign: "center",
+    marginTop: 10
+  },
+
   produtoInfo: { flexDirection: 'row', alignItems: 'center' },
   imagem: { width: 70, height: 70, borderRadius: 8, marginRight: 10, backgroundColor: '#eee' },
   imagemVazia: {

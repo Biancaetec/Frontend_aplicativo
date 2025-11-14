@@ -43,8 +43,8 @@ export default function NovaMesa() {
 
   return (
     <View style={styles.container}>
-      <BotaoVoltar destino="mesa" />
       <Text style={styles.titulo}>Cadastro de Mesa</Text>
+      <BotaoVoltar destino="mesa" />
 
       <TextInput
         placeholder="Número da mesa"
@@ -83,7 +83,7 @@ export default function NovaMesa() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: '#F5F6FA', justifyContent: 'flex-start' },
-  titulo: { fontSize: 22, fontWeight: 'bold', color: '#0D3A87', marginBottom: 25, textAlign: 'center' },
+  titulo: { fontSize: 22, fontWeight: 'bold', color: '#0D3A87', marginBottom: 25, textAlign: 'center', marginTop: 10 },
   input: {
     height: 50,
     borderWidth: 1.5,
@@ -93,6 +93,7 @@ const styles = StyleSheet.create({
     marginBottom: 25,
     color: '#333',
     fontSize: 16,
+    marginTop: 30,
   },
   botaoSalvar: { backgroundColor: '#0D3A87', paddingVertical: 15, borderRadius: 15, alignItems: 'center' },
   textoBotao: { color: '#fff', fontWeight: 'bold', fontSize: 16 },

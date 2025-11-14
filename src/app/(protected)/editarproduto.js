@@ -13,6 +13,7 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 import { ProdutoContext } from '../../ProdutoContext';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import BotaoVoltar from './botaovoltar';
 
 export default function EditarProduto() {
   const { editarProduto, loading, id_restaurante } = useContext(ProdutoContext);
@@ -111,6 +112,7 @@ export default function EditarProduto() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.titulo}>Editar Produto</Text>
+      <BotaoVoltar destino="produto" />
 
       {/* Imagem do produto */}
       <TouchableOpacity style={styles.imagemContainer} onPress={escolherImagem}>
@@ -209,6 +211,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 25,
+    marginTop: 15,
   },
   imagem: {
     width: '100%',

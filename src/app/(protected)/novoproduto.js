@@ -5,6 +5,7 @@ import { CategoriaContext } from '../../CategoriaContext'; // Contexto das categ
 import * as ImagePicker from 'expo-image-picker'; // Biblioteca para escolher imagens da galeria
 import { router } from 'expo-router'; // Router para navegação
 import Produtos from './produto';
+import BotaoVoltar from './botaovoltar';
 
 export default function NovoProduto() {
   // Contextos
@@ -93,7 +94,9 @@ export default function NovoProduto() {
   // ================= LAYOUT =================
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      
+      <Text style={styles.titulomaior}>Novo Produto</Text>
+      <BotaoVoltar destino="produto" />
+
       {/* Seção da imagem */}
       <TouchableOpacity style={styles.imagemContainer} onPress={escolherImagem}>
         {imagem ? (
@@ -174,4 +177,12 @@ const styles = StyleSheet.create({
   checkboxContainer: { flexDirection: 'row', alignItems: 'center', marginBottom: 5 },
   checkbox: { width: 20, height: 20, borderWidth: 1, borderColor: '#555', borderRadius: 4 },
   checkboxSelecionado: { backgroundColor: '#004aad' },
+  titulomaior: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: "#1E56A0",
+    marginBottom: 20,
+    textAlign: "center",
+    marginTop: 10
+  },
 });

@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { CategoriaContext } from '../../CategoriaContext';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import BotaoVoltar from './botaovoltar';
 
 export default function EditarCategoria() {
   const navigation = useNavigation();
@@ -44,6 +45,7 @@ export default function EditarCategoria() {
   return (
     <View style={styles.container}>
       <Text style={styles.titulo}>Editar Categoria</Text>
+      <BotaoVoltar destino="categoria" />
 
       <TextInput
         placeholder="Nome da categoria"
@@ -72,6 +74,7 @@ const styles = StyleSheet.create({
     color: '#0D3A87',
     marginBottom: 20,
     textAlign: 'center',
+    marginTop: 10,
   },
   input: {
     height: 50,
@@ -82,6 +85,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: '#333',
     fontSize: 16,
+    marginTop: 30,
   },
   botaoSalvar: {
     backgroundColor: '#0D3A87',

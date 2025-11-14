@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Entypo from 'react-native-vector-icons/Entypo';
 import { router } from 'expo-router';
 import { useAuth } from '../../hooks/Auth/useAuth';
 import { useNavigation } from '@react-navigation/native';
@@ -147,7 +148,7 @@ export default function Layout() {
                       drawerLabel: 'Início',
                       header: () => <CustomHeader />,
                       drawerIcon: ({ size, color }) => (
-                        <FontAwesome5 name="home" size={size} color={color} />
+                        <MaterialIcons name="home" size={size} color={color} />
                       ),
                     }}
                   />
@@ -156,7 +157,7 @@ export default function Layout() {
                     options={{
                       drawerLabel: 'Gestão de Mesas',
                       drawerIcon: ({ size, color }) => (
-                        <MaterialIcons name="admin-panel-settings" size={size} color={color} />
+                        <MaterialIcons name="table-bar" size={size} color={color} />
                       ),
                     }}
                   />
@@ -165,7 +166,7 @@ export default function Layout() {
                     options={{
                       drawerLabel: 'Gestão de Categorias',
                       drawerIcon: ({ size, color }) => (
-                        <MaterialIcons name="admin-panel-settings" size={size} color={color} />
+                        <MaterialIcons name="category" size={size} color={color} />
                       ),
                     }}
                   />
@@ -174,7 +175,7 @@ export default function Layout() {
                     options={{
                       drawerLabel: 'Gestão de Produtos',
                       drawerIcon: ({ size, color }) => (
-                        <MaterialIcons name="admin-panel-settings" size={size} color={color} />
+                        <MaterialIcons name="shopping-cart" size={size} color={color} />
                       ),
                     }}
                   />
@@ -182,14 +183,15 @@ export default function Layout() {
                     name="pedidosfechados"
                     options={{
                       drawerLabel: 'Pedidos Fechados',
-                      drawerIcon: () => <FontAwesome5 name="box" size={20} color="#545454" />,
+                      drawerIcon: () => <MaterialIcons name="check-box" size={20} color="#545454" />,
                     }}
                   />
                   <Drawer.Screen
                     name="visualizacao"
                     options={{
                       drawerLabel: 'Visualização',
-                      drawerIcon: () => <FontAwesome5 name="eye" size={20} color="#545454" />,
+                      drawerIcon: () => 
+                      <MaterialIcons name="view-comfy" size={20} color="#545454" />,
                     }}
                   />
                   {/* Telas ocultas */}
@@ -234,6 +236,7 @@ const headerStyles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 25,
     marginHorizontal: 10,
+    marginTop: 50,
   },
   leftContainer: { flexDirection: 'row', alignItems: 'center' },
   headerTitle: { color: '#fff', fontSize: 16, fontWeight: '500', marginLeft: 8 },

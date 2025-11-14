@@ -35,8 +35,8 @@ export default function Categoria() {
           <Text style={styles.textoBotao}>Editar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => handleExcluir(item.id_categoria)}>
-          <MaterialIcons name="delete" size={26} color="#d11a2a" />
+        <TouchableOpacity style={styles.botaoExcluir} onPress={() => handleExcluir(item.id_categoria)}>
+          <MaterialIcons name="delete" size={22} color="#d11a2a" />
         </TouchableOpacity>
       </View>
     </View>
@@ -44,6 +44,7 @@ export default function Categoria() {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.titulo}>Gestão de Categorias</Text>
       {categorias.length === 0 ? (
         <Text style={styles.semCategorias}>Nenhuma categoria cadastrada.</Text>
       ) : (
@@ -51,7 +52,7 @@ export default function Categoria() {
           data={categorias}
           keyExtractor={(item) => item.id_categoria.toString()}
           renderItem={renderCategoria}
-          contentContainerStyle={{ paddingBottom: 100, paddingTop: 10 }}
+          contentContainerStyle={{ paddingBottom: 120, paddingTop: 10 }}
         />
       )}
 
@@ -66,35 +67,75 @@ export default function Categoria() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 15, backgroundColor: '#fff' },
-  semCategorias: { fontSize: 16, color: '#555', textAlign: 'center', marginTop: 50 },
+  container: { 
+    flex: 1, 
+    padding: 15, 
+    backgroundColor: '#fff' 
+  },
+
+  titulo: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: "#1E56A0",
+    marginBottom: 20,
+    textAlign: "center",
+    marginTop: 10
+  },
+
+  semCategorias: { 
+    fontSize: 16, 
+    color: '#555', 
+    textAlign: 'center', 
+    marginTop: 50 
+  },
+
   categoriaContainer: {
-    borderWidth: 2,
-    borderRadius: 12,
+    borderWidth: 1.5,
+    borderRadius: 16,
     backgroundColor: '#fff',
     marginBottom: 12,
     padding: 15,
-    borderColor: '#0d4086ff',
+    borderColor: '#004aad',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
   },
+
   categoriaNome: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#000000ff',
-    marginBottom: 10,
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#000',
+    marginBottom: 12,
   },
+
   botoesContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
+    gap: 10,
   },
+
   botaoEditar: {
     backgroundColor: '#004aad',
-    paddingVertical: 5,
-    paddingHorizontal: 10,
+    paddingVertical: 6,
+    paddingHorizontal: 14,
     borderRadius: 8,
-    marginRight: 10,
   },
-  textoBotao: { color: '#fff', fontWeight: 'bold' },
+
+  botaoExcluir: {
+    backgroundColor: '#f5f5f5',
+    padding: 6,
+    borderRadius: 8,
+  },
+
+  textoBotao: { 
+    color: '#fff', 
+    fontWeight: 'bold', 
+    fontSize: 13 
+  },
+
   botaoFlutuante: {
     position: 'absolute',
     bottom: 25,
@@ -102,8 +143,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#004aad',
     paddingVertical: 14,
     paddingHorizontal: 22,
-    borderRadius: 25,
-    elevation: 5,
+    borderRadius: 28,
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 6,
   },
-  textoBotaoFlutuante: { color: '#fff', fontWeight: 'bold', fontSize: 15 },
+
+  textoBotaoFlutuante: { 
+    color: '#fff', 
+    fontWeight: 'bold', 
+    fontSize: 15 
+  },
 });
