@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react
 import { MesaContext } from '../../MesaContext';
 import { useNavigation } from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import BotaoVoltar from '../(protected)/botaovoltar';
 
 export default function Mesa() {
   const { mesas, carregarMesas, excluirMesa } = useContext(MesaContext);
@@ -25,8 +26,10 @@ export default function Mesa() {
 
   const renderMesa = ({ item }) => (
     <View style={styles.mesaContainer}>
+      {/* Nome da mesa centralizado */}
       <Text style={styles.mesaNome}>Mesa {item.numero}</Text>
 
+      {/* Botões na parte inferior */}
       <View style={styles.botoesContainer}>
         <TouchableOpacity
           style={styles.botaoEditar}
@@ -35,8 +38,11 @@ export default function Mesa() {
           <Text style={styles.textoBotao}>Editar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.iconeExcluir} onPress={() => handleExcluir(item.id_mesa)}>
-          <MaterialIcons name="delete" size={26} color="#d11a2a" style={{ marginLeft: 10 }} />
+        <TouchableOpacity
+          style={styles.botaoExcluir}
+          onPress={() => handleExcluir(item.id_mesa)}
+        >
+          <MaterialIcons name="delete" size={22} color="#d11a2a" />
         </TouchableOpacity>
       </View>
     </View>
@@ -44,6 +50,7 @@ export default function Mesa() {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.titulo}>Gestão de Mesas</Text>
       {mesas.length === 0 ? (
         <Text style={styles.semMesas}>Nenhuma mesa cadastrada.</Text>
       ) : (
@@ -51,9 +58,9 @@ export default function Mesa() {
           data={mesas}
           keyExtractor={(item) => item.id_mesa.toString()}
           renderItem={renderMesa}
-          numColumns={3} 
+          numColumns={3}
           key={3}
-          contentContainerStyle={{ paddingBottom: 100, paddingTop: 10 }}
+          contentContainerStyle={{ paddingBottom: 120, paddingTop: 10 }}
         />
       )}
 
@@ -68,47 +75,82 @@ export default function Mesa() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 10, backgroundColor: '#fff' },
-  semMesas: { fontSize: 16, color: '#555', textAlign: 'center', marginTop: 50 },
+  container: {
+    flex: 1,
+    padding: 4,
+    backgroundColor: '#fff'
+  },
+
+  semMesas: {
+    fontSize: 16,
+    color: '#555',
+    textAlign: 'center',
+    marginTop: 50
+  },
+
+  titulo: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: "#1E56A0",
+    marginBottom: 20,
+    textAlign: "center",
+    marginTop: 20
+  },
+
   mesaContainer: {
-    borderWidth: 2,
-    borderRadius: 12,
+    borderWidth: 1.5,
+    borderColor: '#e0e0e0',
+    borderRadius: 16,
     backgroundColor: '#fff',
-    margin: 5,
-    width: '30%', 
-    aspectRatio: 1, // deixa quadrado
+    margin: 2,
+    width: '32%',
+    aspectRatio: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 10,
+    padding: 2,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
     position: 'relative',
+    height: 100,
   },
+
   mesaNome: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#000000ff',
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#000',
     textAlign: 'center',
-    marginBottom: 5,
+    marginBottom: 20,
   },
+
   botoesContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 5,
+    gap: 5, // espaçamento entre os botões
   },
+
   botaoEditar: {
     backgroundColor: '#004aad',
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 6,
-    marginRight: 5,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 8,
   },
-  textoBotao: { color: '#fff', fontWeight: 'bold', fontSize: 12 },
-iconeExcluir: {
-     position: 'absolute',
-     marginTop: '-160%',
-     marginRight: '-106%',
-     zIndex: 10,
+
+  botaoExcluir: {
+    backgroundColor: '#f5f5f5',
+    padding: 6,
+    borderRadius: 8,
   },
+
+  textoBotao: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 13
+  },
+
   botaoFlutuante: {
     position: 'absolute',
     bottom: 25,
@@ -116,8 +158,17 @@ iconeExcluir: {
     backgroundColor: '#004aad',
     paddingVertical: 14,
     paddingHorizontal: 22,
-    borderRadius: 25,
-    elevation: 5,
+    borderRadius: 28,
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 6,
   },
-  textoBotaoFlutuante: { color: '#fff', fontWeight: 'bold', fontSize: 15 },
+
+  textoBotaoFlutuante: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 15
+  },
 });

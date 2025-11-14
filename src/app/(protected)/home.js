@@ -67,7 +67,7 @@ export default function TelaPedidos() {
         onPress={() => router.push('/visualizacao')}
         style={styles.botaopedido}
       >
-        <Text style={styles.textobotao}>+ Novo pedido *testeee pra commitar pode apagar*</Text>
+        <Text style={styles.textobotao}>+ Novo pedido</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );

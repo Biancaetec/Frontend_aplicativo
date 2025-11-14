@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { MesaContext } from '../../MesaContext';
 import { useNavigation } from '@react-navigation/native';
+import BotaoVoltar from '../(protected)/botaovoltar';
 
 export default function NovaMesa() {
   const { adicionarMesa, loading, id_restaurante } = useContext(MesaContext);
@@ -42,6 +43,7 @@ export default function NovaMesa() {
 
   return (
     <View style={styles.container}>
+      <BotaoVoltar destino="mesa" />
       <Text style={styles.titulo}>Cadastro de Mesa</Text>
 
       <TextInput

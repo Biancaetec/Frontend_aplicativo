@@ -152,9 +152,27 @@ export default function Layout() {
                     }}
                   />
                   <Drawer.Screen
-                    name="administracao"
+                    name="mesa"
                     options={{
-                      drawerLabel: 'Administração',
+                      drawerLabel: 'Gestão de Mesas',
+                      drawerIcon: ({ size, color }) => (
+                        <MaterialIcons name="admin-panel-settings" size={size} color={color} />
+                      ),
+                    }}
+                  />
+                  <Drawer.Screen
+                    name="categoria"
+                    options={{
+                      drawerLabel: 'Gestão de Categorias',
+                      drawerIcon: ({ size, color }) => (
+                        <MaterialIcons name="admin-panel-settings" size={size} color={color} />
+                      ),
+                    }}
+                  />
+                  <Drawer.Screen
+                    name="produto"
+                    options={{
+                      drawerLabel: 'Gestão de Produtos',
                       drawerIcon: ({ size, color }) => (
                         <MaterialIcons name="admin-panel-settings" size={size} color={color} />
                       ),
@@ -174,16 +192,12 @@ export default function Layout() {
                       drawerIcon: () => <FontAwesome5 name="eye" size={20} color="#545454" />,
                     }}
                   />
-
                   {/* Telas ocultas */}
-                  <Drawer.Screen name="categoria" options={{ drawerItemStyle: { display: 'none' } }} />
                   <Drawer.Screen name="novacategoria" options={{ drawerItemStyle: { display: 'none' } }} />
                   <Drawer.Screen name="visualizarcategorias" options={{ drawerItemStyle: { display: 'none' } }} />
                   <Drawer.Screen name="editarcategoria" options={{ drawerItemStyle: { display: 'none' } }} />
-                  <Drawer.Screen name="mesa" options={{ drawerItemStyle: { display: 'none' } }} />
                   <Drawer.Screen name="novamesa" options={{ drawerItemStyle: { display: 'none' } }} />
                   <Drawer.Screen name="editarmesa" options={{ drawerItemStyle: { display: 'none' } }} />
-                  <Drawer.Screen name="produto" options={{ drawerItemStyle: { display: 'none' } }} />
                   <Drawer.Screen name="novoproduto" options={{ drawerItemStyle: { display: 'none' } }} />
                   <Drawer.Screen name="editarproduto" options={{ drawerItemStyle: { display: 'none' } }} />
                   <Drawer.Screen name="FilaDePreparo" options={{ drawerItemStyle: { display: 'none' } }} />
@@ -191,6 +205,8 @@ export default function Layout() {
                   <Drawer.Screen name="pedidosdafila" options={{ drawerItemStyle: { display: 'none' } }} />
                   <Drawer.Screen name="revisarpedido" options={{ drawerItemStyle: { display: 'none' } }} />
                   <Drawer.Screen name="visualizarmesa" options={{ drawerItemStyle: { display: 'none' } }} />
+                  <Drawer.Screen name="administracao" options={{ drawerItemStyle: { display: 'none' } }} />
+                  <Drawer.Screen name="botaovoltar" options={{ drawerItemStyle: { display: 'none' } }} />
                 </Drawer>
               </FilaProvider>
             </PedidoProvider>

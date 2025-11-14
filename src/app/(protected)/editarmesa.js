@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { MesaContext } from '../../MesaContext';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import BotaoVoltar from '../(protected)/botaovoltar';
 
 export default function EditarMesa() {
   const { editarMesa, loading, id_restaurante } = useContext(MesaContext);
@@ -61,6 +62,7 @@ export default function EditarMesa() {
 
   return (
     <View style={styles.container}>
+      <BotaoVoltar destino="mesa" />
       <Text style={styles.titulo}>Editar Mesa</Text>
 
       <TextInput
