@@ -12,15 +12,24 @@ import {
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { ProdutoContext } from '../../ProdutoContext';
+import { CategoriaContext } from '../../CategoriaContext';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import BotaoVoltar from './botaovoltar';
 
 export default function EditarProduto() {
-  const { editarProduto, loading, id_restaurante } = useContext(ProdutoContext);
+  const { editarProduto, loading } = useContext(ProdutoContext);
+  const { categorias } = useContext(CategoriaContext);
+
   const navigation = useNavigation();
   const route = useRoute();
 
-  const produtoEditando = route.params?.produtoEditando || null;
+    let produtoEditando = route.params?.produtoEditando || null;
+    console.log("PRODUTO EDITANDO ===>", produtoEditando);
+
+
+  if (typeof produtoEditando === "string") {
+    produtoEditando = JSON.parse(produtoEditando);
+  }
 
   const [nome, setNome] = useState('');
   const [descricao, setDescricao] = useState('');
@@ -40,17 +49,13 @@ export default function EditarProduto() {
       );
       setImagem(produtoEditando.imagem ?? '');
     }
-  }, [produtoEditando]);
+  }, []);
 
   const escolherImagem = async () => {
     try {
-      const { status } =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert(
-          'Permissão negada',
-          'Você precisa permitir o acesso à galeria.'
-        );
+        Alert.alert('Permissão negada', 'Você precisa permitir o acesso à galeria.');
         return;
       }
 
@@ -62,8 +67,7 @@ export default function EditarProduto() {
       });
 
       if (!result.canceled) {
-        const uri = result.assets[0].uri;
-        setImagem(uri);
+        setImagem(result.assets[0].uri);
       }
     } catch (error) {
       console.error('Erro ao escolher imagem:', error);
@@ -72,6 +76,11 @@ export default function EditarProduto() {
   };
 
   const handleSalvar = async () => {
+  if (!produtoEditando?.id_produto) {
+    Alert.alert("Erro", "ID do produto não encontrado.");
+    return;
+  }
+
   try {
     await editarProduto(produtoEditando.id_produto, {
       nome,
@@ -79,14 +88,17 @@ export default function EditarProduto() {
       preco: Number(preco),
       tipo_preparo,
       imagem,
-      id_categoria: Number(produtoEditando.id_categoria) // Obrigatório
+      id_categoria: Number(id_categoria),
     });
-    alert("Produto atualizado!");
-    router.back();
+
+    Alert.alert("Sucesso", "Produto atualizado!");
+    navigation.goBack();
   } catch (e) {
     console.log("Erro ao editar:", e);
+    Alert.alert("Erro", "Não foi possível atualizar o produto.");
   }
 };
+
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -112,7 +124,7 @@ export default function EditarProduto() {
 
       <Text style={styles.label}>Descrição</Text>
       <TextInput
-        placeholder="Ex: Massa fina, molho artesanal, borda recheada..."
+        placeholder="Ex: massa fina, molho artesanal..."
         style={[styles.input, { height: 80 }]}
         value={descricao}
         onChangeText={setDescricao}
@@ -130,24 +142,36 @@ export default function EditarProduto() {
         placeholderTextColor="#A9A9A9"
       />
 
-      <Text style={styles.label}>Categoria (id)</Text>
-      <TextInput
-        placeholder="Ex: 2"
-        style={styles.input}
-        value={id_categoria}
-        onChangeText={setIdCategoria}
-        keyboardType="numeric"
-        placeholderTextColor="#A9A9A9"
-      />
 
-      <Text style={styles.label}>Tipo de Preparo</Text>
-      <TextInput
-        placeholder="Ex: Cozinha"
-        style={styles.input}
-        value={tipo_preparo}
-        onChangeText={setTipo_Preparo}
-        placeholderTextColor="#A9A9A9"
-      />
+      {/* 🔵 LISTA DE CATEGORIAS IGUAL AO NOVO PRODUTO */}
+      {categorias && categorias.length > 0 ? (
+        <View style={{ marginBottom: 20 }}>
+          <Text style={{ fontWeight: "bold", marginBottom: 5, color: "#0D3A87" }}>
+            Categoria referente:
+          </Text>
+
+          {categorias.map((cat, i) => (
+            <TouchableOpacity
+              key={i}
+              style={styles.checkboxContainer}
+              onPress={() => {
+                setTipo_Preparo(cat.nome);
+                setIdCategoria(String(cat.id_categoria));
+              }}
+            >
+              <View
+                style={[
+                  styles.checkbox,
+                  Number(id_categoria) === Number(cat.id_categoria) && styles.checkboxSelecionado
+                ]}
+              />
+              <Text style={{ marginLeft: 8 }}>{cat.nome}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      ) : (
+        <Text>Nenhuma categoria cadastrada.</Text>
+      )}
 
       <TouchableOpacity
         style={[styles.botaoSalvar, loading && { opacity: 0.7 }]}
@@ -183,27 +207,27 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     fontSize: 14,
   },
-  imagemContainer: {
-    alignSelf: 'center',
-    width: 130,
-    height: 130,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#0D3A87',
-    backgroundColor: '#E6E6E6',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 25,
-    marginTop: 15,
+   imagemContainer: {
+    width: "100%",
+    height: 200,
+    backgroundColor: "#e6ecf7",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 16,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    borderColor: "#c7d4e8",
+    overflow: "hidden",
   },
   imagem: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 10,
+    width: "100%",
+    height: "100%",
+    borderRadius: 14,
   },
   imagemPlaceholder: {
-    color: '#666',
-    fontSize: 14,
+    color: "#7a8797",
+    fontSize: 16,
+    fontWeight: "600",
   },
   input: {
     height: 50,
@@ -216,6 +240,25 @@ const styles = StyleSheet.create({
     fontSize: 16,
     backgroundColor: '#fff',
   },
+
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 6,
+  },
+  checkbox: {
+    width: 22,
+    height: 22,
+    borderWidth: 2,
+    borderColor: "#0D3A87",
+    borderRadius: 6,
+    backgroundColor: "#fff",
+  },
+  checkboxSelecionado: {
+    backgroundColor: "#0D3A87",
+    borderColor: "#062c66",
+  },
+
   botaoSalvar: {
     backgroundColor: '#0D3A87',
     paddingVertical: 15,

@@ -81,7 +81,7 @@ export function ProdutoProvider({ children }) {
     if (!res.ok) throw new Error(await res.text());
     await carregarProdutos();
   } catch (error) {
-    console.error('[ProdutoContext] editarProduto:', error.message);
+console.error('[ProdutoContext] editarProduto => ERRO COMPLETO:', JSON.stringify(error));
     throw error;
   } finally {
     setLoading(false);

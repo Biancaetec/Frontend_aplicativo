@@ -109,9 +109,10 @@ export default function NovoProduto() {
       {/* Campos do produto */}
       <TextInput style={styles.input} placeholder="Nome" value={nome} onChangeText={setNome} />
       <TextInput style={styles.input} placeholder="Descrição" value={descricao} onChangeText={setDescricao} />
-      <TextInput style={styles.input} placeholder="Tipo (1/2 ou Inteira)" value={tipo} onChangeText={setTipo} />
+      {/*<TextInput style={styles.input} placeholder="Tipo (1/2 ou Inteira)" value={tipo} onChangeText={setTipo} />*/}
       <TextInput style={styles.input} placeholder="Valor" keyboardType="numeric" value={valor} onChangeText={setValor} />
-      <TextInput style={styles.input} placeholder="Custo" keyboardType="numeric" value={custo} onChangeText={setCusto} />
+    
+      {/*<TextInput style={styles.input} placeholder="Custo" keyboardType="numeric" value={custo} onChangeText={setCusto} />*/}
 
       {/* Seção de categorias */}
       {categorias && categorias.length > 0 ? (
@@ -141,7 +142,7 @@ export default function NovoProduto() {
         </View>
       )}
 
-      {/* Seção de adicionais */}
+      {/* Seção de adicionais 
       <View style={styles.adicionaisSection}>
         <Text style={styles.titulo}>Adicionais</Text>
         {adicionais.map((item, i) => (
@@ -152,7 +153,7 @@ export default function NovoProduto() {
         <TouchableOpacity style={styles.botaoAdicional} onPress={adicionarNovoAdicional}>
           <Text style={styles.botaoTexto}>Adicionar Adicional</Text>
         </TouchableOpacity>
-      </View>
+      </View>*/}
 
       {/* Botão de salvar */}
       <TouchableOpacity style={styles.botaoSalvar} onPress={salvarProduto}>
@@ -164,25 +165,111 @@ export default function NovoProduto() {
 
 // ================= ESTILOS =================
 const styles = StyleSheet.create({
-  container: { padding: 16 },
-  imagemContainer: { width: '100%', height: 180, backgroundColor: '#ddd', justifyContent: 'center', alignItems: 'center', marginBottom: 12, borderRadius: 12 },
-  imagemTexto: { color: '#555' },
-  imagem: { width: '100%', height: '100%', borderRadius: 12 },
-  input: { borderWidth: 1, borderColor: '#aaa', borderRadius: 8, padding: 10, marginBottom: 10 },
-  adicionaisSection: { marginTop: 10 },
-  titulo: { fontWeight: 'bold', fontSize: 16, marginBottom: 5 },
-  botaoAdicional: { backgroundColor: '#004aad', padding: 10, borderRadius: 10, marginTop: 5, alignItems: 'center' },
-  botaoSalvar: { backgroundColor: 'green', padding: 14, borderRadius: 10, marginTop: 20, alignItems: 'center' },
-  botaoTexto: { color: '#fff', fontWeight: 'bold' },
-  checkboxContainer: { flexDirection: 'row', alignItems: 'center', marginBottom: 5 },
-  checkbox: { width: 20, height: 20, borderWidth: 1, borderColor: '#555', borderRadius: 4 },
-  checkboxSelecionado: { backgroundColor: '#004aad' },
+  container: {
+    padding: 20,
+    backgroundColor: "#f8f9fc",
+  },
+
   titulomaior: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: "#1E56A0",
+    fontSize: 24,
+    fontWeight: "800",
+    color: "#004aad",
     marginBottom: 20,
     textAlign: "center",
-    marginTop: 10
+  },
+
+  // --- IMAGEM ---
+  imagemContainer: {
+    width: "100%",
+    height: 200,
+    backgroundColor: "#e6ecf7",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 16,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    borderColor: "#c7d4e8",
+    overflow: "hidden",
+  },
+  imagemTexto: {
+    color: "#7a8797",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  imagem: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 14,
+  },
+
+  // --- INPUTS ---
+  input: {
+    borderWidth: 1.5,
+    borderColor: "#c7d4e8",
+    borderRadius: 10,
+    padding: 12,
+    backgroundColor: "#fff",
+    marginBottom: 12,
+    fontSize: 15,
+    elevation: 1,
+  },
+
+  // --- CHECKBOX CATEGORIA ---
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 6,
+  },
+  checkbox: {
+    width: 22,
+    height: 22,
+    borderWidth: 2,
+    borderColor: "#004aad",
+    borderRadius: 6,
+    backgroundColor: "#fff",
+  },
+  checkboxSelecionado: {
+    backgroundColor: "#004aad",
+    borderColor: "#003580",
+  },
+
+  // --- SEÇÃO ADICIONAIS ---
+  adicionaisSection: {
+    marginTop: 15,
+    padding: 10,
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#c7d4e8",
+  },
+  titulo: {
+    fontWeight: "bold",
+    fontSize: 16,
+    marginBottom: 8,
+    color: "#003580",
+  },
+
+  botaoAdicional: {
+    backgroundColor: "#004aad",
+    padding: 12,
+    borderRadius: 10,
+    marginTop: 10,
+    alignItems: "center",
+    elevation: 2,
+  },
+
+  // --- BOTÃO SALVAR ---
+  botaoSalvar: {
+    backgroundColor: "#00a200",
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: "center",
+    marginTop: 25,
+    elevation: 2,
+  },
+  botaoTexto: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 17,
   },
 });
