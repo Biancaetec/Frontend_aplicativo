@@ -1,72 +1,73 @@
-import { createContext, useState, useMemo } from 'react';
+import { createContext, useState, useEffect, useMemo } from 'react';
+import { useAuth } from './hooks/Auth/useAuth.js';
 
 export const PedidoContext = createContext();
 
 export function PedidoProvider({ children }) {
   const [itensSelecionados, setItensSelecionados] = useState([]);
-  // Estrutura: [{ id_produto, nome, preco, quantidade, id_categoria, nome_categoria }]
-  const [pedidosFinalizados, setPedidosFinalizados] = useState([]);
+  const [pedidosCompleto, setPedidosCompleto] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  // 🧩 Adiciona ou atualiza produto
+  const { user, loading: authLoading } = useAuth();
+
+  // ID do restaurante
+  const id_restaurante = useMemo(() => user?.restaurante?.id_restaurante, [user]);
+
+  const API_URL = 'https://automatic-train-wrvv54w5wg9whv455-3001.app.github.dev/api/pedido';
+
+  /* ============================================================
+     🧩 Adicionar / atualizar item no pedido
+  ============================================================ */
   const adicionarProduto = (produto, quantidade) => {
-    setItensSelecionados((prev) => {
-      const existente = prev.find(item => item.id_produto === produto.id_produto);
+    setItensSelecionados(prev => {
+      const existente = prev.find(p => p.id_produto === produto.id_produto);
 
       if (existente) {
-        // Atualiza a quantidade
         return prev.map(item =>
           item.id_produto === produto.id_produto
             ? { ...item, quantidade }
             : item
         );
-      } else {
-        // Adiciona novo produto incluindo nome da categoria
-        const nomeCategoria =
-          produto.nome_categoria ||
-          produto.categoria_nome || // caso venha com outro nome do back
-          `Categoria ${produto.id_categoria}`;
-        return [
-          ...prev,
-          { ...produto, quantidade, nome_categoria: nomeCategoria },
-        ];
       }
+
+      return [
+        ...prev,
+        {
+          ...produto,
+          quantidade,
+          nome_categoria:
+            produto.nome_categoria ||
+            produto.categoria_nome ||
+            `Categoria ${produto.id_categoria}`,
+        },
+      ];
     });
   };
 
-  // 🗑️ Remover produto
+  /* ============================================================
+     🗑 Remover item
+  ============================================================ */
   const removerProduto = (id_produto) => {
-    setItensSelecionados(prev => prev.filter(item => item.id_produto !== id_produto));
+    setItensSelecionados(prev =>
+      prev.filter(item => item.id_produto !== id_produto)
+    );
   };
 
-  // 💰 Calcular subtotal de cada item
+  /* ============================================================
+     💰 Subtotal & total
+  ============================================================ */
   const calcularSubtotal = (item) => item.preco * item.quantidade;
 
-  // 💵 Calcular total geral
   const totalPedido = useMemo(() => {
-    return itensSelecionados.reduce((acc, item) => acc + calcularSubtotal(item), 0);
+    return itensSelecionados.reduce(
+      (acc, item) => acc + calcularSubtotal(item),
+      0
+    );
   }, [itensSelecionados]);
 
-  // 🔖 Filtrar produtos por categoria
-  const getProdutosPorCategoria = (id_categoria) => {
-    return itensSelecionados.filter(item => item.id_categoria === id_categoria);
-  };
-
-  // 💾 Salvar categoria (não finaliza o pedido)
-  const salvarCategoria = (id_categoria) => {
-    const produtosDaCategoria = getProdutosPorCategoria(id_categoria);
-    console.log('Produtos salvos da categoria:', produtosDaCategoria);
-  };
-
-  // ✅ Revisar pedido completo
-  const revisarPedido = () => ({
-    produtos: itensSelecionados.map(item => ({
-      ...item,
-      subtotal: calcularSubtotal(item),
-    })),
-    total: totalPedido,
-  });
-
-  // 🧾 Agrupar produtos por categoria para exibir na tela de revisão
+  /* ============================================================
+     📦 Agrupamento por categoria
+  ============================================================ */
   const getResumoPedido = () => {
     const resumo = {};
 
@@ -87,46 +88,129 @@ export function PedidoProvider({ children }) {
     return resumo;
   };
 
-  // 💲 Obter total geral do pedido
-  const getTotalPedido = () => totalPedido;
+  /* ============================================================
+     🔎 Obter pedido formatado antes de enviar
+  ============================================================ */
+  const revisarPedido = () => ({
+    produtos: itensSelecionados.map(item => ({
+      ...item,
+      subtotal: calcularSubtotal(item),
+    })),
+    total: totalPedido,
+  });
 
-  // 🚀 Finalizar pedido (usado ao confirmar)
-  const fecharPedido = (mesaSelecionada) => {
+  /* ============================================================
+     🚀 Criar pedido completo (enviar ao backend)
+  ============================================================ */
+  const criarPedidoCompleto = async ({ numeroMesa }) => {
+    if (!id_restaurante) throw new Error('Usuário não autenticado');
+
     const pedido = revisarPedido();
 
     if (pedido.produtos.length === 0) {
-      alert("Não há produtos no pedido para confirmar!");
+      alert("Selecione ao menos 1 produto!");
       return;
     }
 
-    const novoPedido = {
-      id: Date.now(),
-      data: new Date().toLocaleString('pt-BR'),
-      total: pedido.total,
+    const payload = {
+      id_restaurante,
+      numero_mesa: numeroMesa,
       produtos: pedido.produtos,
-      status: 'Aguardando preparo',
-      numeroMesa: mesaSelecionada?.numero || "Desconhecida",
+      total: pedido.total,
     };
 
-    setPedidosFinalizados(prev => [...prev, novoPedido]);
-    setItensSelecionados([]);
-    console.log("Pedido finalizado:", novoPedido);
+    setLoading(true);
+
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error(await res.text());
+
+      await carregarPedidosCompleto();
+      setItensSelecionados([]);
+
+    } catch (err) {
+      console.error("[PedidoContext] criarPedidoCompleto:", err);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
   };
+
+  /* ============================================================
+     📥 Carregar todos pedidos completos
+  ============================================================ */
+  const carregarPedidosCompleto = async () => {
+    if (authLoading || !id_restaurante) return;
+
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_URL}?id_restaurante=${id_restaurante}`);
+      if (!res.ok) throw new Error(await res.text());
+
+      const data = await res.json();
+      setPedidosCompleto(data);
+
+    } catch (err) {
+      console.error("[PedidoContext] carregarPedidosCompleto:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* ============================================================
+     ❌ Excluir pedido completo
+  ============================================================ */
+  const excluirPedidoCompleto = async (id_pedido_completo) => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_URL}/${id_pedido_completo}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) throw new Error(await res.text());
+
+      await carregarPedidosCompleto();
+
+    } catch (err) {
+      console.error("[PedidoContext] excluirPedidoCompleto:", err);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* ============================================================
+     🔄 Requisição automática ao carregar
+  ============================================================ */
+  useEffect(() => {
+    if (!authLoading && id_restaurante) {
+      carregarPedidosCompleto();
+    }
+  }, [authLoading, id_restaurante]);
+
+  if (authLoading) return null;
+
   return (
     <PedidoContext.Provider
       value={{
         itensSelecionados,
-        pedidosFinalizados,
+        pedidosCompleto,
+        loading,
+
         adicionarProduto,
         removerProduto,
-        salvarCategoria,
-        getProdutosPorCategoria,
         revisarPedido,
-        fecharPedido,
         totalPedido,
         getResumoPedido,
-        getTotalPedido,
-        
+
+        criarPedidoCompleto,
+        carregarPedidosCompleto,
+        excluirPedidoCompleto,
       }}
     >
       {children}

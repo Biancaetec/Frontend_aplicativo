@@ -14,7 +14,7 @@ export function ProdutoProvider({ children }) {
 
   // console.log("Hook restaurante: ", id_restaurante);
 
-  const API_URL = 'https://turbo-guide-v6pprpwwjpjjh6gwx-3001.app.github.dev/api/produto';
+  const API_URL = 'https://automatic-train-wrvv54w5wg9whv455-3001.app.github.dev/api/produto';
 
   // Carregar produtos
   const carregarProdutos = async () => {

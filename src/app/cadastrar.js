@@ -11,7 +11,7 @@ export default function Cadastrar() {
   const [loading, setLoading] = useState(false);
 
   // SEM barra no final
-  const BASE_URL = 'https://turbo-guide-v6pprpwwjpjjh6gwx-3001.app.github.dev';
+  const BASE_URL = 'https://automatic-train-wrvv54w5wg9whv455-3001.app.github.dev';
   // const BASE_URL = 'https://turbo-guide-v6pprpwwjpjjh6gwx-3001.app.github.dev';
 
   const handleCadastrar = async () => {
