@@ -5,22 +5,49 @@ import { PedidoContext } from '../../PedidoContext';
 import { MesaContext } from '../../MesaContext';
 
 export default function RevisarPedido() {
-  const { getResumoPedido, getTotalPedido, fecharPedido } = useContext(PedidoContext);
+  const { getResumoPedido, criarPedidoCompleto } = useContext(PedidoContext);
   const router = useRouter();
   const { mesaSelecionada } = useContext(MesaContext);
-  const resumo = getResumoPedido();
-  const total = getTotalPedido();
-  const categorias = Object.keys(resumo);
 
-  const handleConfirmar = () => {
-    if (categorias.length === 0) {
+  // pegar o resumo (pode ser array, objeto por categoria ou undefined)
+  const resumoRaw = getResumoPedido();
+  // normalizar para array de itens
+  const itens = (() => {
+    if (!resumoRaw) return [];
+    if (Array.isArray(resumoRaw)) return resumoRaw;
+    // se for objeto agrupado por categoria: { "Bebidas": [...], "Lanches":[...] }
+    try {
+      return Object.values(resumoRaw).flat();
+    } catch {
+      return [];
+    }
+  })();
+
+  // total seguro (usa preco ou preco_unitario)
+  const total = itens.reduce((acc, item) => {
+    const preco = Number(item.preco ?? item.preco_unitario ?? 0);
+    const qtd = Number(item.quantidade ?? 0);
+    return acc + preco * qtd;
+  }, 0);
+
+  const handleConfirmar = async () => {
+    if (itens.length === 0) {
       Alert.alert('Aviso', 'Nenhum produto foi adicionado ao pedido.');
       return;
     }
 
-    fecharPedido(mesaSelecionada);
-    Alert.alert('Pedido Confirmado', 'O pedido foi enviado com sucesso!');
-    router.push('/visualizarmesa');
+    try {
+      // adaptar conforme sua implementação: criarPedidoCompleto espera mesaSelecionada ou { numeroMesa }
+      await criarPedidoCompleto({
+        numeroMesa: mesaSelecionada?.numero,
+        id_mesa: mesaSelecionada?.id_mesa
+      });
+      Alert.alert('Pedido Confirmado', 'O pedido foi enviado com sucesso!');
+      router.push('/visualizarmesa');
+    } catch (error) {
+      console.error('[RevisarPedido] erro ao confirmar:', error);
+      Alert.alert('Erro', 'Falha ao enviar o pedido. Tente novamente.');
+    }
   };
 
   return (
@@ -28,23 +55,20 @@ export default function RevisarPedido() {
       <Text style={styles.titulo}>Revisar Pedido</Text>
 
       <ScrollView style={styles.scroll}>
-        {categorias.length === 0 ? (
+        {itens.length === 0 ? (
           <Text style={styles.vazio}>Nenhum produto adicionado.</Text>
         ) : (
-          categorias.map((categoria, index) => (
-            <View key={index} style={styles.categoriaCard}>
-              <Text style={styles.nomeCategoria}>{categoria}</Text>
-              {resumo[categoria].map((item, i) => (
-                <View key={`${item.id_produto}-${i}`} style={styles.itemLinha}>
-                  <View style={styles.itemInfo}>
-                    <Text style={styles.itemNome}>{item.nome}</Text>
-                    <Text style={styles.itemQuantidade}>x{item.quantidade}</Text>
-                  </View>
-                  <Text style={styles.itemPreco}>
-                    R$ {(item.preco * item.quantidade).toFixed(2).replace('.', ',')}
-                  </Text>
+          itens.map((item, i) => (
+            <View key={`${item.id_produto ?? i}-${i}`} style={styles.categoriaCard}>
+              <View style={styles.itemLinha}>
+                <View style={styles.itemInfo}>
+                  <Text style={styles.itemNome}>{item.nome}</Text>
+                  <Text style={styles.itemQuantidade}>x{item.quantidade}</Text>
                 </View>
-              ))}
+                <Text style={styles.itemPreco}>
+                  R$ {( (Number(item.preco ?? item.preco_unitario ?? 0) * Number(item.quantidade ?? 0)) ).toFixed(2).replace('.', ',')}
+                </Text>
+              </View>
             </View>
           ))
         )}

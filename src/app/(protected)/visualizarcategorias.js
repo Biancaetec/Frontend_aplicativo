@@ -16,12 +16,10 @@ import { MesaContext } from "../../MesaContext";
 export default function VisualizarCategorias() {
   const router = useRouter();
   const { mesaSelecionada } = useContext(MesaContext);
-  const { categorias, carregarCategorias, loading: loadingCategorias } =
-    useContext(CategoriaContext);
-  const { produtos, carregarProdutos, carregarProdutosPorCategoria, loading } =
-    useContext(ProdutoContext);
-  const { adicionarProduto, salvarCategoria } = useContext(PedidoContext);
-
+  const { categorias, carregarCategorias, loading: loadingCategorias } = useContext(CategoriaContext);
+  const { produtos, carregarProdutos, carregarProdutosPorCategoria, loading } = useContext(ProdutoContext);
+  const { adicionarProduto } = useContext(PedidoContext);
+  
   const [categoriaSelecionada, setCategoriaSelecionada] = useState(null);
   const [produtosFiltrados, setProdutosFiltrados] = useState([]);
   const [quantidades, setQuantidades] = useState({}); // controle de qtd por produto
@@ -56,13 +54,14 @@ export default function VisualizarCategorias() {
       (p) => quantidades[p.id_produto] > 0
     );
 
-    if (selecionados.length === 0) return alert("Selecione ao menos um produto!");
+    if (selecionados.length === 0) {
+      return alert("Selecione ao menos um produto!");
+    }
 
     selecionados.forEach((produto) => {
       adicionarProduto(produto, quantidades[produto.id_produto]);
     });
 
-    salvarCategoria(categoriaSelecionada.id_categoria);
     alert("Categoria salva com sucesso!");
     setQuantidades({});
     setCategoriaSelecionada(null);

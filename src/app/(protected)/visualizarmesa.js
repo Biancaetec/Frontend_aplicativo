@@ -1,43 +1,61 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import { PedidoContext } from '../../PedidoContext'; // ajuste o caminho conforme sua estrutura
+import { PedidoContext } from '../../PedidoContext';
 import { MesaContext } from '../../MesaContext';
 
 export default function VisualizarMesa() {
     const router = useRouter();
-    const { pedidosFinalizados } = useContext(PedidoContext);
+    const { pedidosCompleto, carregarPedidosCompleto } = useContext(PedidoContext);
     const { mesaSelecionada } = useContext(MesaContext);
 
-    const pedidosMesa = pedidosFinalizados.filter(
-        p => p.numeroMesa === mesaSelecionada?.numero
+    useEffect(() => {
+        carregarPedidosCompleto();
+    }, []);
+
+    if (!mesaSelecionada) {
+        return (
+            <View style={styles.container}>
+                <Text style={styles.vazio}>Nenhuma mesa selecionada.</Text>
+            </View>
+        );
+    }
+
+    // Filtrar apenas os pedidos da mesa atual
+    const pedidosMesa = (pedidosCompleto ?? []).filter(
+        p => p.id_mesa === mesaSelecionada.id_mesa
     );
 
     return (
         <View style={styles.container}>
-            <Text style={styles.titulo}>Mesa {mesaSelecionada?.numero}</Text>
+            <Text style={styles.titulo}>Mesa {mesaSelecionada.numero}</Text>
+
             {pedidosMesa.length === 0 ? (
                 <Text style={styles.vazio}>Nenhum pedido realizado ainda.</Text>
             ) : (
                 <FlatList
                     data={pedidosMesa}
-                    keyExtractor={(item) => item.id.toString()}
+                    keyExtractor={(item) => item.id_pedido.toString()}
                     renderItem={({ item }) => (
                         <View style={styles.pedidoCard}>
                             <View style={styles.pedidoHeader}>
-                                <Text style={styles.pedidoId}>Pedido #{item.id}</Text>
-                                <Text style={styles.pedidoData}>{item.data}</Text>
+                                <Text style={styles.pedidoId}>Pedido #{item.id_pedido}</Text>
+                                <Text style={styles.pedidoData}>
+                                    {new Date(item.data_abertura).toLocaleString()}
+                                </Text>
                             </View>
 
                             <FlatList
-                                data={item.produtos}
+                                data={item.itens}
                                 keyExtractor={(prod) => prod.id_produto.toString()}
                                 renderItem={({ item: prod }) => (
                                     <View style={styles.produtoLinha}>
-                                        <Text style={styles.produtoNome}>{prod.nome}</Text>
+                                        <Text style={styles.produtoNome}>{prod.nome_produto}</Text>
                                         <Text style={styles.produtoQtd}>x{prod.quantidade}</Text>
                                         <Text style={styles.produtoPreco}>
-                                            R$ {(prod.preco * prod.quantidade).toFixed(2).replace('.', ',')}
+                                            R$ {(prod.preco_unitario * prod.quantidade)
+                                                .toFixed(2)
+                                                .replace('.', ',')}
                                         </Text>
                                     </View>
                                 )}
@@ -46,7 +64,7 @@ export default function VisualizarMesa() {
                             <View style={styles.totalContainer}>
                                 <Text style={styles.totalTexto}>Total:</Text>
                                 <Text style={styles.totalValor}>
-                                    R$ {item.total.toFixed(2).replace('.', ',')}
+                                    R$ {item.valor_total.toFixed(2).replace('.', ',')}
                                 </Text>
                             </View>
 
@@ -58,7 +76,7 @@ export default function VisualizarMesa() {
 
             <TouchableOpacity
                 style={styles.botaoAdicionar}
-                onPress={() => router.push('/visualizacao')} // ajuste o caminho da tela inicial
+                onPress={() => router.push('/visualizacao')}
             >
                 <Text style={styles.textoBotao}>Adicionar Pedido</Text>
             </TouchableOpacity>

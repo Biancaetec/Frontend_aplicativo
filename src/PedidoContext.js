@@ -13,7 +13,8 @@ export function PedidoProvider({ children }) {
   // ID do restaurante
   const id_restaurante = useMemo(() => user?.restaurante?.id_restaurante, [user]);
 
-  const API_URL = 'https://automatic-train-wrvv54w5wg9whv455-3001.app.github.dev/api/pedido';
+  //const API_URL = 'https://automatic-train-wrvv54w5wg9whv455-3001.app.github.dev/api/pedido';
+  const API_URL = 'https://special-invention-9769xr99qw56hx95x-3001.app.github.dev/api/pedidocompleto';
 
   /* ============================================================
      🧩 Adicionar / atualizar item no pedido
@@ -102,7 +103,7 @@ export function PedidoProvider({ children }) {
   /* ============================================================
      🚀 Criar pedido completo (enviar ao backend)
   ============================================================ */
-  const criarPedidoCompleto = async ({ numeroMesa }) => {
+  const criarPedidoCompleto = async ({ numeroMesa, id_mesa }) => {
     if (!id_restaurante) throw new Error('Usuário não autenticado');
 
     const pedido = revisarPedido();
@@ -113,16 +114,30 @@ export function PedidoProvider({ children }) {
     }
 
     const payload = {
-      id_restaurante,
-      numero_mesa: numeroMesa,
-      produtos: pedido.produtos,
-      total: pedido.total,
+      id_mesa: id_mesa,
+      id_usuario: user?.restaurante?.id_usuario,
+      observacoes: null,
+      valor_total: pedido.total,
+      status: "pendente",
+      tipo_preparo: "normal",
+
+      itens: pedido.produtos.map(p => ({
+        id_produto: p.id_produto,
+        quantidade: p.quantidade,
+        preco_unitario: p.preco,
+        tipo_porção: "inteira",
+        status: "aguardando"
+      }))
     };
 
     setLoading(true);
 
     try {
-      const res = await fetch(API_URL, {
+      console.log("numeroMesa:", numeroMesa);
+      console.log("user:", user);
+      console.log("id_usuario (certo):", user?.restaurante?.id_usuario);
+      console.log("PAYLOAD ENVIADO:", payload);
+      const res = await fetch(`${API_URL}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -201,13 +216,11 @@ export function PedidoProvider({ children }) {
         itensSelecionados,
         pedidosCompleto,
         loading,
-
         adicionarProduto,
         removerProduto,
         revisarPedido,
         totalPedido,
         getResumoPedido,
-
         criarPedidoCompleto,
         carregarPedidosCompleto,
         excluirPedidoCompleto,
