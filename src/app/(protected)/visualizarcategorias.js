@@ -12,6 +12,7 @@ import { CategoriaContext } from "../../CategoriaContext";
 import { ProdutoContext } from "../../ProdutoContext";
 import { PedidoContext } from "../../PedidoContext";
 import { MesaContext } from "../../MesaContext";
+import BotaoVoltar from './botaovoltar';
 
 export default function VisualizarCategorias() {
   const router = useRouter();
@@ -78,6 +79,7 @@ export default function VisualizarCategorias() {
 
   return (
     <View style={styles.container}>
+      <BotaoVoltar destino="visualizacao" />
       <Text style={styles.titulo}>Mesa {mesaSelecionada?.numero}</Text>
 
       {/* Lista de categorias */}

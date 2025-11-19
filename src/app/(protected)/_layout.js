@@ -33,10 +33,17 @@ function CustomHeader() {
 
   const handleFilaPress = () => setMostrarFilas(prev => !prev);
 
-  const selecionarFila = (fila) => {
-    setMostrarFilas(false);
-    navigation.navigate('pedidosdafila', { filaNome: fila.nome });
+  // Função para selecionar a fila e navegar
+  const selecionarFila = (cat) => {
+    setMostrarFilas(false); // Fecha o dropdown de categorias
+    // Chama a função para carregar a fila de preparo da categoria
+    getFilaPreparoPorCategoria(cat.id_categoria).then(fila => {
+      // Navega para a tela 'pedidosdafila' passando a fila e a categoria
+      navigation.navigate('pedidosdafila', { fila: fila, categoria: cat });
+    });
   };
+
+
 
   return (
     <View style={headerStyles.headerWrapper}>
@@ -45,17 +52,21 @@ function CustomHeader() {
           style={headerStyles.leftContainer}
           onPress={() => navigation.toggleDrawer()}
         >
-          <FontAwesome5 name="bars" size={18} color="#fff" />
-          <Text style={headerStyles.headerTitle}>Filtrar</Text>
+          <View style={headerStyles.iconWithLabel}>
+            <MaterialIcons name="menu" size={40} color="#fff" />
+          </View>
         </TouchableOpacity>
 
         <View style={headerStyles.rightIcons}>
-          <TouchableOpacity style={headerStyles.iconButton} onPress={handleFilaPress}>
-            <FontAwesome5 name="clock" size={20} color="#fff" />
+          <TouchableOpacity style={headerStyles.iconButton} onPress={() => router.push('/pedidosdafila')}>
+            <View style={headerStyles.iconWithLabel}>
+              <MaterialIcons name="access-time-filled" size={30} color="#fff" />
+              <Text style={headerStyles.iconLabel}>Fila de Preparo</Text>
+            </View>
           </TouchableOpacity>
         </View>
       </View>
-
+{/** 
       {mostrarFilas && (
         <View style={headerStyles.filasDropdown}>
           <Text style={headerStyles.filasTitulo}>Fila de preparo</Text>
@@ -64,9 +75,12 @@ function CustomHeader() {
               {categorias.map((cat, i) => (
                 <TouchableOpacity
                   key={i}
-                  onPress={() => setCategoriaSelecionada(cat.nome)}
+                  onPress={() => {
+                    setCategoriaSelecionada(cat.nome);
+                    selecionarFila(cat); // Chama a função para selecionar a fila da categoria
+                  }}
                 >
-                  <Text onPress={() => router.push('/categoria')}>{cat.nome}</Text>
+                  <Text>{cat.nome}</Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -82,7 +96,8 @@ function CustomHeader() {
             </View>
           )}
         </View>
-      )}
+      )}*/}
+
     </View>
   );
 }
@@ -92,7 +107,7 @@ function CustomDrawerContent(props) {
   const { signOut, user } = useAuth();
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.drawerWrapper}>
       <View style={styles.areaperfil}>
         <Image style={styles.imagemperfil} />
         <Text style={styles.nomeusuario}>
@@ -100,18 +115,18 @@ function CustomDrawerContent(props) {
         </Text>
       </View>
 
-      <DrawerContentScrollView {...props}>
-        <DrawerItemList {...props} />
+      <DrawerContentScrollView {...props} contentContainerStyle={styles.drawerScroll}>
+        <DrawerItemList {...props} itemStyle={styles.drawerItem} labelStyle={styles.drawerLabel} />
       </DrawerContentScrollView>
 
       <TouchableOpacity
-        style={styles.button}
+        style={styles.buttonDrawer}
         onPress={() => {
           signOut();
           router.replace('/');
         }}
       >
-        <Text style={{ color: 'white', fontSize: 15 }}>Sair</Text>
+        <Text style={styles.buttonDrawerText}>Sair</Text>
       </TouchableOpacity>
     </View>
   );
@@ -190,8 +205,8 @@ export default function Layout() {
                     name="visualizacao"
                     options={{
                       drawerLabel: 'Visualização',
-                      drawerIcon: () => 
-                      <MaterialIcons name="view-comfy" size={20} color="#545454" />,
+                      drawerIcon: () =>
+                        <MaterialIcons name="view-comfy" size={20} color="#545454" />,
                     }}
                   />
                   {/* Telas ocultas */}
@@ -222,73 +237,128 @@ export default function Layout() {
 // ================= ESTILOS =================
 const headerStyles = StyleSheet.create({
   headerWrapper: {
-    backgroundColor: '#fff',
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight + 10 : 40,
-    paddingBottom: 5,
+    backgroundColor: '#004aad',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight + 38 : 48,
+    paddingBottom: 8,
     zIndex: 10,
   },
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#004aad',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 25,
-    marginHorizontal: 10,
-    marginTop: 50,
+    backgroundColor: 'transparent',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 12,
+    marginHorizontal: 12,
+    marginTop: Platform.OS === 'android' ? 34 : 36,
   },
   leftContainer: { flexDirection: 'row', alignItems: 'center' },
-  headerTitle: { color: '#fff', fontSize: 16, fontWeight: '500', marginLeft: 8 },
+  headerTitle: { color: '#fff', fontSize: 22, fontWeight: '700', marginLeft: 10 },
   rightIcons: { flexDirection: 'row', alignItems: 'center' },
   iconButton: { marginLeft: 12 },
+  iconWithLabel: { alignItems: 'center', justifyContent: 'center' },
+  iconLabel: { color: '#fff', fontSize: 12, marginTop: 4, fontWeight: '600' },
   filasDropdown: {
     position: 'absolute',
-    top: Platform.OS === 'android' ? StatusBar.currentHeight + 60 : 100,
-    right: 20,
-    width: 200,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 12,
-    padding: 10,
-    maxHeight: 250,
+    top: Platform.OS === 'android' ? StatusBar.currentHeight + 110 : 150,
+    right: 12,
+    width: 220,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 8,
+    maxHeight: 280,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.18,
+    shadowRadius: 6,
+    elevation: 6,
     zIndex: 100,
   },
   filasTitulo: { fontSize: 16, fontWeight: 'bold', marginBottom: 6 },
 });
 
 const styles = StyleSheet.create({
+  drawerWrapper: {
+    flex: 1,
+    backgroundColor: '#f4f7fb',
+    // Gradiente fake usando cor sólida, para gradiente real use expo-linear-gradient
+  },
   areaperfil: {
     marginTop: 0,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#004aad',
-    paddingVertical: 90,
+    paddingVertical: 60,
     paddingBottom: 20,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.18,
+    shadowRadius: 8,
+    elevation: 8,
   },
   imagemperfil: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    borderWidth: 2,
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    borderWidth: 3,
     borderColor: '#fff',
-    marginBottom: 12,
+    marginBottom: 10,
+    backgroundColor: '#e0e7ef',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.18,
+    shadowRadius: 6,
+    elevation: 6,
   },
-  nomeusuario: { color: '#fff', fontSize: 18, fontWeight: '600' },
-  button: {
-    backgroundColor: '#000',
-    padding: 10,
-    borderRadius: 5,
-    marginTop: 35,
+  nomeusuario: {
+    color: '#fff',
+    fontSize: 22,
+    fontWeight: '700',
+    marginTop: 4,
+    letterSpacing: 0.5,
+    textShadowColor: '#003366',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  drawerScroll: {
+    paddingTop: 10,
+    paddingBottom: 10,
+  },
+  drawerItem: {
+    borderRadius: 12,
+    marginVertical: 2,
+    marginHorizontal: 8,
+    backgroundColor: '#e0e7ef',
+    elevation: 1,
+  },
+  drawerLabel: {
+    fontSize: 17,
+    color: '#004aad',
+    fontWeight: '600',
+    marginLeft: 8,
+  },
+  buttonDrawer: {
+    backgroundColor: '#004aad',
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 30,
     alignItems: 'center',
-    width: 200,
-    marginBottom: 20,
-    marginLeft: 35,
+    marginTop: 30,
+    marginBottom: 30,
+    alignSelf: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.18,
+    shadowRadius: 6,
+    elevation: 6,
+  },
+  buttonDrawerText: {
+    color: '#fff',
+    fontSize: 17,
+    fontWeight: '700',
+    letterSpacing: 1,
   },
 });

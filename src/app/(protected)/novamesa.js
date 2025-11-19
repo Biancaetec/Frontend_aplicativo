@@ -44,7 +44,8 @@ export default function NovaMesa() {
   return (
     <View style={styles.container}>
       <Text style={styles.titulo}>Cadastro de Mesa</Text>
-      <BotaoVoltar destino="mesa" />
+      <BotaoVoltar destino="FilaDePreparo" />
+      <BotaoVoltar destino="pedidosdafila" />
 
       <TextInput
         placeholder="Número da mesa"

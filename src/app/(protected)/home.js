@@ -1,68 +1,45 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, StatusBar, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MesaContext } from '../../MesaContext';
 import { router } from 'expo-router';
 
-export default function TelaPedidos() {
-  const [abaAtiva, setAbaAtiva] = useState('Pedidos');
-  const { mesas, selecionarMesa } = useContext(MesaContext); // adiciona selecionarMesa do contexto
+export default function TelaMesas() {
+  const { mesas, selecionarMesa } = useContext(MesaContext);
 
   const mesasOrdenadas = [...mesas].sort((a, b) => a.numero - b.numero);
 
   function handleSelecionarMesa(mesa) {
-    selecionarMesa(mesa); // salva no contexto
-    router.push('/visualizarmesa'); // navega pra tela
+    selecionarMesa(mesa);
+    router.push('/visualizarmesa');
   }
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
 
-      {/* Menu de Abas */}
-      <View style={styles.headerRow}>
-        <TouchableOpacity
-          style={[styles.linha, abaAtiva === 'Pedidos' && styles.linhaAtiva]}
-          onPress={() => setAbaAtiva('Pedidos')}
-        >
-          <Text style={[styles.texto, abaAtiva === 'Pedidos' && styles.textoAtivo]}>
-            Pedidos
-          </Text>
-        </TouchableOpacity>
+      <Text style={styles.titulo}>Visualização das Mesas</Text>
 
-        <TouchableOpacity
-          style={[styles.linha, abaAtiva === 'Mesa' && styles.linhaAtiva]}
-          onPress={() => setAbaAtiva('Mesa')}
-        >
-          <Text style={[styles.texto, abaAtiva === 'Mesa' && styles.textoAtivo]}>
-            Mesa
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Área de conteúdo */}
-      <View style={styles.dentroLinhaAtiva}>
-        {abaAtiva === 'Pedidos' ? (
-          <Text>📋 Lista de pedidos aqui...</Text>
-        ) : (
-          <FlatList
-            data={mesasOrdenadas}
-            keyExtractor={(item) => item.id_mesa.toString()}
-            numColumns={3}
-            columnWrapperStyle={{ justifyContent: 'space-around', marginBottom: 16 }}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={styles.mesaquadradinho}
-                onPress={() => handleSelecionarMesa(item)}
-              >
-                <Text style={styles.mesaTexto}>{item.numero}</Text>
-              </TouchableOpacity>
-            )}
-          />
+      <FlatList
+        data={mesasOrdenadas}
+        keyExtractor={(item) => item.id_mesa.toString()}
+        numColumns={3}
+        contentContainerStyle={{ paddingTop: 20 }}
+        columnWrapperStyle={{
+          justifyContent: 'space-between',
+          marginBottom: 20,
+        }}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={styles.mesa}
+            onPress={() => handleSelecionarMesa(item)}
+          >
+            <Text style={styles.numeroMesa}>{item.numero}</Text>
+          </TouchableOpacity>
         )}
-      </View>
+      />
 
-      {/* Botão Novo Pedido */}
+      {/* 🔵 Botão Novo Pedido */}
       <TouchableOpacity
         onPress={() => router.push('/visualizacao')}
         style={styles.botaopedido}
@@ -74,44 +51,58 @@ export default function TelaPedidos() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
-  linha: {
-    paddingVertical: 10,
+  container: {
     flex: 1,
-    alignItems: 'center',
+    backgroundColor: '#f8f8f8',
+    paddingHorizontal: 20,
+    paddingBottom: '-30',
+    paddingTop: '-20',
   },
-  linhaAtiva: {
-    borderBottomWidth: 2,
-    borderBottomColor: '#1E56A0',
+
+  titulo: {
+    marginTop: 10,
+    fontSize: 26,
+    fontWeight: 'bold',
+    color: '#1E56A0',
+    textAlign: 'center',
   },
-  texto: { fontWeight: 'bold', fontSize: 16, color: '#333' },
-  textoAtivo: { color: '#1E56A0' },
-  dentroLinhaAtiva: { flex: 1, padding: 16 },
-  botaopedido: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    backgroundColor: '#1E56A0',
-    paddingVertical: 10,
-    width: '50%',
-    borderRadius: 25,
-    alignItems: 'center',
-  },
-  textobotao: { color: '#fff', fontSize: 16, fontWeight: '600' },
-  mesaquadradinho: {
-    width: '28%',
+
+  mesa: {
+    width: '30%',
     aspectRatio: 1,
-    borderWidth: 2,
-    borderColor: '#00ad00ff',
-    borderRadius: 12,
+    backgroundColor: '#1E56A015',
+    borderRadius: 14,
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#1E56A0',
   },
-  mesaTexto: { fontSize: 18, fontWeight: 'bold', color: '#000000ff' },
+
+  numeroMesa: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#1E56A0',
+  },
+
+  botaopedido: {
+    position: 'absolute',
+    bottom: 30,
+    right: 30,
+    backgroundColor: '#1E56A0',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 30,
+    elevation: 3,
+    width: '50%',
+    height: '12%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  
+  },
+
+  textobotao: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '600',
+  },
 });

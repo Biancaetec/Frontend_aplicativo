@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import React, { useContext, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, TextInput } from 'react-native';
 import { useRouter } from 'expo-router';
 import { PedidoContext } from '../../PedidoContext';
 import { MesaContext } from '../../MesaContext';
@@ -8,6 +8,7 @@ export default function RevisarPedido() {
   const { getResumoPedido, criarPedidoCompleto } = useContext(PedidoContext);
   const router = useRouter();
   const { mesaSelecionada } = useContext(MesaContext);
+  const [observacoes, setObservacoes] = useState('');
 
   // pegar o resumo (pode ser array, objeto por categoria ou undefined)
   const resumoRaw = getResumoPedido();
@@ -40,7 +41,8 @@ export default function RevisarPedido() {
       // adaptar conforme sua implementação: criarPedidoCompleto espera mesaSelecionada ou { numeroMesa }
       await criarPedidoCompleto({
         numeroMesa: mesaSelecionada?.numero,
-        id_mesa: mesaSelecionada?.id_mesa
+        id_mesa: mesaSelecionada?.id_mesa,
+        observacoes: observacoes || null,
       });
       Alert.alert('Pedido Confirmado', 'O pedido foi enviado com sucesso!');
       router.push('/visualizarmesa');
@@ -72,6 +74,18 @@ export default function RevisarPedido() {
             </View>
           ))
         )}
+
+        {/* Campo observações estilizado */}
+        <View style={styles.observacoesContainer}>
+          <Text style={styles.observacoesLabel}>Observações</Text>
+          <TextInput
+            value={observacoes}
+            onChangeText={setObservacoes}
+            placeholder="Ex.: sem cebola, trocar acompanhamento..."
+            style={styles.observacoesInput}
+            multiline
+          />
+        </View>
       </ScrollView>
 
       <View style={styles.rodape}>
@@ -140,4 +154,32 @@ const styles = StyleSheet.create({
   },
   textoBotao: { color: '#fff', fontSize: 16, fontWeight: '600' },
   vazio: { textAlign: 'center', color: '#777', fontSize: 16, marginTop: 40 },
+  observacoesContainer: {
+    backgroundColor: '#f4f8ff',
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#cdd7ee',
+    shadowColor: '#004aad',
+    shadowOpacity: 0.07,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+  },
+  observacoesLabel: {
+    fontWeight: '700',
+    fontSize: 16,
+    color: '#004aad',
+    marginBottom: 8,
+  },
+  observacoesInput: {
+    borderWidth: 1,
+    borderColor: '#b0c4de',
+    borderRadius: 8,
+    padding: 12,
+    minHeight: 48,
+    backgroundColor: '#fff',
+    fontSize: 15,
+    color: '#222',
+  },
 });
