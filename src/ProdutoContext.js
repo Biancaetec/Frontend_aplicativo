@@ -157,8 +157,8 @@ export function ProdutoProvider({ children }) {
   // ID do restaurante
   const id_restaurante = useMemo(() => user?.restaurante?.id_restaurante, [user]);
 
-//const API_URL = 'https://automatic-train-wrvv54w5wg9whv455-3001.app.github.dev/api/produto';
-  const API_URL = 'https://special-invention-9769xr99qw56hx95x-3001.app.github.dev/api/produto';
+  const API_URL = 'https://automatic-train-wrvv54w5wg9whv455-3001.app.github.dev/api/produto';
+  //const API_URL = 'https://special-invention-9769xr99qw56hx95x-3001.app.github.dev/api/produto';
 
   // 🔹 Carregar produtos filtrando pelo restaurante
   const carregarProdutos = async () => {
