@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Drawer } from 'expo-router/drawer';
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
@@ -66,7 +66,7 @@ function CustomHeader() {
           </TouchableOpacity>
         </View>
       </View>
-{/** 
+      {/** 
       {mostrarFilas && (
         <View style={headerStyles.filasDropdown}>
           <Text style={headerStyles.filasTitulo}>Fila de preparo</Text>
@@ -143,93 +143,94 @@ export default function Layout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <MesaProvider>
-        <CategoriaProvider>
-          <ProdutoProvider>
-            <PedidoProvider>
-              <FilaProvider>
-                <Drawer
-                  screenOptions={{
-                    drawerActiveTintColor: '#004aad',
-                    drawerInactiveTintColor: '#555',
-                    drawerLabelStyle: { fontSize: 16 },
-                    drawerStyle: { backgroundColor: '#fff' },
-                  }}
-                  drawerContent={(props) => <CustomDrawerContent {...props} />}
-                >
-                  <Drawer.Screen
-                    name="home"
-                    options={{
-                      drawerLabel: 'Início',
-                      header: () => <CustomHeader />,
-                      drawerIcon: ({ size, color }) => (
-                        <MaterialIcons name="home" size={size} color={color} />
-                      ),
+        <MesaProvider>
+          <CategoriaProvider>
+            <ProdutoProvider>
+              <PedidoProvider>
+                <FilaProvider>
+                  <Drawer
+                    screenOptions={{
+                      drawerActiveTintColor: '#004aad',
+                      drawerInactiveTintColor: '#555',
+                      drawerLabelStyle: { fontSize: 16 },
+                      drawerStyle: { backgroundColor: '#fff' },
                     }}
-                  />
-                  <Drawer.Screen
-                    name="mesa"
-                    options={{
-                      drawerLabel: 'Gestão de Mesas',
-                      drawerIcon: ({ size, color }) => (
-                        <MaterialIcons name="table-bar" size={size} color={color} />
-                      ),
-                    }}
-                  />
-                  <Drawer.Screen
-                    name="categoria"
-                    options={{
-                      drawerLabel: 'Gestão de Categorias',
-                      drawerIcon: ({ size, color }) => (
-                        <MaterialIcons name="category" size={size} color={color} />
-                      ),
-                    }}
-                  />
-                  <Drawer.Screen
-                    name="produto"
-                    options={{
-                      drawerLabel: 'Gestão de Produtos',
-                      drawerIcon: ({ size, color }) => (
-                        <MaterialIcons name="shopping-cart" size={size} color={color} />
-                      ),
-                    }}
-                  />
-                  <Drawer.Screen
-                    name="pedidosfechados"
-                    options={{
-                      drawerLabel: 'Pedidos Fechados',
-                      drawerIcon: () => <MaterialIcons name="check-box" size={20} color="#545454" />,
-                    }}
-                  />
-                  <Drawer.Screen
-                    name="visualizacao"
-                    options={{
-                      drawerLabel: 'Visualização',
-                      drawerIcon: () =>
-                        <MaterialIcons name="view-comfy" size={20} color="#545454" />,
-                    }}
-                  />
-                  {/* Telas ocultas */}
-                  <Drawer.Screen name="novacategoria" options={{ drawerItemStyle: { display: 'none' } }} />
-                  <Drawer.Screen name="visualizarcategorias" options={{ drawerItemStyle: { display: 'none' } }} />
-                  <Drawer.Screen name="editarcategoria" options={{ drawerItemStyle: { display: 'none' } }} />
-                  <Drawer.Screen name="novamesa" options={{ drawerItemStyle: { display: 'none' } }} />
-                  <Drawer.Screen name="editarmesa" options={{ drawerItemStyle: { display: 'none' } }} />
-                  <Drawer.Screen name="novoproduto" options={{ drawerItemStyle: { display: 'none' } }} />
-                  <Drawer.Screen name="editarproduto" options={{ drawerItemStyle: { display: 'none' } }} />
-                  <Drawer.Screen name="FilaDePreparo" options={{ drawerItemStyle: { display: 'none' } }} />
-                  <Drawer.Screen name="novafila" options={{ drawerItemStyle: { display: 'none' } }} />
-                  <Drawer.Screen name="pedidosdafila" options={{ drawerItemStyle: { display: 'none' } }} />
-                  <Drawer.Screen name="revisarpedido" options={{ drawerItemStyle: { display: 'none' } }} />
-                  <Drawer.Screen name="visualizarmesa" options={{ drawerItemStyle: { display: 'none' } }} />
-                  <Drawer.Screen name="administracao" options={{ drawerItemStyle: { display: 'none' } }} />
-                  <Drawer.Screen name="botaovoltar" options={{ drawerItemStyle: { display: 'none' } }} />
-                </Drawer>
-              </FilaProvider>
-            </PedidoProvider>
-          </ProdutoProvider>
-        </CategoriaProvider>
-      </MesaProvider>
+                    drawerContent={(props) => <CustomDrawerContent {...props} />}
+                  >
+                    <Drawer.Screen
+                      name="home"
+                      options={{
+                        drawerLabel: 'Início',
+                        header: () => <CustomHeader />,
+                        drawerIcon: ({ size, color }) => (
+                          <MaterialIcons name="home" size={size} color={color} />
+                        ),
+                      }}
+                    />
+                    <Drawer.Screen
+                      name="mesa"
+                      options={{
+                        drawerLabel: 'Gestão de Mesas',
+                        drawerIcon: ({ size, color }) => (
+                          <MaterialIcons name="table-bar" size={size} color={color} />
+                        ),
+                      }}
+                    />
+                    <Drawer.Screen
+                      name="categoria"
+                      options={{
+                        drawerLabel: 'Gestão de Categorias',
+                        drawerIcon: ({ size, color }) => (
+                          <MaterialIcons name="category" size={size} color={color} />
+                        ),
+                      }}
+                    />
+                    <Drawer.Screen
+                      name="produto"
+                      options={{
+                        drawerLabel: 'Gestão de Produtos',
+                        drawerIcon: ({ size, color }) => (
+                          <MaterialIcons name="shopping-cart" size={size} color={color} />
+                        ),
+                      }}
+                    />
+                    <Drawer.Screen
+                      name="pedidosfechados"
+                      options={{
+                        drawerLabel: 'Pedidos Fechados',
+                        drawerIcon: () => <MaterialIcons name="check-box" size={20} color="#545454" />,
+                      }}
+                    />
+                    <Drawer.Screen
+                      name="visualizacao"
+                      options={{
+                        drawerLabel: 'Visualização',
+                        drawerIcon: () =>
+                          <MaterialIcons name="view-comfy" size={20} color="#545454" />,
+                      }}
+                    />
+
+                    {/* Telas ocultas */}
+                    <Drawer.Screen name="novacategoria" options={{ drawerItemStyle: { display: 'none' } }} />
+                    <Drawer.Screen name="visualizarcategorias" options={{ drawerItemStyle: { display: 'none' } }} />
+                    <Drawer.Screen name="editarcategoria" options={{ drawerItemStyle: { display: 'none' } }} />
+                    <Drawer.Screen name="novamesa" options={{ drawerItemStyle: { display: 'none' } }} />
+                    <Drawer.Screen name="editarmesa" options={{ drawerItemStyle: { display: 'none' } }} />
+                    <Drawer.Screen name="novoproduto" options={{ drawerItemStyle: { display: 'none' } }} />
+                    <Drawer.Screen name="editarproduto" options={{ drawerItemStyle: { display: 'none' } }} />
+                    <Drawer.Screen name="FilaDePreparo" options={{ drawerItemStyle: { display: 'none' } }} />
+                    <Drawer.Screen name="novafila" options={{ drawerItemStyle: { display: 'none' } }} />
+                    <Drawer.Screen name="pedidosdafila" options={{ drawerItemStyle: { display: 'none' } }} />
+                    <Drawer.Screen name="revisarpedido" options={{ drawerItemStyle: { display: 'none' } }} />
+                    <Drawer.Screen name="visualizarmesa" options={{ drawerItemStyle: { display: 'none' } }} />
+                    <Drawer.Screen name="administracao" options={{ drawerItemStyle: { display: 'none' } }} />
+                    <Drawer.Screen name="botaovoltar" options={{ drawerItemStyle: { display: 'none' } }} />
+                  </Drawer>
+                </FilaProvider>
+              </PedidoProvider>
+            </ProdutoProvider>
+          </CategoriaProvider>
+        </MesaProvider>
     </GestureHandlerRootView>
   );
 }

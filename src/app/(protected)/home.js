@@ -1,11 +1,11 @@
 import React, { useContext } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, StatusBar, FlatList } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, StatusBar, FlatList, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MesaContext } from '../../MesaContext';
 import { router } from 'expo-router';
 
 export default function TelaMesas() {
-  const { mesas, selecionarMesa } = useContext(MesaContext);
+  const { mesas, selecionarMesa, loading } = useContext(MesaContext);
 
   const mesasOrdenadas = [...mesas].sort((a, b) => a.numero - b.numero);
 
@@ -20,24 +20,31 @@ export default function TelaMesas() {
 
       <Text style={styles.titulo}>Visualização das Mesas</Text>
 
-      <FlatList
-        data={mesasOrdenadas}
-        keyExtractor={(item) => item.id_mesa.toString()}
-        numColumns={3}
-        contentContainerStyle={{ paddingTop: 20 }}
-        columnWrapperStyle={{
-          justifyContent: 'space-between',
-          marginBottom: 20,
-        }}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.mesa}
-            onPress={() => handleSelecionarMesa(item)}
-          >
-            <Text style={styles.numeroMesa}>{item.numero}</Text>
-          </TouchableOpacity>
-        )}
-      />
+      {loading ? (
+        <View style={styles.loadingWrap}>
+          <ActivityIndicator size="large" color="#1E56A0" />
+          <Text style={styles.loadingText}>Carregando mesas...</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={mesasOrdenadas}
+          keyExtractor={(item) => item.id_mesa.toString()}
+          numColumns={3}
+          contentContainerStyle={{ paddingTop: 20 }}
+          columnWrapperStyle={{
+            justifyContent: 'space-between',
+            marginBottom: 20,
+          }}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={styles.mesa}
+              onPress={() => handleSelecionarMesa(item)}
+            >
+              <Text style={styles.numeroMesa}>{item.numero}</Text>
+            </TouchableOpacity>
+          )}
+        />
+      )}
 
       {/* 🔵 Botão Novo Pedido */}
       <TouchableOpacity
@@ -76,6 +83,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 2,
     borderColor: '#1E56A0',
+  },
+  loadingWrap: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 40,
+  },
+  loadingText: {
+    marginTop: 12,
+    color: '#1E56A0',
+    fontSize: 16,
+    fontWeight: '600',
   },
 
   numeroMesa: {

@@ -2,18 +2,20 @@ import React, { useContext } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { MesaContext } from "../../MesaContext";
 import { useRouter } from "expo-router";
+import BotaoVoltar from "../(protected)/botaovoltar";
 
 export default function Visualizacao() {
   const { mesas, selecionarMesa } = useContext(MesaContext);
   const router = useRouter();
 
   const abrirCategorias = (mesaSelecionada) => {
-  selecionarMesa(mesaSelecionada); // salva no contexto
-  router.push("/(protected)/visualizarcategorias");
-};
+    selecionarMesa(mesaSelecionada); // salva no contexto
+    router.push("/(protected)/visualizarcategorias");
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <BotaoVoltar destino="home" />
       <Text style={styles.titulo}>Selecione uma mesa</Text>
 
       <View style={styles.mesasContainer}>

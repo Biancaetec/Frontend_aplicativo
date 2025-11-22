@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, Image, Alert } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, Image, Alert, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { ProdutoContext } from '../../ProdutoContext'; // Contexto dos produtos
 import { CategoriaContext } from '../../CategoriaContext'; // Contexto das categorias
 import * as ImagePicker from 'expo-image-picker'; // Biblioteca para escolher imagens da galeria
@@ -70,14 +70,14 @@ export default function NovoProduto() {
       return;
     }
 
-    const produto = { 
-      imagem, 
-      nome, 
-      descricao, 
-      tipo_preparo: categoriaSelecionada, 
-      preco: parseFloat(valor, 10), 
-      custo, 
-      adicionais, 
+    const produto = {
+      imagem,
+      nome,
+      descricao,
+      tipo_preparo: categoriaSelecionada,
+      preco: parseFloat(valor, 10),
+      custo,
+      adicionais,
       categoria: categoriaSelecionada,
       ativo: 1,
       id_categoria: categorias.find(cat => cat.nome === categoriaSelecionada)?.id_categoria || null
@@ -86,6 +86,18 @@ export default function NovoProduto() {
     console.log("🔹 Dados do produto a salvar:", produto);
 
     await adicionarProduto(produto); // Adiciona no contexto
+
+    setImagem(null);
+    setNome('');
+    setDescricao('');
+    setTipo('1/2');
+    setValor('');
+    setCusto('');
+    setAdicionais([]);
+    setAdicionalNome('');
+    setAdicionalCusto('');
+    setCategoriaSelecionada('');
+
     Alert.alert('Sucesso', 'Produto cadastrado!', [
       { text: 'OK', onPress: () => router.push('/produto') }, // Volta para a página anterior
     ]);
@@ -93,7 +105,9 @@ export default function NovoProduto() {
 
   // ================= LAYOUT =================
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 80}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
       <Text style={styles.titulomaior}>Novo Produto</Text>
       <BotaoVoltar destino="produto" />
 
@@ -111,7 +125,7 @@ export default function NovoProduto() {
       <TextInput style={styles.input} placeholder="Descrição" value={descricao} onChangeText={setDescricao} />
       {/*<TextInput style={styles.input} placeholder="Tipo (1/2 ou Inteira)" value={tipo} onChangeText={setTipo} />*/}
       <TextInput style={styles.input} placeholder="Valor" keyboardType="numeric" value={valor} onChangeText={setValor} />
-    
+
       {/*<TextInput style={styles.input} placeholder="Custo" keyboardType="numeric" value={custo} onChangeText={setCusto} />*/}
 
       {/* Seção de categorias */}
@@ -124,7 +138,7 @@ export default function NovoProduto() {
               style={styles.checkboxContainer}
               onPress={() => setCategoriaSelecionada(cat.nome)} // Seleciona categoria
             >
-              <View style={[styles.checkbox, categoriaSelecionada === cat.nome && styles.checkboxSelecionado]} /> 
+              <View style={[styles.checkbox, categoriaSelecionada === cat.nome && styles.checkboxSelecionado]} />
               <Text style={{ marginLeft: 8 }}>{cat.nome}</Text>
             </TouchableOpacity>
           ))}
@@ -159,7 +173,9 @@ export default function NovoProduto() {
       <TouchableOpacity style={styles.botaoSalvar} onPress={salvarProduto}>
         <Text style={styles.botaoTexto}>Salvar Produto</Text>
       </TouchableOpacity>
-    </ScrollView>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 

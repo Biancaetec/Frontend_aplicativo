@@ -1,3 +1,5 @@
+//não está usando
+
 import React, { createContext, useState } from 'react';
 
 // Cria o contexto das filas de preparo

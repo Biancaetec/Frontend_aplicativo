@@ -9,6 +9,10 @@ import {
   ActivityIndicator,
   Image,
   ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { ProdutoContext } from '../../ProdutoContext';
@@ -90,6 +94,14 @@ export default function EditarProduto() {
       imagem,
       id_categoria: Number(id_categoria),
     });
+    
+    // 🔥 LIMPAR TODOS OS CAMPOS ANTES DE SAIR
+    setNome('');
+    setDescricao('');
+    setPreco('');
+    setTipo_Preparo('');
+    setImagem('');
+    setIdCategoria('');
 
     Alert.alert("Sucesso", "Produto atualizado!");
     navigation.goBack();
@@ -101,7 +113,9 @@ export default function EditarProduto() {
 
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 80}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
       <Text style={styles.titulo}>Editar Produto</Text>
       <BotaoVoltar destino="produto" />
 
@@ -184,7 +198,9 @@ export default function EditarProduto() {
           <Text style={styles.textoBotao}>Salvar Alterações</Text>
         )}
       </TouchableOpacity>
-    </ScrollView>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 

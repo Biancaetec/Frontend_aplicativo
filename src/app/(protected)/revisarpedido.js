@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, TextInput } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, TextInput, Image, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { useRouter } from 'expo-router';
 import { PedidoContext } from '../../PedidoContext';
 import { MesaContext } from '../../MesaContext';
@@ -36,6 +36,7 @@ export default function RevisarPedido() {
       Alert.alert('Aviso', 'Nenhum produto foi adicionado ao pedido.');
       return;
     }
+    setObservacoes('');
 
     try {
       // adaptar conforme sua implementação: criarPedidoCompleto espera mesaSelecionada ou { numeroMesa }
@@ -53,26 +54,40 @@ export default function RevisarPedido() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.titulo}>Revisar Pedido</Text>
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 80}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.container}>
+          <Text style={styles.titulo}>Revisar Pedido</Text>
 
-      <ScrollView style={styles.scroll}>
+          <ScrollView style={styles.scroll} keyboardShouldPersistTaps="handled">
         {itens.length === 0 ? (
           <Text style={styles.vazio}>Nenhum produto adicionado.</Text>
         ) : (
-          itens.map((item, i) => (
-            <View key={`${item.id_produto ?? i}-${i}`} style={styles.categoriaCard}>
-              <View style={styles.itemLinha}>
-                <View style={styles.itemInfo}>
-                  <Text style={styles.itemNome}>{item.nome}</Text>
-                  <Text style={styles.itemQuantidade}>x{item.quantidade}</Text>
+          itens.map((item, i) => {
+            const unidade = Number(item.preco ?? item.preco_unitario ?? 0) || 0;
+            return (
+              <View key={`${item.id_produto ?? i}-${i}`} style={styles.categoriaCard}>
+                <View style={styles.itemTop}>
+                  {item.imagem ? (
+                    <Image source={{ uri: item.imagem }} style={styles.imagemProduto} />
+                  ) : (
+                    <View style={styles.imagemProdutoPlaceholder} />
+                  )}
+
+                  <View style={styles.nomeWrap}>
+                    <Text style={styles.itemNome}>{item.nome}</Text>
+                  </View>
                 </View>
-                <Text style={styles.itemPreco}>
-                  R$ {( (Number(item.preco ?? item.preco_unitario ?? 0) * Number(item.quantidade ?? 0)) ).toFixed(2).replace('.', ',')}
-                </Text>
+
+                <View style={styles.separator} />
+
+                <View style={styles.itemBottomRow}>
+                  <Text style={styles.itemQuantidade}>Quantidade: {item.quantidade}</Text>
+                  <Text style={styles.itemPreco}>R$ {unidade.toFixed(2).replace('.', ',')}</Text>
+                </View>
               </View>
-            </View>
-          ))
+            );
+          })
         )}
 
         {/* Campo observações estilizado */}
@@ -86,9 +101,9 @@ export default function RevisarPedido() {
             multiline
           />
         </View>
-      </ScrollView>
+          </ScrollView>
 
-      <View style={styles.rodape}>
+          <View style={styles.rodape}>
         <View style={styles.totalContainer}>
           <Text style={styles.totalTexto}>Total:</Text>
           <Text style={styles.totalValor}>R$ {total.toFixed(2).replace('.', ',')}</Text>
@@ -97,15 +112,17 @@ export default function RevisarPedido() {
         <TouchableOpacity style={styles.botaoConfirmar} onPress={handleConfirmar}>
           <Text style={styles.textoBotao}>Confirmar Pedido</Text>
         </TouchableOpacity>
-      </View>
-    </View>
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff', paddingHorizontal: 16, paddingTop: 40 },
   titulo: { fontSize: 24, fontWeight: '700', color: '#004aad', textAlign: 'center', marginBottom: 20 },
-  scroll: { flex: 1, marginBottom: 100 },
+  scroll: { flex: 1, marginBottom: 160 },
   categoriaCard: {
     backgroundColor: '#f8f9fa',
     borderRadius: 12,
@@ -119,21 +136,41 @@ const styles = StyleSheet.create({
   },
   nomeCategoria: { fontSize: 18, fontWeight: '600', color: '#004aad', marginBottom: 8 },
   itemLinha: {
+    // legacy - não usado no novo layout
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 6,
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#ddd',
     paddingBottom: 6,
   },
   itemInfo: { flexDirection: 'row', alignItems: 'center' },
-  itemNome: { fontSize: 16, color: '#333', marginRight: 8 },
+  itemNome: { fontSize: 16, color: '#333', marginLeft: 4 },
   itemQuantidade: { fontSize: 15, color: '#555' },
   itemPreco: { fontSize: 16, color: '#000', fontWeight: '500' },
+  // new layout styles
+  itemTop: { flexDirection: 'row', alignItems: 'center' },
+  nomeWrap: { flex: 1, justifyContent: 'center' },
+  separator: { height: 1, backgroundColor: '#e6e6e6', marginVertical: 8, borderRadius: 1 },
+  itemBottomRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  imagemProduto: {
+    width: 56,
+    height: 56,
+    borderRadius: 8,
+    marginRight: 6,
+    backgroundColor: '#eef2f8'
+  },
+  imagemProdutoPlaceholder: {
+    width: 56,
+    height: 56,
+    borderRadius: 8,
+    marginRight: 6,
+    backgroundColor: '#f0f3f8',
+    borderWidth: 1,
+    borderColor: '#e0e6f0'
+  },
   rodape: {
     position: 'absolute',
-    bottom: 0,
+    bottom: 24,
     left: 0,
     right: 0,
     backgroundColor: '#fff',

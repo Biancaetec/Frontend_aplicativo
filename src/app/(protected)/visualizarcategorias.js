@@ -6,6 +6,7 @@ import {
   FlatList,
   TouchableOpacity,
   ActivityIndicator,
+  Image,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { CategoriaContext } from "../../CategoriaContext";
@@ -31,15 +32,32 @@ export default function VisualizarCategorias() {
   }, []);
 
   useEffect(() => {
-    if (categoriaSelecionada) {
+    let mounted = true;
+    const atualizarFiltrados = async () => {
+      if (!categoriaSelecionada) {
+        if (mounted) setProdutosFiltrados([]);
+        return;
+      }
+
+      // se ainda não temos produtos, tenta recarregar antes de filtrar
+      if ((!produtos || produtos.length === 0) && carregarProdutos) {
+        try {
+          await carregarProdutos();
+        } catch (e) {
+          console.error('[VisualizarCategorias] erro recarregar produtos:', e);
+        }
+      }
+
       const filtrados = carregarProdutosPorCategoria(
         categoriaSelecionada.id_categoria
       );
-      setProdutosFiltrados(filtrados);
-    } else {
-      setProdutosFiltrados([]);
-    }
+      if (mounted) setProdutosFiltrados(filtrados || []);
+    };
+
+    atualizarFiltrados();
     setQuantidades({}); // resetar quantidades ao trocar categoria
+
+    return () => { mounted = false; };
   }, [categoriaSelecionada, produtos]);
 
   const alterarQuantidade = (id, delta) => {
@@ -138,31 +156,37 @@ export default function VisualizarCategorias() {
               keyExtractor={(item) => item.id_produto.toString()}
               renderItem={({ item }) => (
                 <View style={styles.produtoBox}>
-                  <View>
-                    <Text style={styles.produtoNome}>{item.nome}</Text>
-                    <Text style={styles.produtoPreco}>
-                      R$ {Number(item.preco).toFixed(2)}
-                    </Text>
-                  </View>
+                      {item.imagem ? (
+                        <Image source={{ uri: item.imagem }} style={styles.imagemProduto} />
+                      ) : (
+                        <View style={styles.imagemProdutoPlaceholder} />
+                      )}
 
-                  <View style={styles.controles}>
-                    <TouchableOpacity
-                      style={styles.botaoQtd}
-                      onPress={() => alterarQuantidade(item.id_produto, -1)}
-                    >
-                      <Text style={styles.qtdTexto}>−</Text>
-                    </TouchableOpacity>
-                    <Text style={styles.qtdNumero}>
-                      {quantidades[item.id_produto] || 0}
-                    </Text>
-                    <TouchableOpacity
-                      style={styles.botaoQtd}
-                      onPress={() => alterarQuantidade(item.id_produto, 1)}
-                    >
-                      <Text style={styles.qtdTexto}>＋</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
+                      <View style={styles.produtoInfo}>
+                        <Text style={styles.produtoNome}>{item.nome}</Text>
+                        <Text style={styles.produtoPreco}>
+                          R$ {Number(item.preco).toFixed(2)}
+                        </Text>
+                      </View>
+
+                      <View style={styles.controles}>
+                        <TouchableOpacity
+                          style={styles.botaoQtd}
+                          onPress={() => alterarQuantidade(item.id_produto, -1)}
+                        >
+                          <Text style={styles.qtdTexto}>−</Text>
+                        </TouchableOpacity>
+                        <Text style={styles.qtdNumero}>
+                          {quantidades[item.id_produto] || 0}
+                        </Text>
+                        <TouchableOpacity
+                          style={styles.botaoQtd}
+                          onPress={() => alterarQuantidade(item.id_produto, 1)}
+                        >
+                          <Text style={styles.qtdTexto}>＋</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
               )}
               contentContainerStyle={{ paddingBottom: 20 }}
             />
@@ -193,20 +217,21 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fafafa",
-    padding: 16,
+    paddingHorizontal: 12,
+    paddingTop: 8,
   },
   titulo: {
     fontSize: 22,
     fontWeight: "bold",
     color: "#004aad",
     textAlign: "center",
-    marginBottom: 16,
+    marginBottom: 20,
   },
   categoriasContainer: {
     flexGrow: 0,
-    marginBottom: 12,
+    marginBottom: 6,
     paddingHorizontal: 4,
-    height: 45,
+    height: 34,
   },
   categoriaBotao: {
     flexDirection: "row",
@@ -234,15 +259,15 @@ const styles = StyleSheet.create({
   },
   produtosContainer: {
     flex: 1,
-    marginTop: 10,
-    marginBottom: 70,
+    marginTop: -470,
+    marginBottom: 90,
 
   },
   subtitulo: {
     fontSize: 18,
     fontWeight: "600",
     color: "#004aad",
-    marginBottom: 10,
+    marginBottom: 20,
     textAlign: "center",
   },
   produtoBox: {
@@ -269,6 +294,26 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#666",
     marginTop: 4,
+  },
+  imagemProduto: {
+    width: 64,
+    height: 64,
+    borderRadius: 8,
+    marginRight: 12,
+    backgroundColor: '#eef2f8'
+  },
+  imagemProdutoPlaceholder: {
+    width: 64,
+    height: 64,
+    borderRadius: 8,
+    marginRight: 12,
+    backgroundColor: '#f0f3f8',
+    borderWidth: 1,
+    borderColor: '#e0e6f0'
+  },
+  produtoInfo: {
+    flex: 1,
+    justifyContent: 'center'
   },
   controles: {
     flexDirection: "row",
@@ -327,13 +372,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#555",
     textAlign: "center",
-    marginTop: 50,
+    marginTop: 40,
   },
   semProdutos: {
     fontSize: 15,
     color: "#777",
     textAlign: "center",
-    marginTop: 30,
+    marginTop: 18,
   },
   loadingContainer: {
     flex: 1,

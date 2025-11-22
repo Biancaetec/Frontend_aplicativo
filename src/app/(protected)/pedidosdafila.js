@@ -5,56 +5,51 @@ import {
   FlatList,
   TouchableOpacity,
   ActivityIndicator,
-  StyleSheet
+  StyleSheet,
+  SafeAreaView
 } from 'react-native';
-import { CategoriaContext } from '../../CategoriaContext';  // Contexto das categorias
-import { PedidoContext } from '../../PedidoContext';  // Contexto dos pedidos
+import { CategoriaContext } from '../../CategoriaContext';
+import { PedidoContext } from '../../PedidoContext';
 import BotaoVoltar from './botaovoltar';
+import { router } from 'expo-router';
+import { MaterialIcons } from '@expo/vector-icons';
 
 export default function FilaPreparo() {
-  const { categorias } = useContext(CategoriaContext);  // Obter categorias
-  const { getFilaPreparoPorCategoria, loading, pedidosCompleto } = useContext(PedidoContext);  // Função para buscar fila de preparo por categoria
+  const { categorias } = useContext(CategoriaContext);
+  const { getFilaPreparoPorCategoria, loading, pedidosCompleto, atualizarStatusItemPedido } = useContext(PedidoContext);
   const [categoriaSelecionada, setCategoriaSelecionada] = useState(null);
   const [itensFila, setItensFila] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
 
-  // Carregar a fila de preparo quando a categoria for selecionada
   useEffect(() => {
     if (categoriaSelecionada) {
       const carregarFila = async () => {
         setRefreshing(true);
         const fila = await getFilaPreparoPorCategoria(categoriaSelecionada.id_categoria);
-        setItensFila(fila);
+        setItensFila(fila || []);
         setRefreshing(false);
       };
-
       carregarFila();
     }
   }, [categoriaSelecionada]);
 
-  // Recarrega automaticamente a fila se os pedidos completos mudarem (ex.: status atualizado em outra tela)
   useEffect(() => {
     if (!categoriaSelecionada) return;
     const atualizar = async () => {
       setRefreshing(true);
       const fila = await getFilaPreparoPorCategoria(categoriaSelecionada.id_categoria);
-      setItensFila(fila);
+      setItensFila(fila || []);
       setRefreshing(false);
     };
-
     atualizar();
   }, [pedidosCompleto]);
 
-  // Filtra os itens da fila com status "aguardando", "em_preparo" ou "pronto"
   const filtrarItensFila = (itens) => {
-    return itens.filter(item => 
-      item.status !== "fechado"  // Exclui os itens com status fechado
-    );
+    if (!itens) return [];
+    return itens.filter(item => item.status !== 'fechado');
   };
 
-  // Exibe a fila de preparo de forma agrupada por categoria
-  const renderItemFila = ({ item, index }) => {
-    // Extrair campos comuns (com safety checks)
+  const renderItemFila = ({ item }) => {
     const nome = item.nome_produto || item.nome || item.produto?.nome || 'Produto';
     const categoria = item.categoria_nome || item.nome_categoria || item.produto?.categoria_nome || null;
     const quantidade = item.quantidade ?? item.qtd ?? 1;
@@ -63,7 +58,6 @@ export default function FilaPreparo() {
     const observacoes = item.observacoes ?? item.obs ?? item.pedido_observacoes ?? '';
     const status = item.status ?? 'pendente';
 
-    // Calcular tempo desde abertura/criação (em minutos) se houver timestamp
     let tempoTexto = '';
     const timestamp = item.data_abertura || item.created_at || item.createdAt || item.data || null;
     if (timestamp) {
@@ -74,137 +68,180 @@ export default function FilaPreparo() {
       }
     }
 
-    // Cor do badge baseado no status
     const statusColor = status === 'em_preparo' ? '#FFA500' : status === 'entregue' ? '#007b00' : status === 'fechado' ? '#d32f2f' : '#6c757d';
 
     return (
       <View style={styles.itemBox}>
         <View style={styles.itemTopRow}>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.itemNome}>{nome}</Text>
+          <View style={styles.itemLeft}>
+            <Text style={styles.quantLabelAbove}>Qtd</Text>
+            <View style={styles.quantBadge}>
+              <Text style={styles.quantText}>{quantidade}</Text>
+            </View>
+          </View>
+
+          <View style={styles.itemCenter}>
+            <Text style={styles.itemNome} numberOfLines={2}>{nome}</Text>
             {categoria ? <Text style={styles.itemCategoria}>{categoria}</Text> : null}
             {observacoes ? <Text style={styles.itemObs} numberOfLines={1}>{observacoes}</Text> : null}
           </View>
 
           <View style={styles.itemMeta}>
             {numeroMesa ? (
-              <Text style={styles.metaTexto}>Mesa = {numeroMesa}</Text>
+              <Text style={styles.metaTexto}>Mesa {numeroMesa}</Text>
             ) : (
               pedidoId ? <Text style={styles.metaTexto}>Pedido #{pedidoId}</Text> : null
             )}
             {tempoTexto ? <Text style={styles.tempoTexto}>{tempoTexto}</Text> : null}
-            <View style={[styles.statusBadge, { backgroundColor: statusColor }]}> 
+            <View style={[styles.statusBadge, { backgroundColor: statusColor }]}>
               <Text style={styles.statusBadgeText}>{status.replace('_', ' ')}</Text>
             </View>
           </View>
         </View>
 
         <View style={styles.itemBottomRow}>
-          <Text style={styles.itemQuantidade}>Quantidade: <Text style={{ fontWeight: '700' }}>{quantidade}</Text></Text>
+          <View style={styles.actionsRow}>
+            {status === 'aguardando' && (
+              <TouchableOpacity style={[styles.btnAcao, { backgroundColor: '#f0ad4e' }]} onPress={() => atualizarStatusItemPedido(item.id_item, 'em_preparo')}>
+                <Text style={styles.btnTexto}>Iniciar</Text>
+              </TouchableOpacity>
+            )}
+
+            {status === 'em_preparo' && (
+              <TouchableOpacity style={[styles.btnAcao, { backgroundColor: '#0275d8' }]} onPress={() => atualizarStatusItemPedido(item.id_item, 'pronto')}>
+                <Text style={styles.btnTexto}>Finalizar</Text>
+              </TouchableOpacity>
+            )}
+
+            {status === 'pronto' && (
+              <TouchableOpacity style={[styles.btnAcao, { backgroundColor: '#5cb85c' }]} onPress={() => atualizarStatusItemPedido(item.id_item, 'entregue')}>
+                <Text style={styles.btnTexto}>Entregar</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
       </View>
     );
   };
 
-  // Caso esteja carregando, exibe o indicador de carregamento
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#030274ff" />
+        <ActivityIndicator size="large" color="#004aad" />
         <Text style={styles.loadingText}>Carregando fila de preparo...</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <BotaoVoltar destino="home" />
-      <View style={styles.tituloRow}>
-        <Text style={styles.titulo}>Fila de Preparo</Text>
-        <TouchableOpacity style={styles.refreshButton} onPress={async () => {
-          if (!categoriaSelecionada) return;
-          setRefreshing(true);
-          const fila = await getFilaPreparoPorCategoria(categoriaSelecionada.id_categoria);
-          setItensFila(fila);
-          setRefreshing(false);
-        }}>
-          <Text style={styles.refreshText}>{refreshing ? 'Atualizando...' : 'Atualizar'}</Text>
-        </TouchableOpacity>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <BotaoVoltar destino="home" />
       </View>
 
-      {/* Lista de categorias */}
-      <FlatList
-        data={categorias}
-        keyExtractor={(item) => item.id_categoria.toString()}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.categoriasContainer}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={[
-              styles.categoriaBotao,
-              categoriaSelecionada?.id_categoria === item.id_categoria &&
-              styles.categoriaSelecionada,
-            ]}
-            onPress={() =>
-              setCategoriaSelecionada(
-                categoriaSelecionada?.id_categoria === item.id_categoria
-                  ? null
-                  : item
-              )
-            }
-          >
-            <Text
-              style={[
-                styles.categoriaTexto,
-                categoriaSelecionada?.id_categoria === item.id_categoria &&
-                styles.categoriaTextoSelecionado,
-              ]}
-            >
-              {item.nome}
-            </Text>
-          </TouchableOpacity>
-        )}
-      />
+      <View style={{ marginBottom: 28, marginTop: -8 }}>
+        <Text style={styles.tituloCenteredUp}>Fila de Preparo</Text>
+      </View>
 
-      {/* Exibição dos itens filtrados da fila de preparo */}
-      {categoriaSelecionada && (
+      <View style={styles.categoriasRow}>
+        {/*<TouchableOpacity style={styles.finalizadosBtnRow} onPress={() => router.push('/finalizados')}>
+          <MaterialIcons name="check-circle" size={18} color="#fff" style={{ marginRight: 8 }} />
+          <Text style={styles.finalizadosText}>Finalizados</Text>
+        </TouchableOpacity>*/}
         <FlatList
-  data={filtrarItensFila(itensFila)}
-  keyExtractor={(item, index) => `${item.id_produto}-${index}`} // Combinando id_produto com o índice
-  renderItem={renderItemFila}
-  contentContainerStyle={{ paddingBottom: 20 }}
-  refreshing={refreshing}
-  onRefresh={async () => {
-    if (!categoriaSelecionada) return;
-    setRefreshing(true);
-    const fila = await getFilaPreparoPorCategoria(categoriaSelecionada.id_categoria);
-    setItensFila(fila);
-    setRefreshing(false);
-  }}
-/>
+          data={categorias}
+          keyExtractor={(item) => item.id_categoria.toString()}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.categoriasContainer}
+          style={styles.categoriasList}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={[
+                styles.categoriaBotao,
+                categoriaSelecionada?.id_categoria === item.id_categoria && styles.categoriaSelecionada,
+              ]}
+              onPress={() => setCategoriaSelecionada(categoriaSelecionada?.id_categoria === item.id_categoria ? null : item)}
+            >
+              <Text style={[styles.categoriaTexto, categoriaSelecionada?.id_categoria === item.id_categoria && styles.categoriaTextoSelecionado]}>{item.nome}</Text>
+            </TouchableOpacity>
+          )}
+        />
+      </View>
+
+      {categoriaSelecionada ? (
+        <FlatList
+          data={filtrarItensFila(itensFila)}
+          keyExtractor={(item, index) => `${item.id_item || item.id_produto || index}`}
+          renderItem={renderItemFila}
+          contentContainerStyle={{ paddingBottom: 30 }}
+          refreshing={refreshing}
+          ListEmptyComponent={() => (
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>Nenhum item na fila para esta categoria.</Text>
+            </View>
+          )}
+          onRefresh={async () => {
+            if (!categoriaSelecionada) return;
+            setRefreshing(true);
+            const fila = await getFilaPreparoPorCategoria(categoriaSelecionada.id_categoria);
+            setItensFila(fila || []);
+            setRefreshing(false);
+          }}
+        />
+      ) : (
+        <View style={styles.placeholderContainer}>
+          <Text style={styles.placeholderText}>Selecione uma categoria para ver os itens da fila.</Text>
+        </View>
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fafafa',
-    padding: 16,
+    backgroundColor: '#f6f8fb',
+    padding: 12,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+    paddingHorizontal: 4,
+    marginBottom: 8,
   },
   titulo: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#004aad',
+    paddingBottom: 8,
+    paddingTop: 8,
+  },
+  tituloCentered: {
     fontSize: 22,
-    fontWeight: 'bold',
+    fontWeight: '700',
     color: '#004aad',
     textAlign: 'center',
-    marginBottom: 16,
+    marginBottom: 8,
+  },
+  finalizadosBtn: {
+    backgroundColor: '#28a745',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  finalizadosText: {
+    color: '#fff',
+    fontWeight: '700'
   },
   categoriasContainer: {
     marginBottom: 12,
     paddingHorizontal: 4,
-    height: 45,
+    height: 48,
   },
   categoriaBotao: {
     flexDirection: 'row',
@@ -226,35 +263,92 @@ const styles = StyleSheet.create({
   categoriaTextoSelecionado: {
     color: '#fff',
   },
+  categoriasRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    marginBottom: 8,
+  },
+  categoriasList: {
+    flex: 1,
+  },
   itemBox: {
     backgroundColor: '#fff',
-    padding: 16,
+    padding: 14,
     marginVertical: 8,
-    borderRadius: 10,
+    marginHorizontal: 12,
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#dce3f0',
+    borderColor: '#e6eefc',
+  },
+  itemTopRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  itemLeft: {
+    width: 48,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  quantBadge: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#eef6ff',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  quantText: {
+    color: '#004aad',
+    fontWeight: '700'
+  },
+    quantLabelAbove: {
+      marginBottom: 2,
+      fontSize: 11,
+      color: '#666',
+      textAlign: 'center',
+    },
+  quantLabel: {
+      display: 'none',
+  },
+    tituloCenteredUp: {
+      fontSize: 22,
+      fontWeight: '700',
+      color: '#004aad',
+      textAlign: 'center',
+      marginBottom: 2,
+      marginTop: 2,
+    },
+    finalizadosBtnRow: {
+      backgroundColor: '#28a745',
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+      borderRadius: 8,
+      flexDirection: 'row',
+      alignItems: 'center',
+      height: 48,
+      marginLeft: 10,
+      marginTop: -11,
+      marginRight: 8,
+    },
+  itemCenter: {
+    flex: 1,
+    paddingHorizontal: 8,
+    justifyContent: 'center'
   },
   itemNome: {
     fontSize: 16,
     fontWeight: '500',
   },
-  itemStatus: {
-    fontSize: 14,
-    color: '#777',
+  itemCategoria: {
+    fontSize: 13,
+    color: '#0066cc',
+    marginTop: 4,
   },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: '#004aad',
-  },
-  itemTopRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+  itemObs: {
+    marginTop: 6,
+    fontSize: 13,
+    color: '#555',
   },
   itemMeta: {
     alignItems: 'flex-end',
@@ -282,31 +376,49 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textTransform: 'capitalize',
   },
-  itemCategoria: {
-    fontSize: 13,
-    color: '#0066cc',
-    marginTop: 4,
-  },
-  itemObs: {
-    marginTop: 6,
-    fontSize: 13,
-    color: '#555',
-  },
   itemBottomRow: {
-    marginTop: 8,
+    marginTop: 10,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     alignItems: 'center',
   },
-  itemQuantidade: {
-    fontSize: 14,
-    color: '#333',
+  actionsRow: {
+    flexDirection: 'row'
   },
-  tituloRow: {
-    flexDirection: 'row',
+  btnAcao: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    marginRight: 8
+  },
+  btnTexto: {
+    color: "#fff",
+    fontWeight: "700",
+    fontSize: 13,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 8,
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#004aad',
+  },
+  emptyContainer: {
+    padding: 24,
+    alignItems: 'center'
+  },
+  emptyText: {
+    color: '#666'
+  },
+  placeholderContainer: {
+    padding: 20,
+    alignItems: 'center'
+  },
+  placeholderText: {
+    color: '#666'
   },
   refreshButton: {
     backgroundColor: '#e6eefc',

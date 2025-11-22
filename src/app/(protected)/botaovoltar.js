@@ -1,46 +1,67 @@
 import { useNavigation } from "expo-router";
-import { Text, TouchableOpacity, StyleSheet, View } from "react-native";
+import { Text, StyleSheet, View, Pressable, Platform } from "react-native";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 export default function BotaoVoltar({ destino }) {
   const navigation = useNavigation();
 
   return (
-    <TouchableOpacity
-      style={styles.botaoContainer}
+    <Pressable
       onPress={() => navigation.navigate(destino)}
-      activeOpacity={0.7}
+      android_ripple={{ color: '#e6f0ff' }}
+      style={({ pressed }) => [styles.botaoContainer, pressed && styles.pressed]}
+      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+      accessibilityRole="button"
+      accessibilityLabel="Voltar"
     >
       <View style={styles.conteudo}>
-        <MaterialIcons name="arrow-back" size={24} color="#004aad" />
+        <View style={styles.iconWrap}>
+          <MaterialIcons name="arrow-back" size={20} color="#0b4da0" />
+        </View>
         <Text style={styles.texto}>Voltar</Text>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   botaoContainer: {
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#dfe9ff',
     paddingVertical: 8,
     paddingHorizontal: 12,
-    borderRadius: 8,
-    backgroundColor: '#e6f0ff', // leve destaque azul claro
+    borderRadius: 10,
     alignSelf: 'flex-start',
-    margin: 10,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 1 },
-    shadowRadius: 2,
+    margin: 8,
+    // sombra iOS
+    shadowColor: '#0b3b78',
+    shadowOpacity: Platform.OS === 'ios' ? 0.08 : 0.25,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6,
+    // elevação Android
+    elevation: 3,
+  },
+  pressed: {
+    opacity: 0.9,
+    transform: [{ scale: 0.997 }],
   },
   conteudo: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+  },
+  iconWrap: {
+    width: 34,
+    height: 34,
+    borderRadius: 9,
+    backgroundColor: '#eef6ff',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   texto: {
-    color: '#004aad',
-    fontWeight: 'bold',
+    color: '#0b4da0',
+    fontWeight: '600',
     fontSize: 15,
+    marginLeft: 10,
   },
 });

@@ -1,25 +1,26 @@
 {
   "expo": {
-    "name": "frontend_aplicativo",
+    "name": "",
     "slug": "frontend_aplicativo",
     "scheme": "your-app-scheme",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./src/assets/icon.png",
+    "icon": "./src/assets/imagens/logorestoon.png",
+    "backgroundColor": "#004AAD",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./src/assets/splash-icon.png",
+      "image": "./src/assets/imagens/logorestoon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#004AAD"
     },
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./src/assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./src/assets/imagens/logorestoon.png",
+        "backgroundColor": "#004AAD"
       },
       "edgeToEdgeEnabled": true
     },

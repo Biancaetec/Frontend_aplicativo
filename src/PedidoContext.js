@@ -13,7 +13,7 @@ export function PedidoProvider({ children }) {
   // ID do restaurante
   const id_restaurante = useMemo(() => user?.restaurante?.id_restaurante, [user]);
 
-  const API_URL = 'https://automatic-train-wrvv54w5wg9whv455-3001.app.github.dev/api/pedido';
+  const API_URL = 'https://automatic-train-wrvv54w5wg9whv455-3001.app.github.dev/api/pedidocompleto';
   //const API_URL = 'https://special-invention-9769xr99qw56hx95x-3001.app.github.dev/api/pedidocompleto';
   /* ============================================================
      🧩 Adicionar / atualizar item no pedido
@@ -112,22 +112,22 @@ export function PedidoProvider({ children }) {
       return;
     }
 
-      const payload = {
-        id_mesa: id_mesa,
-        id_usuario: user?.restaurante?.id_usuario,
-        observacoes: observacoes,
-        valor_total: pedido.total,
-        status: "pendente",
-        tipo_preparo: "normal",
+    const payload = {
+      id_mesa: id_mesa,
+      id_usuario: user?.restaurante?.id_usuario,
+      observacoes: observacoes,
+      valor_total: pedido.total,
+      status: "pendente",
+      tipo_preparo: "normal",
 
-        itens: pedido.produtos.map(p => ({
-          id_produto: p.id_produto,
-          quantidade: p.quantidade,
-          preco_unitario: p.preco,
-          tipo_porção: "inteira",
-          status: "aguardando"
-        }))
-      };
+      itens: pedido.produtos.map(p => ({
+        id_produto: p.id_produto,
+        quantidade: p.quantidade,
+        preco_unitario: p.preco,
+        tipo_porção: "inteira",
+        status: "aguardando"
+      }))
+    };
 
     setLoading(true);
 
@@ -198,87 +198,121 @@ export function PedidoProvider({ children }) {
     }
   };
 
-  
+
   /* ============================================================
    🔄 Atualizar status do pedido
 ============================================================ */
-const atualizarStatusPedido = async (id_pedido, novoStatus) => {
-  try {
-    setLoading(true);
+  const atualizarStatusPedido = async (id_pedido, novoStatus) => {
+    try {
+      setLoading(true);
 
-    const res = await fetch(
-      `${API_URL}/status/${id_pedido}`,
-      {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: novoStatus })
+      const res = await fetch(
+        `${API_URL}/status/${id_pedido}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: novoStatus })
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error(await res.text());
       }
-    );
 
-    if (!res.ok) {
-      throw new Error(await res.text());
+      // Recarregar lista após atualização
+      await carregarPedidosCompleto();
+
+    } catch (err) {
+      console.error("[PedidoContext] atualizarStatusPedido:", err);
+    } finally {
+      setLoading(false);
     }
+  };
 
-    // Recarregar lista após atualização
-    await carregarPedidosCompleto();
-
-  } catch (err) {
-    console.error("[PedidoContext] atualizarStatusPedido:", err);
-  } finally {
-    setLoading(false);
-  }
-};
-
-/* ============================================================
-   ❌ Limpar todos os pedidos de uma mesa
+  /* ============================================================
+   🔄 Atualizar status de um ITEM do pedido
 ============================================================ */
-const limparPedidosDaMesa = async (id_mesa) => {
-  if (!id_restaurante) return;
+  const atualizarStatusItemPedido = async (id_item, novoStatus) => {
+    try {
+      setLoading(true);
 
-  setLoading(true);
-  try {
-    const res = await fetch(`${API_URL}/mesa/${id_mesa}`, {
-      method: "DELETE",
-    });
+      const res = await fetch(
+        `https://automatic-train-wrvv54w5wg9whv455-3001.app.github.dev/api/itempedido/status/${id_item}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: novoStatus })
+        }
+      );
 
-    if (!res.ok) throw new Error(await res.text());
+      if (!res.ok) {
+        throw new Error(await res.text());
+      }
 
-    await carregarPedidosCompleto();
+      // Atualiza lista geral de pedidos
+      await carregarPedidosCompleto();
 
-  } catch (err) {
-    console.error("[PedidoContext] limparPedidosDaMesa:", err);
-    throw err;
-  } finally {
-    setLoading(false);
-  }
-};
+    } catch (err) {
+      console.error("[PedidoContext] atualizarStatusItemPedido:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-/* ============================================================
-   📌 Buscar fila de preparo por categoria
-============================================================ */
-const getFilaPreparoPorCategoria = async (id_categoria) => {
-  if (!id_categoria) return [];
 
-  try {
+  /* ============================================================
+     ❌ Limpar todos os pedidos de uma mesa
+  ============================================================ */
+  const limparPedidosDaMesa = async (id_mesa) => {
+    if (!id_restaurante) return;
+
     setLoading(true);
+    try {
+      const res = await fetch(`${API_URL}/mesa/${id_mesa}`, {
+        method: "DELETE",
+      });
 
-    const res = await fetch(
-      `https://special-invention-9769xr99qw56hx95x-3001.app.github.dev/api/fila-preparo/${id_categoria}`
-    );
+      if (!res.ok) throw new Error(await res.text());
 
-    if (!res.ok) throw new Error(await res.text());
+      await carregarPedidosCompleto();
 
-    const data = await res.json();
-    return data; // retorna a lista de itens na fila da categoria específica
+    } catch (err) {
+      console.error("[PedidoContext] limparPedidosDaMesa:", err);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  } catch (err) {
-    console.error("[PedidoContext] getFilaPreparoPorCategoria:", err);
-    return [];
-  } finally {
-    setLoading(false);
-  }
-};
+  /* ============================================================
+     📌 Buscar fila de preparo por categoria
+  ============================================================ */
+  const getFilaPreparoPorCategoria = async (id_categoria) => {
+    if (!id_categoria) return [];
 
+    try {
+      setLoading(true);
+
+      //const res = await fetch(
+      //  `https://special-invention-9769xr99qw56hx95x-3001.app.github.dev/api/fila-preparo/${id_categoria}`
+      //);
+
+      const res = await fetch(
+        `https://automatic-train-wrvv54w5wg9whv455-3001.app.github.dev/api/fila-preparo/${id_categoria}`
+      );
+
+      if (!res.ok) throw new Error(await res.text());
+
+      const data = await res.json();
+      return data; // retorna a lista de itens na fila da categoria específica
+
+    } catch (err) {
+      console.error("[PedidoContext] getFilaPreparoPorCategoria:", err);
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  };
 
   /* ============================================================
      🔄 Requisição automática ao carregar
@@ -306,6 +340,7 @@ const getFilaPreparoPorCategoria = async (id_categoria) => {
         carregarPedidosCompleto,
         excluirPedidoCompleto,
         atualizarStatusPedido,
+        atualizarStatusItemPedido,
         limparPedidosDaMesa,
         getFilaPreparoPorCategoria,
       }}
