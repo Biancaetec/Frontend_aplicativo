@@ -2,7 +2,8 @@ import React, { useContext, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { CategoriaContext } from '../../CategoriaContext';
 import { useNavigation } from '@react-navigation/native';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+
 
 export default function Categoria() {
   const { categorias, carregarCategorias, excluirCategoria } = useContext(CategoriaContext);

@@ -12,7 +12,7 @@ export default function Cadastrar() {
 
   // SEM barra no final
   //const BASE_URL = 'https://automatic-train-wrvv54w5wg9whv455-3001.app.github.dev';
-  const BASE_URL = 'https://special-invention-9769xr99qw56hx95x-3001.app.github.dev/';
+  const BASE_URL = 'https://organic-umbrella-jjrr7gxw6q4pfjj5g-3001.app.github.dev/';
   // const BASE_URL = 'https://turbo-guide-v6pprpwwjpjjh6gwx-3001.app.github.dev';
 
   const handleCadastrar = async () => {

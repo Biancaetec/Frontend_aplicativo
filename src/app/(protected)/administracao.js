@@ -1,7 +1,8 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+
 
 export default function Administração() {
   const router = useRouter();

@@ -2,7 +2,9 @@ import React, { useContext, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, Image } from 'react-native';
 import { ProdutoContext } from '../../ProdutoContext';
 import { useNavigation } from '@react-navigation/native';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+
+
 import { router } from 'expo-router';
 
 export default function Produtos() {

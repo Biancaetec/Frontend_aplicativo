@@ -12,7 +12,7 @@ export function CategoriaProvider({ children }) {
   // ID do restaurante
   const id_restaurante = useMemo(() => user?.restaurante?.id_restaurante, [user]);
 
-  const API_URL = 'https://automatic-train-wrvv54w5wg9whv455-3001.app.github.dev/api/categoria';
+  const API_URL = 'https://organic-umbrella-jjrr7gxw6q4pfjj5g-3001.app.github.dev/api/categoria';
   //const API_URL = 'https://special-invention-9769xr99qw56hx95x-3001.app.github.dev/api/categoria';
   
 

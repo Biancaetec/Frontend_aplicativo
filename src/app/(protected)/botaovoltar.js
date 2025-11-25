@@ -2,6 +2,7 @@ import { useNavigation } from "expo-router";
 import { Text, StyleSheet, View, Pressable, Platform } from "react-native";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
+
 export default function BotaoVoltar({ destino }) {
   const navigation = useNavigation();
 
