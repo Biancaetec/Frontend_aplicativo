@@ -87,7 +87,6 @@ export default function App() {
             </View>
 
             <TouchableOpacity style={styles.esquecisenha}>
-              <Text style={styles.link}>esqueci a senha</Text>
             </TouchableOpacity>
 
             <Pressable
@@ -106,7 +105,6 @@ export default function App() {
               <Text style={styles.textorodape}>É novo por aqui?</Text>
               <TouchableOpacity onPress={() => router.push('/cadastrar')}>
                 <Text style={styles.link}> se cadastre já</Text>
-                <TouchableOpacity onPress={() => router.push('src/App.js')}><Text>Aula Graziani</Text></TouchableOpacity>
               </TouchableOpacity>
             </View>
           </View>

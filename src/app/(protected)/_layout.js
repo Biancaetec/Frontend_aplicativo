@@ -556,16 +556,7 @@ export default function Layout() {
                       }}
                     />
 
-                    {/* PEDIDOS FECHADOS */}
-                    <Drawer.Screen
-                      name="pedidosfechados"
-                      options={{
-                        drawerLabel: 'Pedidos Fechados',
-                        drawerIcon: ({ size, color }) => (
-                          <MaterialIcons name="check-box" size={size} color={color} />
-                        ),
-                      }}
-                    />
+                  
 
                     {/* VISUALIZAÇÃO */}
                     <Drawer.Screen
