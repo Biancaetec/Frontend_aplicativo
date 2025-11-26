@@ -25,12 +25,10 @@ export default function VisualizarMesa() {
         );
     }
 
-    // Filtrar apenas os pedidos daquela mesa
     const pedidosMesa = (pedidosCompleto ?? []).filter(
         p => p.id_mesa === mesaSelecionada.id_mesa
     );
 
-    // Filtrar pelo status selecionado
     const pedidosFiltrados = pedidosMesa.filter(pedido => {
         if (filtroStatus === "aberto") {
             return ["pendente", "em_preparo", "entregue"].includes(pedido.status);

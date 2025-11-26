@@ -35,12 +35,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignSelf: 'flex-start',
     margin: 8,
-    // sombra iOS
+ 
     shadowColor: '#0b3b78',
     shadowOpacity: Platform.OS === 'ios' ? 0.08 : 0.25,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 6,
-    // elevação Android
+
     elevation: 3,
   },
   pressed: {

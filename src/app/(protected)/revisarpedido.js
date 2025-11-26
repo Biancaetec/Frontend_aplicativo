@@ -10,13 +10,12 @@ export default function RevisarPedido() {
   const { mesaSelecionada } = useContext(MesaContext);
   const [observacoes, setObservacoes] = useState('');
 
-  // pegar o resumo (pode ser array, objeto por categoria ou undefined)
   const resumoRaw = getResumoPedido();
-  // normalizar para array de itens
+ 
   const itens = (() => {
     if (!resumoRaw) return [];
     if (Array.isArray(resumoRaw)) return resumoRaw;
-    // se for objeto agrupado por categoria: { "Bebidas": [...], "Lanches":[...] }
+  
     try {
       return Object.values(resumoRaw).flat();
     } catch {
@@ -24,7 +23,7 @@ export default function RevisarPedido() {
     }
   })();
 
-  // total seguro (usa preco ou preco_unitario)
+ 
   const total = itens.reduce((acc, item) => {
     const preco = Number(item.preco ?? item.preco_unitario ?? 0);
     const qtd = Number(item.quantidade ?? 0);
@@ -39,7 +38,6 @@ export default function RevisarPedido() {
     setObservacoes('');
 
     try {
-      // adaptar conforme sua implementação: criarPedidoCompleto espera mesaSelecionada ou { numeroMesa }
       await criarPedidoCompleto({
         numeroMesa: mesaSelecionada?.numero,
         id_mesa: mesaSelecionada?.id_mesa,

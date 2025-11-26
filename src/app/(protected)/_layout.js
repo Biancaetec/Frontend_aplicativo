@@ -512,16 +512,7 @@ export default function Layout() {
                       }}
                     />
 
-                    {/* PERFIL */}
-                    <Drawer.Screen
-                      name="perfil"
-                      options={{
-                        title: "Perfil",
-                        drawerIcon: ({ size, color }) => (
-                          <MaterialIcons name="person" size={size} color={color} />
-                        ),
-                      }}
-                    />
+               
 
                     {/* MESAS */}
                     <Drawer.Screen
@@ -585,6 +576,9 @@ export default function Layout() {
                     <Drawer.Screen name="visualizarmesa" options={{ drawerItemStyle: { display: 'none' } }} />
                     <Drawer.Screen name="administracao" options={{ drawerItemStyle: { display: 'none' } }} />
                     <Drawer.Screen name="botaovoltar" options={{ drawerItemStyle: { display: 'none' } }} />
+                      <Drawer.Screen name="pedidosfechados" options={{ drawerItemStyle: { display: 'none' } }} />
+                        <Drawer.Screen name="perfil" options={{ drawerItemStyle: { display: 'none' } }} />
+
 
                   </Drawer>
                 </PerfilProvider>
