@@ -6,13 +6,13 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./src/assets/imagens/logorestoon.png",
-    "backgroundColor": "#004AAD",
+    "backgroundColor": "#004aad",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
       "image": "./src/assets/imagens/logorestoon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#004AAD"
+      "backgroundColor": "#004aad"
     },
     "ios": {
       "supportsTablet": true
@@ -20,7 +20,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/imagens/logorestoon.png",
-        "backgroundColor": "#004AAD"
+        "backgroundColor": "#004aad"
       },
       "edgeToEdgeEnabled": true
     },

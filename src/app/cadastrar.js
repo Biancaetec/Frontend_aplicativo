@@ -12,7 +12,7 @@ export default function Cadastrar() {
 
   // SEM barra no final
   //const BASE_URL = 'https://automatic-train-wrvv54w5wg9whv455-3001.app.github.dev';
-  const BASE_URL = 'https://organic-umbrella-jjrr7gxw6q4pfjj5g-3001.app.github.dev/';
+  const BASE_URL = 'https://organic-umbrella-jjrr7gxw6q4pfjj5g-3001.app.github.dev/api';
   // const BASE_URL = 'https://turbo-guide-v6pprpwwjpjjh6gwx-3001.app.github.dev';
 
   const handleCadastrar = async () => {
@@ -29,7 +29,7 @@ const status_licenciamento = "pendente"; // valor padrão para novos restaurante
 
     setLoading(true);
     try {
-      const url = `${BASE_URL}/api/restaurante`;
+      const url = `${BASE_URL}/restaurante`;
       console.log('Enviando para:', url);
       console.log('Payload:', { nome, email, senha, id_usuario, status_licenciamento });
 

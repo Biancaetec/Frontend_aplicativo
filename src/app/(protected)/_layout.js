@@ -174,10 +174,10 @@
 //         options={{
 //           title: "Perfil",
 //           drawerIcon: ({size, color}) => <MaterialIcons name="home" size={size} color={color} />
-                        
+
 //         }}
 //       />
-    
+
 //                     <Drawer.Screen
 //                       name="mesa"
 //                       options={{
@@ -412,7 +412,6 @@ function CustomHeader() {
   return (
     <View style={headerStyles.headerWrapper}>
       <View style={headerStyles.headerContainer}>
-        
         {/* Botão Menu */}
         <TouchableOpacity
           style={headerStyles.leftContainer}
@@ -433,7 +432,6 @@ function CustomHeader() {
             </View>
           </TouchableOpacity>
         </View>
-
       </View>
     </View>
   );
@@ -512,13 +510,15 @@ export default function Layout() {
                       }}
                     />
 
-               
+
 
                     {/* MESAS */}
                     <Drawer.Screen
                       name="mesa"
                       options={{
                         drawerLabel: 'Gestão de Mesas',
+                        title: 'Mesas',
+                        headerTitle: () => null,
                         drawerIcon: ({ size, color }) => (
                           <MaterialIcons name="table-bar" size={size} color={color} />
                         ),
@@ -530,6 +530,8 @@ export default function Layout() {
                       name="categoria"
                       options={{
                         drawerLabel: 'Gestão de Categorias',
+                        title: 'Categorias',
+                        headerTitle: () => null,
                         drawerIcon: ({ size, color }) => (
                           <MaterialIcons name="category" size={size} color={color} />
                         ),
@@ -541,19 +543,23 @@ export default function Layout() {
                       name="produto"
                       options={{
                         drawerLabel: 'Gestão de Produtos',
+                        title: 'Produtos',
+                        headerTitle: () => null,
                         drawerIcon: ({ size, color }) => (
                           <MaterialIcons name="shopping-cart" size={size} color={color} />
                         ),
                       }}
                     />
 
-                  
+
 
                     {/* VISUALIZAÇÃO */}
                     <Drawer.Screen
                       name="visualizacao"
                       options={{
                         drawerLabel: 'Visualização',
+                        title: 'Visualização',
+                        headerTitle: () => null,
                         drawerIcon: ({ size, color }) => (
                           <MaterialIcons name="view-comfy" size={size} color={color} />
                         ),
@@ -561,25 +567,142 @@ export default function Layout() {
                     />
 
                     {/* TELAS OCULTAS */}
-                    <Drawer.Screen name="novacategoria" options={{ drawerItemStyle: { display: 'none' } }} />
-                    <Drawer.Screen name="editarperfil" options={{ drawerItemStyle: { display: 'none' } }} />
-                    <Drawer.Screen name="visualizarcategorias" options={{ drawerItemStyle: { display: 'none' } }} />
-                    <Drawer.Screen name="editarcategoria" options={{ drawerItemStyle: { display: 'none' } }} />
-                    <Drawer.Screen name="novamesa" options={{ drawerItemStyle: { display: 'none' } }} />
-                    <Drawer.Screen name="editarmesa" options={{ drawerItemStyle: { display: 'none' } }} />
-                    <Drawer.Screen name="novoproduto" options={{ drawerItemStyle: { display: 'none' } }} />
-                    <Drawer.Screen name="editarproduto" options={{ drawerItemStyle: { display: 'none' } }} />
-                    <Drawer.Screen name="FilaDePreparo" options={{ drawerItemStyle: { display: 'none' } }} />
-                    <Drawer.Screen name="novafila" options={{ drawerItemStyle: { display: 'none' } }} />
-                    <Drawer.Screen name="pedidosdafila" options={{ drawerItemStyle: { display: 'none' } }} />
-                    <Drawer.Screen name="revisarpedido" options={{ drawerItemStyle: { display: 'none' } }} />
-                    <Drawer.Screen name="visualizarmesa" options={{ drawerItemStyle: { display: 'none' } }} />
-                    <Drawer.Screen name="administracao" options={{ drawerItemStyle: { display: 'none' } }} />
-                    <Drawer.Screen name="botaovoltar" options={{ drawerItemStyle: { display: 'none' } }} />
-                      <Drawer.Screen name="pedidosfechados" options={{ drawerItemStyle: { display: 'none' } }} />
-                        <Drawer.Screen name="perfil" options={{ drawerItemStyle: { display: 'none' } }} />
-
-
+                    <Drawer.Screen
+                      name="novacategoria"
+                      options={{
+                        title: 'Nova Categoria',
+                        headerTitle: () => null,
+                        drawerItemStyle: { display: 'none' },
+                      }}
+                    />
+                    <Drawer.Screen
+                      name="editarperfil"
+                      options={{
+                        title: 'Editar Perfil',
+                        headerTitle: () => null,
+                        drawerItemStyle: { display: 'none' },
+                      }}
+                    />
+                    <Drawer.Screen
+                      name="visualizarcategorias"
+                      options={{
+                        title: 'Categorias',
+                        headerTitle: () => null,
+                        drawerItemStyle: { display: 'none' },
+                      }}
+                    />
+                    <Drawer.Screen
+                      name="editarcategoria"
+                      options={{
+                        title: 'Editar Categoria',
+                        headerTitle: () => null,
+                        drawerItemStyle: { display: 'none' },
+                      }}
+                    />
+                    <Drawer.Screen
+                      name="novamesa"
+                      options={{
+                        title: 'Nova Mesa',
+                        headerTitle: () => null,
+                        drawerItemStyle: { display: 'none' },
+                      }}
+                    />
+                    <Drawer.Screen
+                      name="editarmesa"
+                      options={{
+                        title: 'Editar Mesa',
+                        headerTitle: () => null,
+                        drawerItemStyle: { display: 'none' },
+                      }}
+                    />
+                    <Drawer.Screen
+                      name="novoproduto"
+                      options={{
+                        title: 'Novo Produto',
+                        headerTitle: () => null,
+                        drawerItemStyle: { display: 'none' },
+                      }}
+                    />
+                    <Drawer.Screen
+                      name="editarproduto"
+                      options={{
+                        title: 'Editar Produto',
+                        headerTitle: () => null,
+                        drawerItemStyle: { display: 'none' },
+                      }}
+                    />
+                    <Drawer.Screen
+                      name="FilaDePreparo"
+                      options={{
+                        title: 'Fila de Preparo',
+                        headerTitle: () => null,
+                        drawerItemStyle: { display: 'none' },
+                      }}
+                    />
+                    <Drawer.Screen
+                      name="novafila"
+                      options={{
+                        title: 'Nova Fila',
+                        headerTitle: () => null,
+                        drawerItemStyle: { display: 'none' },
+                      }}
+                    />
+                    <Drawer.Screen
+                      name="pedidosdafila"
+                      options={{
+                        title: 'Pedidos da Fila',
+                        headerTitle: () => null,
+                        drawerItemStyle: { display: 'none' },
+                      }}
+                    />
+                    <Drawer.Screen
+                      name="revisarpedido"
+                      options={{
+                        title: 'Revisar Pedido',
+                        headerTitle: () => null,
+                        drawerItemStyle: { display: 'none' },
+                      }}
+                    />
+                    <Drawer.Screen
+                      name="visualizarmesa"
+                      options={{
+                        title: 'Visualizar Mesa',
+                        headerTitle: () => null,
+                        drawerItemStyle: { display: 'none' },
+                      }}
+                    />
+                    <Drawer.Screen
+                      name="administracao"
+                      options={{
+                        title: 'Administração',
+                        headerTitle: () => null,
+                        drawerItemStyle: { display: 'none' },
+                      }}
+                    />
+                    <Drawer.Screen
+                      name="botaovoltar"
+                      options={{
+                        title: 'Retornar',
+                        headerTitle: () => null,
+                        drawerItemStyle: { display: 'none' },
+                      }}
+                    />
+                    <Drawer.Screen
+                      name="pedidosfechados"
+                      options={{
+                        title: 'Pedidos Fechados',
+                        headerTitle: () => null,
+                        drawerItemStyle: { display: 'none' },
+                      }}
+                    />
+                    <Drawer.Screen
+                      name="perfil"
+                      options={{
+                        title: 'Perfil',
+                        headerTitle: () => null,
+                        drawerItemStyle: { display: 'none' },
+                      }}
+                    />
                   </Drawer>
                 </PerfilProvider>
               </FilaProvider>

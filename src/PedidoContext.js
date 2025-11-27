@@ -6,14 +6,14 @@ export const PedidoContext = createContext();
 export function PedidoProvider({ children }) {
   const [itensSelecionados, setItensSelecionados] = useState([]);
   const [pedidosCompleto, setPedidosCompleto] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);9
 
   const { user, loading: authLoading } = useAuth();
 
   // ID do restaurante
   const id_restaurante = useMemo(() => user?.restaurante?.id_restaurante, [user]);
 
-  const API_URL = 'https://backend-restoon.onrender.com/';
+  const API_URL = 'https://organic-umbrella-jjrr7gxw6q4pfjj5g-3001.app.github.dev/api/pedidocompleto';
   //const API_URL = 'https://special-invention-9769xr99qw56hx95x-3001.app.github.dev/api/pedidocompleto';
   /* ============================================================
      🧩 Adicionar / atualizar item no pedido
