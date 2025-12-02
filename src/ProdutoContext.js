@@ -157,7 +157,7 @@ export function ProdutoProvider({ children }) {
   // ID do restaurante
   const id_restaurante = useMemo(() => user?.restaurante?.id_restaurante, [user]);
 
-  const API_URL = 'https://organic-umbrella-jjrr7gxw6q4pfjj5g-3001.app.github.dev/api/produto';
+  const API_URL = 'https://backend-restoon.onrender.com/api/produto';
   //const API_URL = 'https://special-invention-9769xr99qw56hx95x-3001.app.github.dev/api/produto';
 
   // 🔹 Carregar produtos filtrando pelo restaurante

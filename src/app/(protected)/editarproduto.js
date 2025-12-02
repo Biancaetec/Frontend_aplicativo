@@ -27,8 +27,8 @@ export default function EditarProduto() {
   const navigation = useNavigation();
   const route = useRoute();
 
-    let produtoEditando = route.params?.produtoEditando || null;
-    console.log("PRODUTO EDITANDO ===>", produtoEditando);
+  let produtoEditando = route.params?.produtoEditando || null;
+  console.log("PRODUTO EDITANDO ===>", produtoEditando);
 
 
   if (typeof produtoEditando === "string") {
@@ -80,124 +80,124 @@ export default function EditarProduto() {
   };
 
   const handleSalvar = async () => {
-  if (!produtoEditando?.id_produto) {
-    Alert.alert("Erro", "ID do produto não encontrado.");
-    return;
-  }
+    if (!produtoEditando?.id_produto) {
+      Alert.alert("Erro", "ID do produto não encontrado.");
+      return;
+    }
 
-  try {
-    await editarProduto(produtoEditando.id_produto, {
-      nome,
-      descricao,
-      preco: Number(preco),
-      tipo_preparo,
-      imagem,
-      id_categoria: Number(id_categoria),
-    });
-    
-    // 🔥 LIMPAR TODOS OS CAMPOS ANTES DE SAIR
-    setNome('');
-    setDescricao('');
-    setPreco('');
-    setTipo_Preparo('');
-    setImagem('');
-    setIdCategoria('');
+    try {
+      await editarProduto(produtoEditando.id_produto, {
+        nome,
+        descricao,
+        preco: Number(preco),
+        tipo_preparo,
+        imagem,
+        id_categoria: Number(id_categoria),
+      });
 
-    Alert.alert("Sucesso", "Produto atualizado!");
-    navigation.goBack();
-  } catch (e) {
-    console.log("Erro ao editar:", e);
-    Alert.alert("Erro", "Não foi possível atualizar o produto.");
-  }
-};
+      // 🔥 LIMPAR TODOS OS CAMPOS ANTES DE SAIR
+      setNome('');
+      setDescricao('');
+      setPreco('');
+      setTipo_Preparo('');
+      setImagem('');
+      setIdCategoria('');
+
+      Alert.alert("Sucesso", "Produto atualizado!");
+      navigation.navigate('produto');
+    } catch (e) {
+      console.log("Erro ao editar:", e);
+      Alert.alert("Erro", "Não foi possível atualizar o produto.");
+    }
+  };
 
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 80}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-      <Text style={styles.titulo}>Editar Produto</Text>
-      <BotaoVoltar destino="produto" />
+          <Text style={styles.titulo}>Editar Produto</Text>
+          <BotaoVoltar destino="produto" />
 
-      <TouchableOpacity style={styles.imagemContainer} onPress={escolherImagem}>
-        {imagem ? (
-          <Image source={{ uri: imagem }} style={styles.imagem} />
-        ) : (
-          <Text style={styles.imagemPlaceholder}>Selecionar imagem</Text>
-        )}
-      </TouchableOpacity>
+          <TouchableOpacity style={styles.imagemContainer} onPress={escolherImagem}>
+            {imagem ? (
+              <Image source={{ uri: imagem }} style={styles.imagem} />
+            ) : (
+              <Text style={styles.imagemPlaceholder}>Selecionar imagem</Text>
+            )}
+          </TouchableOpacity>
 
-      <Text style={styles.label}>Nome do Produto</Text>
-      <TextInput
-        placeholder="Ex: Pizza Calabresa"
-        style={styles.input}
-        value={nome}
-        onChangeText={setNome}
-        placeholderTextColor="#A9A9A9"
-      />
+          <Text style={styles.label}>Nome do Produto</Text>
+          <TextInput
+            placeholder="Ex: Pizza Calabresa"
+            style={styles.input}
+            value={nome}
+            onChangeText={setNome}
+            placeholderTextColor="#A9A9A9"
+          />
 
-      <Text style={styles.label}>Descrição</Text>
-      <TextInput
-        placeholder="Ex: massa fina, molho artesanal..."
-        style={[styles.input, { height: 80 }]}
-        value={descricao}
-        onChangeText={setDescricao}
-        placeholderTextColor="#A9A9A9"
-        multiline
-      />
+          <Text style={styles.label}>Descrição</Text>
+          <TextInput
+            placeholder="Ex: massa fina, molho artesanal..."
+            style={[styles.input, { height: 80 }]}
+            value={descricao}
+            onChangeText={setDescricao}
+            placeholderTextColor="#A9A9A9"
+            multiline
+          />
 
-      <Text style={styles.label}>Preço</Text>
-      <TextInput
-        placeholder="Ex: 25.90"
-        style={styles.input}
-        value={preco}
-        onChangeText={setPreco}
-        keyboardType="numeric"
-        placeholderTextColor="#A9A9A9"
-      />
+          <Text style={styles.label}>Preço</Text>
+          <TextInput
+            placeholder="Ex: 25.90"
+            style={styles.input}
+            value={preco}
+            onChangeText={setPreco}
+            keyboardType="numeric"
+            placeholderTextColor="#A9A9A9"
+          />
 
 
-      {/* 🔵 LISTA DE CATEGORIAS IGUAL AO NOVO PRODUTO */}
-      {categorias && categorias.length > 0 ? (
-        <View style={{ marginBottom: 20 }}>
-          <Text style={{ fontWeight: "bold", marginBottom: 5, color: "#0D3A87" }}>
-            Categoria referente:
-          </Text>
+          {/* 🔵 LISTA DE CATEGORIAS IGUAL AO NOVO PRODUTO */}
+          {categorias && categorias.length > 0 ? (
+            <View style={{ marginBottom: 20 }}>
+              <Text style={{ fontWeight: "bold", marginBottom: 5, color: "#0D3A87" }}>
+                Categoria referente:
+              </Text>
 
-          {categorias.map((cat, i) => (
-            <TouchableOpacity
-              key={i}
-              style={styles.checkboxContainer}
-              onPress={() => {
-                setTipo_Preparo(cat.nome);
-                setIdCategoria(String(cat.id_categoria));
-              }}
-            >
-              <View
-                style={[
-                  styles.checkbox,
-                  Number(id_categoria) === Number(cat.id_categoria) && styles.checkboxSelecionado
-                ]}
-              />
-              <Text style={{ marginLeft: 8 }}>{cat.nome}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      ) : (
-        <Text>Nenhuma categoria cadastrada.</Text>
-      )}
+              {categorias.map((cat, i) => (
+                <TouchableOpacity
+                  key={i}
+                  style={styles.checkboxContainer}
+                  onPress={() => {
+                    setTipo_Preparo(cat.nome);
+                    setIdCategoria(String(cat.id_categoria));
+                  }}
+                >
+                  <View
+                    style={[
+                      styles.checkbox,
+                      Number(id_categoria) === Number(cat.id_categoria) && styles.checkboxSelecionado
+                    ]}
+                  />
+                  <Text style={{ marginLeft: 8 }}>{cat.nome}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          ) : (
+            <Text>Nenhuma categoria cadastrada.</Text>
+          )}
 
-      <TouchableOpacity
-        style={[styles.botaoSalvar, loading && { opacity: 0.7 }]}
-        onPress={handleSalvar}
-        disabled={loading}
-      >
-        {loading ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={styles.textoBotao}>Salvar Alterações</Text>
-        )}
-      </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.botaoSalvar, loading && { opacity: 0.7 }]}
+            onPress={handleSalvar}
+            disabled={loading}
+          >
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.textoBotao}>Salvar Alterações</Text>
+            )}
+          </TouchableOpacity>
         </ScrollView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     fontSize: 14,
   },
-   imagemContainer: {
+  imagemContainer: {
     width: "100%",
     height: 200,
     backgroundColor: "#e6ecf7",

@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Image,
+  Alert,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { CategoriaContext } from "../../CategoriaContext";
@@ -74,14 +75,15 @@ export default function VisualizarCategorias() {
     );
 
     if (selecionados.length === 0) {
-      return alert("Selecione ao menos um produto!");
+      Alert.alert("Aviso", "Selecione ao menos um produto!");
+      return;
     }
 
     selecionados.forEach((produto) => {
       adicionarProduto(produto, quantidades[produto.id_produto]);
     });
 
-    alert("Categoria salva com sucesso!");
+    Alert.alert("Sucesso", "Categoria salva com sucesso!");
     setQuantidades({});
     setCategoriaSelecionada(null);
   };

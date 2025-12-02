@@ -53,7 +53,7 @@ export default function EditarMesa() {
 
       await editarMesa(mesaEditando.id_mesa, Number(numero));
       Alert.alert('Sucesso', 'Mesa atualizada com sucesso!');
-      navigation.goBack();
+      navigation.navigate('mesa');
     } catch (error) {
       console.error('Erro ao atualizar mesa:', error);
       Alert.alert('Erro', 'Ocorreu um erro ao atualizar a mesa.');

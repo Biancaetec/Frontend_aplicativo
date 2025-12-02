@@ -14,7 +14,7 @@ export function MesaProvider({ children }) {
   const id_restaurante = useMemo(() => user?.restaurante?.id_restaurante, [user]);
   console.log('🔹 id_restaurante:', id_restaurante);
 
-   const API_URL = 'https://organic-umbrella-jjrr7gxw6q4pfjj5g-3001.app.github.dev/api/mesa';
+   const API_URL = 'https://backend-restoon.onrender.com/api/mesa';
   //const API_URL = 'https://special-invention-9769xr99qw56hx95x-3001.app.github.dev/api/mesa';
   
   // 🔹 Carregar mesas do restaurante

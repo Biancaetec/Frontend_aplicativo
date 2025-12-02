@@ -35,7 +35,7 @@ export default function EditarCategoria() {
     try {
       await editarCategoria(categoriaEditando.id_categoria, nome);
       Alert.alert('Sucesso', 'Categoria atualizada!');
-      navigation.goBack();
+      navigation.navigate('categoria');
     } catch (error) {
       console.error('[EditarCategoria] erro ao editar:', error);
       Alert.alert('Erro', 'Não foi possível atualizar a categoria.');

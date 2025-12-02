@@ -13,7 +13,7 @@ export function PedidoProvider({ children }) {
   // ID do restaurante
   const id_restaurante = useMemo(() => user?.restaurante?.id_restaurante, [user]);
 
-  const API_URL = 'https://organic-umbrella-jjrr7gxw6q4pfjj5g-3001.app.github.dev/api/pedidocompleto';
+  const API_URL = 'https://backend-restoon.onrender.com/api/pedidocompleto';
   //const API_URL = 'https://special-invention-9769xr99qw56hx95x-3001.app.github.dev/api/pedidocompleto';
   /* ============================================================
      🧩 Adicionar / atualizar item no pedido
@@ -237,7 +237,7 @@ export function PedidoProvider({ children }) {
       setLoading(true);
 
       const res = await fetch(
-        `https://organic-umbrella-jjrr7gxw6q4pfjj5g-3001.app.github.dev/api/itempedido/status/${id_item}`,
+        `https://backend-restoon.onrender.com/api/itempedido/status/${id_item}`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
@@ -298,7 +298,7 @@ export function PedidoProvider({ children }) {
       //);
 
       const res = await fetch(
-        `https://organic-umbrella-jjrr7gxw6q4pfjj5g-3001.app.github.dev/api/fila-preparo/${id_categoria}`
+        `https://backend-restoon.onrender.com/api/fila-preparo/${id_categoria}`
       );
 
       if (!res.ok) throw new Error(await res.text());
